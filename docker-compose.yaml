@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  seq:
+    image: datalust/seq:latest
+    container_name: "FWTL-seq"
+    ports:
+      - "5341:80"
+    environment:
+      ACCEPT_EULA : "Y"
+    volumes :
+     - FWTL-data:/data
+    networks :
+      - backend
+  sql:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name : "FWTL-sql"
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA : "Y"
+      SA_PASSWORD : "KQlqqjercDE7d4YSF3O"
+    volumes :
+     - FWTL-data:/var/opt/mssql
+    networks :
+     - backend
+  telegram-api-server:
+    build: "C:\\Projects\\Telegram\\TelegramApiServer-master"
+    image: telegram-api-server:latest
+    container_name: FWTL-telegram-api-server
+    restart: unless-stopped
+    ports:
+     - "127.0.0.1:9503:9503"
+    volumes: 
+     - "FWTL-sessions:/app/sessions"
+    #  - "FWTL-data:/app/.env"
+volumes:
+  FWTL-data:
+  FWTL-sessions:
+
+networks:
+  backend:
