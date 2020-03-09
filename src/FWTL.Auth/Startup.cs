@@ -69,7 +69,7 @@ namespace FWTL.Auth
             _applicationContainer = IocConfig.RegisterDependencies(services, _hostingEnvironment, _configuration);
             var seedData = _applicationContainer.Resolve<Seed>();
             //var task = Task.Run(async () => await seedData.UpdateAsync());
-            task.Wait();
+            //task.Wait();
 
             return new AutofacServiceProvider(_applicationContainer);
         }
