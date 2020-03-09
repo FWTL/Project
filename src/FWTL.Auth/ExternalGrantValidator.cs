@@ -17,17 +17,18 @@ namespace FWTL.Auth
 
         public string GrantType => "external";
 
-        public async Task ValidateAsync(ExtensionGrantValidationContext context)
+        public Task ValidateAsync(ExtensionGrantValidationContext context)
         {
             var externalToken = context.Request.Raw.Get("externalToken");
 
             if (string.IsNullOrWhiteSpace(externalToken))
             {
                 context.Result = GrantValidationResultHelpers.Error("invalid external token");
-                return;
+                return Task.CompletedTask;
             }
 
             context.Result = GrantValidationResultHelpers.Success("", "FWTL", null);
+            return Task.CompletedTask;
         }
     }
 }
