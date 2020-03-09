@@ -13,4 +13,4 @@ else
 
 $Env:ASPNETCORE_ENVIRONMENT = $configuration
 Set-Location $buildPath
-dotnet ef database update --startup-project ../FWTL.Auth --verbose
+dotnet ef database update --startup-project ../FWTL.Auth --verbose --context AuthDatabaseContext
