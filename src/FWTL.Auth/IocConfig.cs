@@ -51,7 +51,7 @@ namespace FWTL.Auth
                     .CreateLogger();
             });
 
-            builder.RegisterType<Seed>().AsSelf();
+            builder.RegisterType<SeedData>().AsSelf();
 
             return builder.Build();
         }

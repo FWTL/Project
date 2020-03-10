@@ -1,21 +1,18 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FWTL.Auth.Database.Entities;
 using FWTL.Common.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace FWTL.Auth
 {
-    public class Seed
+    public class SeedData
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
 
-        private Claim _eventRead;
-        private Claim _eventWrite;
         private Role _userRole;
 
-        public Seed(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public SeedData(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
