@@ -26,6 +26,7 @@ namespace FWTL.Common.Credentials
             _allowAdmin = true;
         }
 
-        public string ConnectionString => $"{_name}.redis.cache.windows.net:{_port},password={_password},ssl={_isSsl},abortConnect=False,allowAdmin={_allowAdmin}";
+        public string ConnectionString =>
+            $"{_name}.redis.cache.windows.net:{_port},password={_password},ssl={_isSsl},abortConnect=False,allowAdmin={_allowAdmin}";
     }
 }

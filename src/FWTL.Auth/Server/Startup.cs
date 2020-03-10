@@ -59,8 +59,11 @@ namespace FWTL.Auth.Server
                 .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
                 .AddOperationalStore(options =>
                 {
-                    var credentials = new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(_configuration, "Auth"));
-                    options.ConfigureDbContext = builder => builder.UseSqlServer(credentials.ConnectionString, sql => sql.MigrationsAssembly(typeof(AuthIdentityServerDatabaseCredentials).Assembly.GetName().Name));
+                    var credentials =
+                        new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(_configuration, "Auth"));
+                    options.ConfigureDbContext = builder => builder.UseSqlServer(credentials.ConnectionString,
+                        sql => sql.MigrationsAssembly(typeof(AuthIdentityServerDatabaseCredentials).Assembly.GetName()
+                            .Name));
                 })
                 .AddAspNetIdentity<User>()
                 .AddExtensionGrantValidator<ExternalGrantValidator>()

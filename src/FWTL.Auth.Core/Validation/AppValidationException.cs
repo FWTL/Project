@@ -11,7 +11,8 @@ namespace FWTL.Core.Validation
         {
         }
 
-        public AppValidationException(string property, string message) : base(new List<ValidationFailure>() { new ValidationFailure(property, message) })
+        public AppValidationException(string property, string message) : base(new List<ValidationFailure>
+            {new ValidationFailure(property, message)})
         {
         }
     }

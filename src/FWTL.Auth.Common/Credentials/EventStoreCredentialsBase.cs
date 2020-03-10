@@ -14,8 +14,6 @@ namespace FWTL.Common.Credentials
             Port = configuration["EventStore:Port"].To<int>();
         }
 
-        public string ConnectionString => $"tcp://{User}:{Password}@{Ip}:{Port}";
-
         public string Ip { get; }
 
         public string Password { get; }
@@ -23,5 +21,7 @@ namespace FWTL.Common.Credentials
         public int Port { get; }
 
         public string User { get; }
+
+        public string ConnectionString => $"tcp://{User}:{Password}@{Ip}:{Port}";
     }
 }

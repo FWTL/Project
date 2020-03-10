@@ -14,7 +14,7 @@ namespace FWTL.Common.Helpers
 
         public static GrantValidationResult Success(string userId, string provider, List<Claim> userClaims)
         {
-            return new GrantValidationResult(userId, provider, userClaims, provider, null);
+            return new GrantValidationResult(userId, provider, userClaims, provider);
         }
     }
 }

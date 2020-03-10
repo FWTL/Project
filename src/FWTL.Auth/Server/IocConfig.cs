@@ -25,7 +25,8 @@ namespace FWTL.Auth.Server
             }).SingleInstance();
         }
 
-        public static IContainer RegisterDependencies(IServiceCollection services, IWebHostEnvironment env, IConfiguration rootConfiguration)
+        public static IContainer RegisterDependencies(IServiceCollection services, IWebHostEnvironment env,
+            IConfiguration rootConfiguration)
         {
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -41,7 +42,8 @@ namespace FWTL.Auth.Server
 
             builder.Register<ILogger>(b =>
             {
-                const string format = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
+                const string format =
+                    "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
                 var configuration = b.Resolve<IConfiguration>();
 
                 return new LoggerConfiguration()

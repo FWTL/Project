@@ -7,7 +7,7 @@ namespace FWTL.Common.Extensions
     {
         public static T To<T>(this string source)
         {
-            return (T)Convert.ChangeType(source, typeof(T), CultureInfo.InvariantCulture);
+            return (T) Convert.ChangeType(source, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public static T? ToEnum<T>(this string source) where T : struct
@@ -24,7 +24,7 @@ namespace FWTL.Common.Extensions
         {
             if (!string.IsNullOrWhiteSpace(source))
             {
-                return (T)Convert.ChangeType(source, typeof(T), CultureInfo.InvariantCulture);
+                return (T) Convert.ChangeType(source, typeof(T), CultureInfo.InvariantCulture);
             }
 
             return null;
