@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FWTL.Auth.Controllers
+namespace FWTL.Auth.Server.Controllers
 {
     [AllowAnonymous]
     public class AccountController : Controller

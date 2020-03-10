@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.Entities;
+using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Credentials;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace FWTL.Auth
+namespace FWTL.Auth.Server
 {
     public class Startup
     {
@@ -73,6 +74,17 @@ namespace FWTL.Auth
         public void Configure(IApplicationBuilder app)
         {
             app.UseIdentityServer();
+
+            app.UseStaticFiles();
+            app.UseClientSideBlazorFiles<Client.Program>();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapFallbackToClientSideBlazor<Client.Program>("index.html");
+            });
         }
     }
 }
