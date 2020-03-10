@@ -17,6 +17,6 @@ namespace FWTL.Auth.Database
             ConnectionString = credentials.ConnectionString;
         }
 
-        public string ConnectionString { get; private set; }
+        public string ConnectionString { get; }
     }
 }
