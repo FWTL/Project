@@ -8,8 +8,8 @@ namespace FWTL.Common.Middlewares
 {
     public class ResponseTimeMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly RequestDelegate _next;
         private readonly string _source;
 
         public ResponseTimeMiddleware(RequestDelegate next, ILogger logger, string source)
@@ -34,13 +34,14 @@ namespace FWTL.Common.Middlewares
                 {
                     var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
                     _logger
-                    .Information(
-                    "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
-                    currentUser,
-                    $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
-                    _source,
-                    responseTimeForCompleteRequest);
+                        .Information(
+                            "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
+                            currentUser,
+                            $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
+                            _source,
+                            responseTimeForCompleteRequest);
                 }
+
                 return Task.CompletedTask;
             });
 

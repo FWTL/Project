@@ -2,9 +2,5 @@
 {
     public class WarcraftClientFactory
     {
-        public WarcraftClientFactory()
-        {
-	
-        }
     }
 }

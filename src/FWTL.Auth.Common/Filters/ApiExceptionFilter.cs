@@ -1,23 +1,23 @@
 ﻿using System.IO;
 using System.Linq;
-using FWTL.Core.Services;
 using FluentValidation;
+using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Serilog;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace FWTL.Common.Filters
 {
     public sealed class ApiExceptionFilter : ExceptionFilterAttribute
     {
         private readonly IGuidService _guid;
-        private readonly string _source;
         private readonly IWebHostEnvironment _hosting;
 
         private readonly ILogger _logger;
+        private readonly string _source;
 
         public ApiExceptionFilter(ILogger logger, IWebHostEnvironment hosting, IGuidService guid, string source)
         {
@@ -69,11 +69,11 @@ namespace FWTL.Common.Filters
 
             if (_hosting.IsDevelopment())
             {
-                context.Result = new ContentResult() { Content = context.Exception.ToString() };
+                context.Result = new ContentResult {Content = context.Exception.ToString()};
             }
             else
             {
-                context.Result = new ContentResult() { Content = exceptionId.ToString() };
+                context.Result = new ContentResult {Content = exceptionId.ToString()};
             }
         }
     }

@@ -15,6 +15,7 @@ namespace FWTL.Common.Credentials
             _catalog = configuration[$"{prefix}:Catalog"];
         }
 
-        public string ConnectionString => $"Data Source={_url};Initial Catalog={_catalog};Persist Security Info=False;Integrated Security=True;";
+        public string ConnectionString =>
+            $"Data Source={_url};Initial Catalog={_catalog};Persist Security Info=False;Integrated Security=True;";
     }
 }

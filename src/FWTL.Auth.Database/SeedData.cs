@@ -7,8 +7,8 @@ namespace FWTL.Auth.Database
 {
     public class SeedData
     {
-        private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<User> _userManager;
 
         private Role _userRole;
 
@@ -34,7 +34,7 @@ namespace FWTL.Auth.Database
 
         private Task CreateRolesAsync()
         {
-            _userRole = new Role() { Name = "user" };
+            _userRole = new Role {Name = "user"};
             return Task.CompletedTask;
         }
     }

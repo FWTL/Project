@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FWTL.Common.Credentials;
+﻿using FWTL.Common.Credentials;
 
 namespace FWTL.Auth.Database
 {
