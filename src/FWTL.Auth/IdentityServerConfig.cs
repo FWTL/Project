@@ -27,7 +27,6 @@ namespace FWTL.Auth
                     AccessTokenLifetime = 60 * 60,
                     AllowOfflineAccess = true,
                     RefreshTokenUsage = TokenUsage.ReUse,
-
                 }
             };
         }

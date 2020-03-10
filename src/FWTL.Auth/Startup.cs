@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
@@ -67,16 +66,12 @@ namespace FWTL.Auth
                 .AddDeveloperSigningCredential();
 
             _applicationContainer = IocConfig.RegisterDependencies(services, _hostingEnvironment, _configuration);
-            var seedData = _applicationContainer.Resolve<Seed>();
-            //var task = Task.Run(async () => await seedData.UpdateAsync());
-            //task.Wait();
 
             return new AutofacServiceProvider(_applicationContainer);
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseMvc(routes => { });
             app.UseIdentityServer();
         }
     }
