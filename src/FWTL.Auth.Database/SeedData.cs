@@ -3,7 +3,7 @@ using FWTL.Auth.Database.Entities;
 using FWTL.Common.Extensions;
 using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Auth
+namespace FWTL.Auth.Database
 {
     public class SeedData
     {

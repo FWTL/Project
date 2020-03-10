@@ -4,7 +4,7 @@ using FWTL.Common.Helpers;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Auth
+namespace FWTL.Auth.Server
 {
     public class ExternalGrantValidator : IExtensionGrantValidator
     {

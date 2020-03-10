@@ -3,15 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Core", "FWTL.Core\FWTL.Core.csproj", "{4DB4C990-87C5-4AD5-B299-E75FDCD62334}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Core", "FWTL.Auth.Core\FWTL.Core.csproj", "{4DB4C990-87C5-4AD5-B299-E75FDCD62334}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Common", "FWTL.Common\FWTL.Common.csproj", "{C3049872-E093-43F2-99FF-28834CAC2C2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Common", "FWTL.Auth.Common\FWTL.Common.csproj", "{C3049872-E093-43F2-99FF-28834CAC2C2C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Database.IdentityServer", "FWTL.Auth.Database.IdentityServer\FWTL.Auth.Database.IdentityServer.csproj", "{2C0BB470-3966-4D18-8A32-99D0925258EB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Database", "FWTL.Auth.Database\FWTL.Auth.Database.csproj", "{814EE0B9-C024-4402-BAAC-69EFE31EC745}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWTL.Auth", "FWTL.Auth\FWTL.Auth.csproj", "{0105BA2C-22E0-4B66-997B-03929DEC2ED8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWTL.Auth.Server", "FWTL.Auth\Server\FWTL.Auth.Server.csproj", "{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWTL.Auth.Client", "FWTL.Auth\Client\FWTL.Auth.Client.csproj", "{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWTL.Auth.Shared", "FWTL.Auth\Shared\FWTL.Auth.Shared.csproj", "{85287D20-8EAD-45B3-9B5C-18BDC31AD740}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{0C802A08-F7D1-4632-86F7-DEEA7E6FF191}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,13 +41,25 @@ Global
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0105BA2C-22E0-4B66-997B-03929DEC2ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0105BA2C-22E0-4B66-997B-03929DEC2ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0105BA2C-22E0-4B66-997B-03929DEC2ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0105BA2C-22E0-4B66-997B-03929DEC2ED8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85287D20-8EAD-45B3-9B5C-18BDC31AD740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85287D20-8EAD-45B3-9B5C-18BDC31AD740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85287D20-8EAD-45B3-9B5C-18BDC31AD740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85287D20-8EAD-45B3-9B5C-18BDC31AD740}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7} = {0C802A08-F7D1-4632-86F7-DEEA7E6FF191}
+		{CE0F6B64-FF2F-418B-B6A6-B1998AFC09AE} = {0C802A08-F7D1-4632-86F7-DEEA7E6FF191}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A5B21B2-A3F3-412A-9686-D3BF49C242F1}

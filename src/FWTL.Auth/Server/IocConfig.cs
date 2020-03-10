@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace FWTL.Auth
+namespace FWTL.Auth.Server
 {
     public class IocConfig
     {

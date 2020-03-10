@@ -2,7 +2,7 @@
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace FWTL.Auth
+namespace FWTL.Auth.Server
 {
     public class IdentityServerConfig
     {
@@ -14,11 +14,11 @@ namespace FWTL.Auth
             };
         }
 
-        public static IEnumerable<Client> GetClients(IConfigurationRoot appConfiguration)
+        public static IEnumerable<IdentityServer4.Models.Client> GetClients(IConfigurationRoot appConfiguration)
         {
-            return new List<Client>()
+            return new List<IdentityServer4.Models.Client>()
             {
-                new Client()
+                new IdentityServer4.Models.Client()
                 {
                     ClientId = "FWTL",
                     AllowedGrantTypes = new List<string> { "external" },
