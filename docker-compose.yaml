@@ -25,7 +25,7 @@ services:
     networks :
      - backend
   telegram-api-server:
-    build: "C:\\Projects\\Telegram\\TelegramApiServer-master"
+    #build: "C:\\Projects\\Telegram\\TelegramApiServer-master"
     image: telegram-api-server:latest
     container_name: FWTL-telegram-api-server
     restart: unless-stopped
