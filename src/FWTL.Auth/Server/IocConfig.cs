@@ -58,20 +58,19 @@ namespace FWTL.Auth.Server
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandlerAsync<>)))
-                    .AsImplementedInterfaces().WithScopedLifetime()
-            );
-
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
                     .AddClasses(classes => classes.AssignableTo(typeof(AppAbstractValidation<>)))
                     .AsSelf().WithScopedLifetime()
             );
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(true)
-                    .AsMatchingInterface((service, filter) => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandlerAsync<>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(filter => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );

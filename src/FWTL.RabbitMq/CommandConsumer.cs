@@ -12,13 +12,18 @@ namespace FWTL.RabbitMq
         private readonly IEventDispatcher _eventDispatcher;
         private readonly ICommandHandlerAsync<TCommand> _handler;
 
-        public CommandConsumer(
-            ICommandHandlerAsync<TCommand> handler,
-            IEventDispatcher eventDispatcher)
+        public CommandConsumer()
         {
-            _handler = handler;
-            _eventDispatcher = eventDispatcher;
+                
         }
+
+        //public CommandConsumer(
+        //    ICommandHandlerAsync<TCommand> handler,
+        //    IEventDispatcher eventDispatcher)
+        //{
+        //    _handler = handler;
+        //    _eventDispatcher = eventDispatcher;
+        //}
 
         public async Task Consume(ConsumeContext<TCommand> context)
         {

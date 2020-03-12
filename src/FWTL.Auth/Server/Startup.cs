@@ -69,7 +69,7 @@ namespace FWTL.Auth.Server
             JsonConvert.DefaultSettings = () => defaultSettings;
 
             services.AddAutoMapper(
-                config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); },
+                config => { config.AddProfile(new RequestToCommandProfile(typeof(RegisterUser))); },
                 typeof(RequestToCommandProfile).Assembly);
 
             services.AddDbContext<AuthDatabaseContext>();
@@ -99,40 +99,36 @@ namespace FWTL.Auth.Server
                 var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
                     .ToList();
 
-                foreach (var command in commands)
-                {
-                    x.AddConsumers(typeof(CommandConsumer<>).MakeGenericType(command));
-                }
+                x.AddConsumers(typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
-                {
-                    cfg.ConfigureJsonSerializer(config =>
                     {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
-
-                    cfg.ConfigureJsonDeserializer(config =>
-                    {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
-
-                    var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
-                    {
-                        h.Username(_configuration["RabbitMq:Username"]);
-                        h.Password(_configuration["RabbitMq:Password"]);
-                    });
-
-                    cfg.ReceiveEndpoint("commands", ec =>
-                    {
-                        foreach (var command in commands)
+                        cfg.ConfigureJsonSerializer(config =>
                         {
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(command));
-                        }
-                    });
-                }));
+                            config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                            return config;
+                        });
+
+                        cfg.ConfigureJsonDeserializer(config =>
+                        {
+                            config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                            return config;
+                        });
+
+                        var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
+                        {
+                            h.Username(_configuration["RabbitMq:Username"]);
+                            h.Password(_configuration["RabbitMq:Password"]);
+                        });
+
+                        cfg.ReceiveEndpoint("commands", ec =>
+                        {
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
+                        });
+                    }));
             });
+
+            services.BuildServiceProvider();
         }
 
         public void Configure(IApplicationBuilder app)
