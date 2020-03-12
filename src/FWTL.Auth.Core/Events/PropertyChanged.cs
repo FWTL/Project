@@ -4,7 +4,8 @@ namespace FWTL.Core.Events
 {
     public class PropertyChanged : IEvent
     {
-        public PropertyChanged(Guid aggregateId, string aggregateName, string typeName, string propertyName, object oldValue, object newValue) : this(aggregateId, aggregateName, typeName, propertyName)
+        public PropertyChanged(Guid aggregateId, string aggregateName, string typeName, string propertyName,
+            object oldValue, object newValue) : this(aggregateId, aggregateName, typeName, propertyName)
         {
             OldValue = oldValue;
             NewValue = newValue;

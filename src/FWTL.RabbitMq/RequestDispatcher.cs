@@ -14,8 +14,8 @@ namespace FWTL.RabbitMq
     public class RequestDispatcher : ICommandDispatcher
     {
         private readonly IClientFactory _clientFactory;
-        private readonly IRequestToCommandMapper _requestToCommandMapper;
         private readonly IComponentContext _context;
+        private readonly IRequestToCommandMapper _requestToCommandMapper;
 
         public RequestDispatcher(
             IComponentContext context,
@@ -38,12 +38,14 @@ namespace FWTL.RabbitMq
                 }
             }
 
-            var client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), timeout: TimeSpan.FromMinutes(10));
+            var client =
+                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
             var response = await client.GetResponse<Response>(command);
             if (response.Message.Errors.Any())
             {
                 throw new AppValidationException(response.Message.Errors);
             }
+
             return response.Message.Id;
         }
 
@@ -53,7 +55,8 @@ namespace FWTL.RabbitMq
             return await DispatchAsync(command);
         }
 
-        public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap) where TCommand : class, ICommand
+        public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap)
+            where TCommand : class, ICommand
         {
             var command = _requestToCommandMapper.Map(request, afterMap);
             return await DispatchAsync(command);

@@ -7,10 +7,6 @@ namespace FWTL.Common.Commands
 {
     public class Response
     {
-        public Guid Id { get; set; }
-
-        public IEnumerable<ValidationFailure> Errors { get; set; } = new List<ValidationFailure>();
-
         public Response()
         {
         }
@@ -24,5 +20,9 @@ namespace FWTL.Common.Commands
         {
             Errors = validationException.Errors;
         }
+
+        public Guid Id { get; set; }
+
+        public IEnumerable<ValidationFailure> Errors { get; set; } = new List<ValidationFailure>();
     }
 }

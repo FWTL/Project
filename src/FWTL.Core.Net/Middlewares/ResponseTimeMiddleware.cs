@@ -34,11 +34,11 @@ namespace FWTL.Common.Net.Middlewares
                 {
                     var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
                     _logger.LogInformation(
-                    "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
-                    currentUser,
-                    $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
-                    _source,
-                    responseTimeForCompleteRequest);
+                        "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
+                        currentUser,
+                        $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
+                        _source,
+                        responseTimeForCompleteRequest);
                 }
 
                 return Task.CompletedTask;

@@ -65,7 +65,8 @@ namespace FWTL.Auth.Server
 
             builder.AddMassTransit(x =>
             {
-                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t)).ToList();
+                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
+                    .ToList();
                 foreach (var command in commands)
                 {
                     x.AddConsumers(typeof(CommandConsumer<>).MakeGenericType(command));
@@ -103,15 +104,18 @@ namespace FWTL.Auth.Server
 
             builder.RegisterType<SeedData>().AsSelf();
 
-            builder.RegisterAssemblyTypes(domainAssembly).Where(x => typeof(ICommand).IsAssignableFrom(x) && x.BaseType.Name == "Request").AsSelf();
+            builder.RegisterAssemblyTypes(domainAssembly)
+                .Where(x => typeof(ICommand).IsAssignableFrom(x) && x.BaseType.Name == "Request").AsSelf();
 
             builder.RegisterType<RequestDispatcher>().As<ICommandDispatcher>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(ICommandHandlerAsync<>)).InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(ICommandHandlerAsync<>))
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<EventFactory>().As<IEventFactory>().InstancePerLifetimeScope();
             builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().InstancePerLifetimeScope();
 
-            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(AppAbstractValidation<>)).InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(AppAbstractValidation<>))
+                .InstancePerLifetimeScope();
 
             return builder.Build();
         }

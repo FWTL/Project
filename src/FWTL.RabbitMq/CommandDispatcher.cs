@@ -11,10 +11,10 @@ namespace FWTL.RabbitMq
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private readonly ISendEndpointProvider _sendEndpointProvider;
+        private readonly IComponentContext _context;
         private readonly IGuidService _guidService;
         private readonly IRequestToCommandMapper _requestToCommandMapper;
-        private readonly IComponentContext _context;
+        private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public CommandDispatcher(
             IComponentContext context,
@@ -54,7 +54,7 @@ namespace FWTL.RabbitMq
         }
 
         public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap)
-             where TCommand : class, ICommand
+            where TCommand : class, ICommand
         {
             var command = _requestToCommandMapper.Map(request, afterMap);
             return await DispatchAsync(command);

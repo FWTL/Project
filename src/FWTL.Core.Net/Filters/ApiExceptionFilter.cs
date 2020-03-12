@@ -60,7 +60,8 @@ namespace FWTL.Common.Net.Filters
             }
 
             var exceptionId = _guid.New;
-            _logger.LogError("ExceptionId: {exceptionId} Url: {url} Body: {body} Exception: {exception} Source: {source}",
+            _logger.LogError(
+                "ExceptionId: {exceptionId} Url: {url} Body: {body} Exception: {exception} Source: {source}",
                 exceptionId,
                 context.HttpContext.Request.GetDisplayUrl(),
                 body,

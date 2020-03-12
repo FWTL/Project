@@ -9,6 +9,7 @@ namespace FWTL.Core.Commands
 
         Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request) where TCommand : class, ICommand;
 
-        Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap) where TCommand : class, ICommand;
+        Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap)
+            where TCommand : class, ICommand;
     }
 }

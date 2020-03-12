@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FWTL.Core.Commands;
+﻿using FWTL.Core.Commands;
 
 namespace FWTL.Domain.Users
 {
@@ -18,7 +15,6 @@ namespace FWTL.Domain.Users
 
         public class RegisterUserCommand : RegisterUserRequest, ICommand
         {
-
         }
     }
 }
