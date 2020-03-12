@@ -1,6 +1,4 @@
-﻿using System;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using System.Linq;
 using AutoMapper;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.Entities;
@@ -8,6 +6,10 @@ using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
 using FWTL.Common.Net.Filters;
+using FWTL.Core.Commands;
+using FWTL.Domain.Users;
+using FWTL.RabbitMq;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +28,6 @@ namespace FWTL.Auth.Server
         private readonly IConfigurationRoot _configuration;
 
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private IContainer _applicationContainer;
 
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
@@ -51,7 +52,7 @@ namespace FWTL.Auth.Server
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(configuration =>
             {
@@ -91,9 +92,47 @@ namespace FWTL.Auth.Server
                 .AddExtensionGrantValidator<ExternalGrantValidator>()
                 .AddDeveloperSigningCredential();
 
-            _applicationContainer = IocConfig.RegisterDependencies(services, _hostingEnvironment, _configuration);
+            IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
-            return new AutofacServiceProvider(_applicationContainer);
+            services.AddMassTransit(x =>
+            {
+                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
+                    .ToList();
+
+                foreach (var command in commands)
+                {
+                    x.AddConsumers(typeof(CommandConsumer<>).MakeGenericType(command));
+                }
+
+                x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+                    cfg.ConfigureJsonSerializer(config =>
+                    {
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
+
+                    cfg.ConfigureJsonDeserializer(config =>
+                    {
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
+
+                    var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
+                    {
+                        h.Username(_configuration["RabbitMq:Username"]);
+                        h.Password(_configuration["RabbitMq:Password"]);
+                    });
+
+                    cfg.ReceiveEndpoint("commands", ec =>
+                    {
+                        foreach (var command in commands)
+                        {
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(command));
+                        }
+                    });
+                }));
+            });
         }
 
         public void Configure(IApplicationBuilder app)

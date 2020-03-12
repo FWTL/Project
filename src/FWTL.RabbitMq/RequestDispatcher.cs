@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Autofac;
 using FluentValidation;
 using FWTL.Common.Commands;
+using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FWTL.RabbitMq
 {
     public class RequestDispatcher : ICommandDispatcher
     {
         private readonly IClientFactory _clientFactory;
-        private readonly IComponentContext _context;
+        private readonly IServiceProvider _context;
         private readonly IRequestToCommandMapper _requestToCommandMapper;
 
         public RequestDispatcher(
-            IComponentContext context,
+            IServiceProvider context,
             IClientFactory clientFactory,
             IRequestToCommandMapper requestToCommandMapper)
         {
@@ -29,7 +30,8 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
-            if (_context.TryResolve(out AppAbstractValidation<TCommand> validator))
+            AppAbstractValidation<TCommand> validator = _context.GetService<AppAbstractValidation<TCommand>>();
+            if (validator.IsNotNull())
             {
                 var validationResult = validator.Validate(command);
                 if (!validationResult.IsValid)

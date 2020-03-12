@@ -1,10 +1,7 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using FWTL.Auth.Server;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Integration.Tests
@@ -21,11 +18,10 @@ namespace Integration.Tests
         }
 
         [TestMethod]
-        public Task RegisterUser()
+        public async Task RegisterUser()
         {
-            var x = 1;
-            x.Should().Be(1);
-            return Task.CompletedTask;
+            var response = await _client.GetAsync("api/Account");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

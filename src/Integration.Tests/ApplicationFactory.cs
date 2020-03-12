@@ -12,7 +12,6 @@ namespace Integration.Tests
         public async Task<HttpClient> CreateAsync()
         {
             var hostBuilder = new HostBuilder()
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHost(webHost =>
                 {
                     webHost.UseTestServer();
