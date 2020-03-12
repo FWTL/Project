@@ -8,7 +8,6 @@ using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Validation;
 using FWTL.Domain.Users;
-using FWTL.Rabbitmq;
 using FWTL.RabbitMq;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
