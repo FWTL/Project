@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace FWTL.Common.Middlewares
+namespace FWTL.Common.Net.Middlewares
 {
     public static class ResponseTimeMiddlewareExtensions
     {

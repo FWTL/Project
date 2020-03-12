@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
-namespace FWTL.Common.Middlewares
+namespace FWTL.Common.Net.Middlewares
 {
     public class ResponseTimeMiddleware
     {
@@ -33,13 +33,12 @@ namespace FWTL.Common.Middlewares
                 if (route != null)
                 {
                     var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
-                    _logger
-                        .Information(
-                            "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
-                            currentUser,
-                            $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
-                            _source,
-                            responseTimeForCompleteRequest);
+                    _logger.LogInformation(
+                    "User {currentUser} executed {route} from {source} total elapsed {responseTimeForCompleteRequest} ms",
+                    currentUser,
+                    $"{context.Request.Method}/{route.Values["controller"]}/{route.Values["action"]}",
+                    _source,
+                    responseTimeForCompleteRequest);
                 }
 
                 return Task.CompletedTask;

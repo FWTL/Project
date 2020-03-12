@@ -3,7 +3,7 @@ using System.Security.Claims;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 
-namespace FWTL.Common.Helpers
+namespace FWTL.Common.Net.Helpers
 {
     public static class GrantValidationResultHelpers
     {

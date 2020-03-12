@@ -7,7 +7,7 @@ using FWTL.Auth.Database.Entities;
 using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
-using FWTL.Common.Filters;
+using FWTL.Common.Net.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -54,6 +54,7 @@ namespace FWTL.Auth.Server
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
+
             //.AddJsonOptions(o =>
             //{
             //    o.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
