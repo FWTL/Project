@@ -4,8 +4,10 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
+using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
+using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
@@ -14,6 +16,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NodaTime;
+using NodaTime.Serialization.JsonNet;
 using Serilog;
 
 namespace FWTL.Auth.Server
@@ -74,17 +78,17 @@ namespace FWTL.Auth.Server
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    //cfg.ConfigureJsonSerializer(config =>
-                    //{
-                    //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                    //    return config;
-                    //});
+                    cfg.ConfigureJsonSerializer(config =>
+                    {
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
 
-                    //cfg.ConfigureJsonDeserializer(config =>
-                    //{
-                    //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                    //    return config;
-                    //});
+                    cfg.ConfigureJsonDeserializer(config =>
+                    {
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
 
                     var host = cfg.Host(rootConfiguration["RabbitMq:Url"], h =>
                     {
@@ -116,6 +120,11 @@ namespace FWTL.Auth.Server
 
             builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(AppAbstractValidation<>))
                 .InstancePerLifetimeScope();
+
+            builder.RegisterType<GuidService>().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<CurrentUserService>().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.Register(b => SystemClock.Instance).As<IClock>().SingleInstance();
+            builder.RegisterType<RequestToCommandMapper>().AsImplementedInterfaces().InstancePerLifetimeScope();
 
             return builder.Build();
         }

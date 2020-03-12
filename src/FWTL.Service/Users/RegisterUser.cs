@@ -1,4 +1,8 @@
-﻿using FWTL.Core.Commands;
+﻿using System.Data;
+using System.Threading.Tasks;
+using FluentValidation;
+using FWTL.Core.Commands;
+using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Users
 {
@@ -15,6 +19,25 @@ namespace FWTL.Domain.Users
 
         public class RegisterUserCommand : RegisterUserRequest, ICommand
         {
+        }
+
+        public class Handler : ICommandHandlerAsync<RegisterUserCommand>
+        {
+            public Task ExecuteAsync(RegisterUserCommand command)
+            {
+                return Task.CompletedTask;
+            }
+        }
+
+        public class Validator : AppAbstractValidation<RegisterUserCommand>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.PhoneNumber).NotEmpty();
+                RuleFor(x => x.Password).NotNull();
+                RuleFor(x => x.RepeatPassword).NotNull();
+                RuleFor(x => x.Password).Matches(x => x.RepeatPassword);
+            }
         }
     }
 }

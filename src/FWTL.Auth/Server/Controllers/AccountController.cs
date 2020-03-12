@@ -1,4 +1,7 @@
-﻿using FWTL.TelegramServerClient;
+﻿using System.Threading.Tasks;
+using FWTL.Core.Commands;
+using FWTL.Domain.Users;
+using FWTL.TelegramServerClient;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Auth.Server.Controllers
@@ -7,22 +10,23 @@ namespace FWTL.Auth.Server.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private ITelegramServerClient _telegramServerClient;
+        private ICommandDispatcher _commandDispatcher;
 
-        public AccountController(ITelegramServerClient telegramServerClient)
+        public AccountController(ICommandDispatcher commandDispatcher)
         {
-            _telegramServerClient = telegramServerClient;
+            _commandDispatcher = commandDispatcher;
         }
 
-        [HttpPost]
-        public void SendCode(string phoneNumber)
+        [HttpGet]
+        public void Test()
         {
             //_telegramServerClient.
         }
 
         [HttpPost]
-        public void Register()
+        public async Task Register(RegisterUser.RegisterUserRequest request)
         {
+            await _commandDispatcher.DispatchAsync<RegisterUser.RegisterUserRequest, RegisterUser.RegisterUserCommand>(request);
         }
     }
 }
