@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.Entities;
 using FWTL.Auth.Database.IdentityServer;
@@ -14,9 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using NodaTime;
-using AutoMapper;
 
 namespace FWTL.Auth.Server
 {
@@ -68,7 +66,6 @@ namespace FWTL.Auth.Server
             //JsonConvert.DefaultSettings = () => defaultSettings;
 
             services.AddAutoMapper(configAction: config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); }, assemblies: typeof(RequestToCommandProfile).Assembly);
-
 
             services.AddDbContext<AuthDatabaseContext>();
             services.AddIdentity<User, Role>()
