@@ -12,13 +12,13 @@ namespace FWTL.RabbitMq
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private readonly IServiceProvider _context;
+        private readonly IServiceCollection _context;
         private readonly IGuidService _guidService;
         private readonly IRequestToCommandMapper _requestToCommandMapper;
         private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public CommandDispatcher(
-            IServiceProvider context,
+            IServiceCollection context,
             ISendEndpointProvider sendEndpointProvider,
             IGuidService guidService,
             IRequestToCommandMapper requestToCommandMapper)

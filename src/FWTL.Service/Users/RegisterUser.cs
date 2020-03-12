@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Core.Commands;
 using FWTL.Core.Validation;
@@ -23,6 +22,10 @@ namespace FWTL.Domain.Users
 
         public class Handler : ICommandHandlerAsync<RegisterUserCommand>
         {
+            public Handler()
+            {
+            }
+
             public Task ExecuteAsync(RegisterUserCommand command)
             {
                 return Task.CompletedTask;

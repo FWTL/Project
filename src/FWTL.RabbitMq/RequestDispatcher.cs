@@ -41,7 +41,7 @@ namespace FWTL.RabbitMq
             }
 
             var client =
-                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
+                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromSeconds(10));
             var response = await client.GetResponse<Response>(command);
             if (response.Message.Errors.Any())
             {
