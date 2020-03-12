@@ -66,7 +66,9 @@ namespace FWTL.Auth.Server
             //defaultSettings.Converters.Add(new PropertyChangedConverter());
             //JsonConvert.DefaultSettings = () => defaultSettings;
 
-            services.AddAutoMapper(configAction: config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); }, assemblies: typeof(RequestToCommandProfile).Assembly);
+            services.AddAutoMapper(
+                config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); },
+                typeof(RequestToCommandProfile).Assembly);
 
             services.AddDbContext<AuthDatabaseContext>();
             services.AddIdentity<User, Role>()

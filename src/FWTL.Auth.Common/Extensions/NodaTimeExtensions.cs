@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
@@ -10,16 +9,19 @@ namespace FWTL.Common.Extensions
     //Temporary solution until NodaTime.Serialization.JsonNet new version 
     public static class NodaTimeExtensions
     {
-        public static JsonSerializerSettings ConfigureForNodaTime(this JsonSerializerSettings settings, IDateTimeZoneProvider provider)
+        public static JsonSerializerSettings ConfigureForNodaTime(this JsonSerializerSettings settings,
+            IDateTimeZoneProvider provider)
         {
             if (settings == null)
             {
                 throw new ArgumentNullException(nameof(settings));
             }
+
             if (provider == null)
             {
                 throw new ArgumentNullException(nameof(provider));
             }
+
             // Add our converters
             AddDefaultConverters(settings.Converters, provider);
 

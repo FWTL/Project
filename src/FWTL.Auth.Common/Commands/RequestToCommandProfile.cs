@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
-using FWTL.Core.Commands;
 using FWTL.Common.Extensions;
+using FWTL.Core.Commands;
 
 namespace FWTL.Common.Commands
 {

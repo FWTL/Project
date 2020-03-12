@@ -7,8 +7,8 @@ namespace FWTL.RabbitMq
 {
     public class EventFactory : IEventFactory
     {
-        private readonly IGuidService _guid;
         private readonly ConsumeContext _context;
+        private readonly IGuidService _guid;
 
         public EventFactory(IGuidService guid, ConsumeContext context)
         {

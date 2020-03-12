@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FWTL.TelegramServerClient;
-using Microsoft.AspNetCore.Http;
+﻿using FWTL.TelegramServerClient;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Auth.Server.Controllers
@@ -28,7 +23,6 @@ namespace FWTL.Auth.Server.Controllers
         [HttpPost]
         public void Register()
         {
-
         }
     }
 }
