@@ -4,7 +4,9 @@ using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.Entities;
 using FWTL.Auth.Database.IdentityServer;
+using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
+using FWTL.Common.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +14,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using NodaTime;
+using AutoMapper;
 
 namespace FWTL.Auth.Server
 {
@@ -47,7 +52,23 @@ namespace FWTL.Auth.Server
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(configuration =>
+            {
+                configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
+            });
+            //.AddJsonOptions(o =>
+            //{
+            //    o.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            //    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            //});
+
+            //var defaultSettings = new JsonSerializerSettings()
+            //    .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            //defaultSettings.Converters.Add(new PropertyChangedConverter());
+            //JsonConvert.DefaultSettings = () => defaultSettings;
+
+            services.AddAutoMapper(configAction: config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); }, assemblies: typeof(RequestToCommandProfile).Assembly);
+
 
             services.AddDbContext<AuthDatabaseContext>();
             services.AddIdentity<User, Role>()
@@ -77,17 +98,7 @@ namespace FWTL.Auth.Server
         public void Configure(IApplicationBuilder app)
         {
             app.UseIdentityServer();
-
-            app.UseStaticFiles();
-            app.UseClientSideBlazorFiles<Client.Program>();
-
             app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
-                endpoints.MapFallbackToClientSideBlazor<Client.Program>("index.html");
-            });
         }
     }
 }
