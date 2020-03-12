@@ -15,6 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using NodaTime;
+using NodaTime.Serialization.JsonNet;
 
 namespace FWTL.Auth.Server
 {
@@ -54,17 +57,15 @@ namespace FWTL.Auth.Server
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
-
             //.AddJsonOptions(o =>
             //{
-            //    o.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-            //    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            //    o.JsonSerializerOptions.Con;
+            //    o.JsonSerializerOptions.IgnoreNullValues = true;
             //});
 
-            //var defaultSettings = new JsonSerializerSettings()
-            //    .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-            //defaultSettings.Converters.Add(new PropertyChangedConverter());
-            //JsonConvert.DefaultSettings = () => defaultSettings;
+            var defaultSettings = new JsonSerializerSettings()
+                .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            JsonConvert.DefaultSettings = () => defaultSettings;
 
             services.AddAutoMapper(
                 config => { config.AddProfile(new RequestToCommandProfile(typeof(RequestToCommandProfile))); },
@@ -99,6 +100,11 @@ namespace FWTL.Auth.Server
         {
             app.UseIdentityServer();
             app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
