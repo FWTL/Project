@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FWTL.Auth.Database\FWTL.Auth.Database.csproj" />
+    <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
+    <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
+    <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramServerClient.csproj" />
+  </ItemGroup>
+
+</Project>

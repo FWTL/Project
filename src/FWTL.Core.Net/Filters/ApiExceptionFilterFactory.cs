@@ -3,9 +3,9 @@ using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
-namespace FWTL.Common.Filters
+namespace FWTL.Common.Net.Filters
 {
     public class ApiExceptionFilterFactory : IFilterFactory
     {

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
   </ItemGroup>
 
 </Project>

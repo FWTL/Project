@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FWTL.Auth.Database.Entities;
-using FWTL.Common.Helpers;
+using FWTL.Common.Net.Helpers;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 
