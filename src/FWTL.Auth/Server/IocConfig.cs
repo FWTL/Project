@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using System.Reflection;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Common.Services;
@@ -11,54 +8,46 @@ using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
-using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
-using NodaTime.Serialization.JsonNet;
 using Serilog;
 
 namespace FWTL.Auth.Server
 {
     public class IocConfig
     {
-        public static void OverrideWithLocalCredentials(ContainerBuilder builder)
+        public static void OverrideWithLocalCredentials(IServiceCollection services)
         {
         }
 
-        public static void RegisterCredentials(ContainerBuilder builder)
+        public static void RegisterCredentials(IServiceCollection services)
         {
-            builder.Register(b =>
+            services.AddSingleton(b =>
             {
-                var configuration = b.Resolve<IConfiguration>();
+                var configuration = b.GetService<IConfiguration>();
                 return new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Auth"));
-            }).SingleInstance();
+            });
         }
 
-        public static IContainer RegisterDependencies(IServiceCollection services, IWebHostEnvironment env,
-            IConfiguration rootConfiguration)
+        public static void RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
             var domainAssembly = typeof(RegisterUser).GetTypeInfo().Assembly;
 
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
-
-            RegisterCredentials(builder);
+            RegisterCredentials(services);
 
             if (env.IsDevelopment())
             {
-                OverrideWithLocalCredentials(builder);
+                OverrideWithLocalCredentials(services);
             }
 
-            builder.Register(b => rootConfiguration).SingleInstance();
-
-            builder.Register<ILogger>(b =>
+            services.AddSingleton<ILogger>(b =>
             {
                 const string format =
                     "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
-                var configuration = b.Resolve<IConfiguration>();
+                var configuration = b.GetService<IConfiguration>();
 
                 return new LoggerConfiguration()
                     .MinimumLevel.Debug()
@@ -67,66 +56,34 @@ namespace FWTL.Auth.Server
                     .CreateLogger();
             });
 
-            builder.AddMassTransit(x =>
-            {
-                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
-                    .ToList();
-                foreach (var command in commands)
-                {
-                    x.AddConsumers(typeof(CommandConsumer<>).MakeGenericType(command));
-                }
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandlerAsync<>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
 
-                x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
-                {
-                    cfg.ConfigureJsonSerializer(config =>
-                    {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(AppAbstractValidation<>)))
+                    .AsSelf().WithScopedLifetime()
+            );
 
-                    cfg.ConfigureJsonDeserializer(config =>
-                    {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(true)
+                    .AsMatchingInterface((service, filter) => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
+                    .AsSelf()
+                    .WithScopedLifetime()
+            );
 
-                    var host = cfg.Host(rootConfiguration["RabbitMq:Url"], h =>
-                    {
-                        h.Username(rootConfiguration["RabbitMq:Username"]);
-                        h.Password(rootConfiguration["RabbitMq:Password"]);
-                    });
-
-                    cfg.ReceiveEndpoint("commands", ec =>
-                    {
-                        foreach (var command in commands)
-                        {
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(command));
-                        }
-                    });
-                }));
-            });
-
-            builder.RegisterType<SeedData>().AsSelf();
-
-            builder.RegisterAssemblyTypes(domainAssembly)
-                .Where(x => typeof(ICommand).IsAssignableFrom(x) && x.BaseType.Name == "Request").AsSelf();
-
-            builder.RegisterType<RequestDispatcher>().As<ICommandDispatcher>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(ICommandHandlerAsync<>))
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<EventFactory>().As<IEventFactory>().InstancePerLifetimeScope();
-            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().InstancePerLifetimeScope();
-
-            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(AppAbstractValidation<>))
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<GuidService>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<CurrentUserService>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.Register(b => SystemClock.Instance).As<IClock>().SingleInstance();
-            builder.RegisterType<RequestToCommandMapper>().AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            return builder.Build();
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<IEventFactory, EventFactory>();
+            services.AddScoped<ICommandDispatcher, RequestDispatcher>();
+            services.AddScoped<ICommandDispatcher, RequestDispatcher>();
+            services.AddScoped<IGuidService, GuidService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddSingleton<IClock>(b => SystemClock.Instance);
+            services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
         }
     }
 }
