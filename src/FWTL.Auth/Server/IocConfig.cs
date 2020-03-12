@@ -1,17 +1,20 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Core.Commands;
+using FWTL.Core.Events;
+using FWTL.Core.Validation;
 using FWTL.Domain.Users;
 using FWTL.Rabbitmq;
+using FWTL.RabbitMq;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
 using Serilog;
 
 namespace FWTL.Auth.Server
@@ -34,6 +37,8 @@ namespace FWTL.Auth.Server
         public static IContainer RegisterDependencies(IServiceCollection services, IWebHostEnvironment env,
             IConfiguration rootConfiguration)
         {
+            var domainAssembly = typeof(RegisterUser).GetTypeInfo().Assembly;
+
             var builder = new ContainerBuilder();
             builder.Populate(services);
 
@@ -98,6 +103,16 @@ namespace FWTL.Auth.Server
             });
 
             builder.RegisterType<SeedData>().AsSelf();
+
+            builder.RegisterAssemblyTypes(domainAssembly).Where(x => typeof(ICommand).IsAssignableFrom(x) && x.BaseType.Name == "Request").AsSelf();
+
+            builder.RegisterType<RequestDispatcher>().As<ICommandDispatcher>().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(ICommandHandlerAsync<>)).InstancePerLifetimeScope();
+
+            builder.RegisterType<EventFactory>().As<IEventFactory>().InstancePerLifetimeScope();
+            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(domainAssembly).AsClosedTypesOf(typeof(AppAbstractValidation<>)).InstancePerLifetimeScope();
 
             return builder.Build();
         }
