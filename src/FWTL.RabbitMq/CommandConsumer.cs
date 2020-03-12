@@ -5,7 +5,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using MassTransit;
 
-namespace FWTL.Rabbitmq
+namespace FWTL.RabbitMq
 {
     public class CommandConsumer<TCommand> : IConsumer<TCommand> where TCommand : class, ICommand
     {
