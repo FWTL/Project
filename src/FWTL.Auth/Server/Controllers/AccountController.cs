@@ -1,19 +1,34 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FWTL.TelegramServerClient;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Auth.Server.Controllers
 {
-    [AllowAnonymous]
-    public class AccountController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
     {
-        public IActionResult Register()
+        private ITelegramServerClient _telegramServerClient;
+
+        public AccountController(ITelegramServerClient telegramServerClient)
         {
-            return View();
+            _telegramServerClient = telegramServerClient;
         }
 
-        public IActionResult SendCode()
+        [HttpPost]
+        public void SendCode(string phoneNumber)
         {
-            return View();
+            //_telegramServerClient.
+        }
+
+        [HttpPost]
+        public void Register()
+        {
+
         }
     }
 }

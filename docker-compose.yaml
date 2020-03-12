@@ -34,6 +34,21 @@ services:
     volumes: 
      - "FWTL-sessions:/app/sessions"
     #  - "FWTL-data:/app/.env"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: "FWTL-rabbitmq"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    volumes :
+     - FWTL-data:/var/lib/rabbitmq
+    networks :
+     - backend
 volumes:
   FWTL-data:
   FWTL-sessions:

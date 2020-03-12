@@ -1,11 +1,17 @@
-﻿using Autofac;
+﻿using System.Linq;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
+using FWTL.Core.Commands;
+using FWTL.Domain.Users;
+using FWTL.Rabbitmq;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NodaTime;
 using Serilog;
 
 namespace FWTL.Auth.Server
@@ -51,6 +57,44 @@ namespace FWTL.Auth.Server
                     .WriteTo.Console(outputTemplate: format)
                     .WriteTo.Seq(configuration["Seq:Url"])
                     .CreateLogger();
+            });
+
+            builder.AddMassTransit(x =>
+            {
+                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t)).ToList();
+                foreach (var command in commands)
+                {
+                    x.AddConsumers(typeof(CommandConsumer<>).MakeGenericType(command));
+                }
+
+                x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+                    //cfg.ConfigureJsonSerializer(config =>
+                    //{
+                    //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                    //    return config;
+                    //});
+
+                    //cfg.ConfigureJsonDeserializer(config =>
+                    //{
+                    //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                    //    return config;
+                    //});
+
+                    var host = cfg.Host(rootConfiguration["RabbitMq:Url"], h =>
+                    {
+                        h.Username(rootConfiguration["RabbitMq:Username"]);
+                        h.Password(rootConfiguration["RabbitMq:Password"]);
+                    });
+
+                    cfg.ReceiveEndpoint("commands", ec =>
+                    {
+                        foreach (var command in commands)
+                        {
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(command));
+                        }
+                    });
+                }));
             });
 
             builder.RegisterType<SeedData>().AsSelf();
