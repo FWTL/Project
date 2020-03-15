@@ -9,12 +9,13 @@ namespace FWTL.Common.Commands
     {
         public Response()
         {
+                
         }
 
-        //public Response(IAggregateRoot aggregateRoot)
-        //{
-        //    Id = aggregateRoot.Id;
-        //}
+        public Response(Guid id)
+        {
+            Id = id;
+        }
 
         public Response(ValidationException validationException)
         {

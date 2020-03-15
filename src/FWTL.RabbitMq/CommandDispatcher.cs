@@ -12,13 +12,13 @@ namespace FWTL.RabbitMq
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private readonly IServiceCollection _context;
+        private readonly IServiceProvider _context;
         private readonly IGuidService _guidService;
         private readonly IRequestToCommandMapper _requestToCommandMapper;
         private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public CommandDispatcher(
-            IServiceCollection context,
+            IServiceProvider context,
             ISendEndpointProvider sendEndpointProvider,
             IGuidService guidService,
             IRequestToCommandMapper requestToCommandMapper)
@@ -31,7 +31,7 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
-            AppAbstractValidation<TCommand> validator = _context.GetService<AppAbstractValidation<TCommand>>();
+            var validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
                 var validationResult = validator.Validate(command);

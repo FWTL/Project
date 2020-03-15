@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Database.Identity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Database", "FWTL.Auth.Database\FWTL.Auth.Database.csproj", "{814EE0B9-C024-4402-BAAC-69EFE31EC745}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Server", "FWTL.Auth\Server\FWTL.Auth.Server.csproj", "{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{0C802A08-F7D1-4632-86F7-DEEA7E6FF191}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.TelegramServerClient", "FWTL.ServerClient\FWTL.TelegramServerClient.csproj", "{5FE65D24-8767-4923-A9A3-D879C49AE6C1}"
@@ -21,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Domain", "FWTL.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.RabbitMq", "FWTL.RabbitMq\FWTL.RabbitMq.csproj", "{F5227FFD-2E65-45B3-97F6-FBD78A6A608A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWTL.Common.Net", "FWTL.Core.Net\FWTL.Common.Net.csproj", "{A18D23F7-C43F-4045-8C9D-B911157B709A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Common.Net", "FWTL.Core.Net\FWTL.Common.Net.csproj", "{A18D23F7-C43F-4045-8C9D-B911157B709A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Tests", "Integration.Tests\Integration.Tests.csproj", "{632F09A9-167C-4684-B652-C6271D628EEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Tests", "Integration.Tests\Integration.Tests.csproj", "{632F09A9-167C-4684-B652-C6271D628EEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth", "FWTL.Auth\FWTL.Auth.csproj", "{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,6 @@ Global
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814EE0B9-C024-4402-BAAC-69EFE31EC745}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FE65D24-8767-4923-A9A3-D879C49AE6C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5FE65D24-8767-4923-A9A3-D879C49AE6C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FE65D24-8767-4923-A9A3-D879C49AE6C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,12 +67,16 @@ Global
 		{632F09A9-167C-4684-B652-C6271D628EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{632F09A9-167C-4684-B652-C6271D628EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{632F09A9-167C-4684-B652-C6271D628EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D3D1CBE1-656A-477E-9B6A-9D634BAE3BB7} = {0C802A08-F7D1-4632-86F7-DEEA7E6FF191}
+		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2} = {0C802A08-F7D1-4632-86F7-DEEA7E6FF191}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A5B21B2-A3F3-412A-9686-D3BF49C242F1}

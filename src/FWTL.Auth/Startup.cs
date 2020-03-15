@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.Entities;
 using FWTL.Auth.Database.IdentityServer;
@@ -20,6 +22,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
+using Serilog;
 
 namespace FWTL.Auth.Server
 {
@@ -68,14 +71,31 @@ namespace FWTL.Auth.Server
                 .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
             JsonConvert.DefaultSettings = () => defaultSettings;
 
+            const string format =
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
+
+            services.AddSingleton<ILogger>(b => new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console(outputTemplate: format)
+                .WriteTo.Seq(_configuration["Seq:Url"])
+                .CreateLogger());
+
             services.AddAutoMapper(
                 config => { config.AddProfile(new RequestToCommandProfile(typeof(RegisterUser))); },
                 typeof(RequestToCommandProfile).Assembly);
 
             services.AddDbContext<AuthDatabaseContext>();
-            services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<AuthDatabaseContext>()
-                .AddDefaultTokenProviders();
+
+            services.AddIdentity<User, Role>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+            })
+            .AddEntityFrameworkStores<AuthDatabaseContext>()
+            .AddDefaultTokenProviders();
 
             services.AddIdentityServer()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
@@ -102,36 +122,34 @@ namespace FWTL.Auth.Server
                 x.AddConsumers(typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+                    cfg.ConfigureJsonSerializer(config =>
                     {
-                        cfg.ConfigureJsonSerializer(config =>
-                        {
-                            config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                            return config;
-                        });
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
 
-                        cfg.ConfigureJsonDeserializer(config =>
-                        {
-                            config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                            return config;
-                        });
+                    cfg.ConfigureJsonDeserializer(config =>
+                    {
+                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                        return config;
+                    });
 
-                        var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
-                        {
-                            h.Username(_configuration["RabbitMq:Username"]);
-                            h.Password(_configuration["RabbitMq:Password"]);
-                        });
+                    var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
+                    {
+                        h.Username(_configuration["RabbitMq:Username"]);
+                        h.Password(_configuration["RabbitMq:Password"]);
+                    });
 
-                        cfg.ReceiveEndpoint("commands", ec =>
-                        {
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
-                        });
-                    }));
+                    cfg.ReceiveEndpoint("commands", ec =>
+                    {
+                        ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
+                    });
+                }));
             });
-
-            services.BuildServiceProvider();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             app.UseIdentityServer();
             app.UseRouting();
@@ -140,6 +158,22 @@ namespace FWTL.Auth.Server
             {
                 endpoints.MapControllers();
             });
+
+            var serviceProvider = app.ApplicationServices;
+
+            Task task = Task.Run(async () => await ConfigureAsync(app));
+            task.Wait();
+
+            Task task2 = Task.Run(async () => await new SeedData(userManager, roleManager).UpdateAsync());
+            task2.Wait();
+        }
+
+        public async Task ConfigureAsync(IApplicationBuilder app)
+        {
+            var serviceProvider = app.ApplicationServices;
+            var bus = serviceProvider.GetService<IBusControl>();
+
+            await bus.StartAsync();
         }
     }
 }

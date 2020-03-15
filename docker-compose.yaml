@@ -13,19 +13,18 @@ services:
     networks :
       - backend
   sql:
-    image: mcr.microsoft.com/mssql/server:latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
     container_name : "FWTL-sql"
     ports:
       - "1433:1433"
     environment:
       ACCEPT_EULA : "Y"
       SA_PASSWORD : "KQlqqjercDE7d4YSF3O"
-    volumes :
-     - FWTL-data:/var/opt/mssql
+    #volumes :
+     #- FWTL-sql-data:/var/opt/mssql
     networks :
      - backend
   telegram-api-server:
-    #build: "C:\\Projects\\Telegram\\TelegramApiServer-master"
     image: telegram-api-server:latest
     container_name: FWTL-telegram-api-server
     restart: unless-stopped
@@ -50,6 +49,7 @@ services:
     networks :
      - backend
 volumes:
+  FWTL-sql-data:
   FWTL-data:
   FWTL-sessions:
 

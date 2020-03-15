@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FWTL.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthDatabaseContext))]
-    [Migration("20200309230905_Init")]
+    [Migration("20200315111524_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,9 +53,7 @@ namespace FWTL.Auth.Database.Migrations
             modelBuilder.Entity("FWTL.Auth.Database.Entities.User", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");

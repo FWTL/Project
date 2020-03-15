@@ -3,7 +3,7 @@ using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace FWTL.Common.Net.Filters
 {
@@ -21,9 +21,9 @@ namespace FWTL.Common.Net.Filters
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
             return new ApiExceptionFilter(
-                serviceProvider.GetService<ILogger>(),
-                serviceProvider.GetService<IWebHostEnvironment>(),
-                serviceProvider.GetService<IGuidService>(),
+                serviceProvider.GetRequiredService<ILogger>(),
+                serviceProvider.GetRequiredService<IWebHostEnvironment>(),
+                serviceProvider.GetRequiredService<IGuidService>(),
                 _source);
         }
     }

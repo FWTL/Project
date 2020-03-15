@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
+using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
 using Microsoft.AspNetCore.Hosting;
@@ -13,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
-using Serilog;
 
 namespace FWTL.Auth.Server
 {
@@ -43,23 +42,10 @@ namespace FWTL.Auth.Server
                 OverrideWithLocalCredentials(services);
             }
 
-            services.AddSingleton<ILogger>(b =>
-            {
-                const string format =
-                    "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
-                var configuration = b.GetService<IConfiguration>();
-
-                return new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.Console(outputTemplate: format)
-                    .WriteTo.Seq(configuration["Seq:Url"])
-                    .CreateLogger();
-            });
-
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(AppAbstractValidation<>)))
-                    .AsSelf().WithScopedLifetime()
+                    .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)))
+                    .AsImplementedInterfaces().WithTransientLifetime()
             );
 
             services.Scan(scan =>
@@ -83,6 +69,7 @@ namespace FWTL.Auth.Server
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
+
         }
     }
 }
