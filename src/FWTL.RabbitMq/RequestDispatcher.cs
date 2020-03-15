@@ -30,7 +30,7 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
-            AppAbstractValidation<TCommand> validator = _context.GetService<AppAbstractValidation<TCommand>>();
+            var validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
                 var validationResult = validator.Validate(command);
@@ -41,7 +41,7 @@ namespace FWTL.RabbitMq
             }
 
             var client =
-                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromSeconds(10));
+                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
             var response = await client.GetResponse<Response>(command);
             if (response.Message.Errors.Any())
             {

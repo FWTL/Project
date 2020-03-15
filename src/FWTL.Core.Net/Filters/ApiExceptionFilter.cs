@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace FWTL.Common.Net.Filters
 {
@@ -60,7 +60,7 @@ namespace FWTL.Common.Net.Filters
             }
 
             var exceptionId = _guid.New;
-            _logger.LogError(
+            _logger.Error(
                 "ExceptionId: {exceptionId} Url: {url} Body: {body} Exception: {exception} Source: {source}",
                 exceptionId,
                 context.HttpContext.Request.GetDisplayUrl(),

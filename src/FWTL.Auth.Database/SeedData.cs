@@ -34,7 +34,7 @@ namespace FWTL.Auth.Database
 
         private Task CreateRolesAsync()
         {
-            _userRole = new Role {Name = "user"};
+            _userRole = new Role { Name = "user" };
             return Task.CompletedTask;
         }
     }

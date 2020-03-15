@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Commands;
 using FWTL.Core.Commands;
@@ -11,26 +12,29 @@ namespace FWTL.RabbitMq
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly ICommandHandlerAsync<TCommand> _handler;
+        private readonly IEventFactory _eventFactory;
 
-        public CommandConsumer()
+        public CommandConsumer(
+            ICommandHandlerAsync<TCommand> handler,
+            IEventFactory eventFactory,
+            IEventDispatcher eventDispatcher)
         {
-                
+            _handler = handler;
+            _eventFactory = eventFactory;
+            _eventDispatcher = eventDispatcher;
         }
-
-        //public CommandConsumer(
-        //    ICommandHandlerAsync<TCommand> handler,
-        //    IEventDispatcher eventDispatcher)
-        //{
-        //    _handler = handler;
-        //    _eventDispatcher = eventDispatcher;
-        //}
 
         public async Task Consume(ConsumeContext<TCommand> context)
         {
             try
             {
                 await _handler.ExecuteAsync(context.Message);
-                await context.RespondAsync(new Response());
+                foreach (var @event in _handler.Events)
+                {
+                    var eventComposite = _eventFactory.Make(@event);
+                    await _eventDispatcher.DispatchAsync(eventComposite);
+                }
+                await context.RespondAsync(new Response(context.RequestId.Value));
             }
             catch (ValidationException ex)
             {

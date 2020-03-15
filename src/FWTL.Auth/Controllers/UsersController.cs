@@ -19,7 +19,7 @@ namespace FWTL.Auth.Server.Controllers
         [HttpPost]
         public async Task RegisterUser(RegisterUser.RegisterUserRequest request)
         {
-            await _commandDispatcher.DispatchAsync<RegisterUser.RegisterUserRequest, RegisterUser.RegisterUserCommand>(request);
+            await _commandDispatcher.DispatchAsync<RegisterUser.RegisterUserRequest, RegisterUser.RegisterUserCommand>(request, command => command.NormalizePhoneNumber());
         }
     }
 }
