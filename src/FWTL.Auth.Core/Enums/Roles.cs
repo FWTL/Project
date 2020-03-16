@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FWTL.Core.Commands
+namespace FWTL.Core.Enums
 {
-    public interface IRequest
+    public enum Roles
     {
-
+        User = 1
     }
 }

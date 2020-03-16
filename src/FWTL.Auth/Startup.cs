@@ -161,11 +161,11 @@ namespace FWTL.Auth.Server
 
             var serviceProvider = app.ApplicationServices;
 
-            Task task = Task.Run(async () => await ConfigureAsync(app));
-            task.Wait();
+            Task startBusTask = Task.Run(async () => await ConfigureAsync(app));
+            startBusTask.Wait();
 
-            Task task2 = Task.Run(async () => await new SeedData(userManager, roleManager).UpdateAsync());
-            task2.Wait();
+            Task seedDatabase = Task.Run(async () => await new SeedData(userManager, roleManager).UpdateAsync());
+            seedDatabase.Wait();
         }
 
         public async Task ConfigureAsync(IApplicationBuilder app)

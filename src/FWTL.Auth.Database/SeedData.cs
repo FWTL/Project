@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FWTL.Auth.Database.Entities;
 using FWTL.Common.Extensions;
+using FWTL.Core.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace FWTL.Auth.Database
@@ -26,7 +27,7 @@ namespace FWTL.Auth.Database
 
         private async Task SeedRolesAsync()
         {
-            if ((await _roleManager.FindByNameAsync("user")).IsNull())
+            if ((await _roleManager.FindByNameAsync(Roles.User.ToString())).IsNull())
             {
                 await _roleManager.CreateAsync(_userRole);
             }
@@ -34,7 +35,7 @@ namespace FWTL.Auth.Database
 
         private Task CreateRolesAsync()
         {
-            _userRole = new Role { Name = "user" };
+            _userRole = new Role { Id = (long)Roles.User, Name = nameof(Roles.User) };
             return Task.CompletedTask;
         }
     }
