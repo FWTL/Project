@@ -1,6 +1,6 @@
-﻿namespace FWTL.TelegramServerClient
+﻿namespace FWTL.TelegramClient
 {
-    public interface ITelegramServerClient
+    public interface ITelegramClient
     {
         IUserService UserService { get; }
         ISystemService SystemService { get; }

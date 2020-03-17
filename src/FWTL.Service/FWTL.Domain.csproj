@@ -14,4 +14,8 @@
     <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Accounts\" />
+  </ItemGroup>
+
 </Project>

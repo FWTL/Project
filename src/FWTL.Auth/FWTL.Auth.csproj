@@ -31,7 +31,7 @@
     <ProjectReference Include="..\FWTL.Auth.Database\FWTL.Auth.Database.csproj" />
     <ProjectReference Include="..\FWTL.Core.Net\FWTL.Common.Net.csproj" />
     <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
-    <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramServerClient.csproj" />
+    <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
     <ProjectReference Include="..\FWTL.Service\FWTL.Domain.csproj" />
   </ItemGroup>
 

@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace FWTL.TelegramServerClient
+namespace FWTL.TelegramClient
 {
     public interface IUserService
     {
-        Task PhoneLogin(string phoneNumber);
+        void PhoneLogin(string sessionName, string phoneNumber);
 
-        Task CompletePhoneLogin(string code);
+        void CompletePhoneLogin(string sessionName, string code);
     }
 }

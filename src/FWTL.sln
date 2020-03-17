@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth.Database", "FWTL.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{0C802A08-F7D1-4632-86F7-DEEA7E6FF191}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.TelegramServerClient", "FWTL.ServerClient\FWTL.TelegramServerClient.csproj", "{5FE65D24-8767-4923-A9A3-D879C49AE6C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.TelegramClient", "FWTL.ServerClient\FWTL.TelegramClient.csproj", "{5FE65D24-8767-4923-A9A3-D879C49AE6C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Domain", "FWTL.Service\FWTL.Domain.csproj", "{85B84BAD-0E6B-4FE8-BB3C-27C8D01F9478}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Tests", "Integration.Tests\Integration.Tests.csproj", "{632F09A9-167C-4684-B652-C6271D628EEC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Auth", "FWTL.Auth\FWTL.Auth.csproj", "{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.TelegramClientTests", "IntegrationTests.TelegramClient\Integration.TelegramClientTests.csproj", "{814E325B-418B-473D-B487-10187D871E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCE2BAC2-9C54-4B27-AE2E-0CC1002886B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{814E325B-418B-473D-B487-10187D871E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{814E325B-418B-473D-B487-10187D871E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{814E325B-418B-473D-B487-10187D871E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{814E325B-418B-473D-B487-10187D871E7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
