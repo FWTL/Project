@@ -23,9 +23,8 @@ namespace Integration.Tests
         [TestMethod]
         public async Task RegisterUser()
         {
-            var content = JsonConvert.SerializeObject(new RegisterUser.RegisterUserRequest()
+            var content = JsonConvert.SerializeObject(new RegisterUser.Request()
             {
-                PhoneNumber = "4823142131",
                 Password = "P@@444w0rd",
                 RepeatPassword = "P@@444w0rd"
             });

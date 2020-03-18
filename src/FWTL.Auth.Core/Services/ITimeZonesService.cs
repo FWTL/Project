@@ -6,6 +6,6 @@ namespace FWTL.Core.Services
     {
         IEnumerable<string> GetAll();
 
-        bool AnyExist(string zoneId);
+        bool Exist(string zoneId);
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace FWTL.Domain.Users
 {
-    public class Role : IdentityRole<long>
+    public class Role : IdentityRole<Guid>
     {
     }
 }

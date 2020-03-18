@@ -14,7 +14,7 @@ namespace FWTL.Common.Services
             return TzdbDateTimeZoneSource.Default.ZoneLocations.Select(zone => zone.ZoneId).ToList();
         }
 
-        public bool AnyExist(string zoneId)
+        public bool Exist(string zoneId)
         {
             return TzdbDateTimeZoneSource.Default.ZoneLocations.Any(zone => zone.ZoneId == zoneId);
         }

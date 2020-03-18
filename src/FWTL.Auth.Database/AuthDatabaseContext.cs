@@ -1,11 +1,12 @@
-﻿using FWTL.Auth.Database.Configuration;
+﻿using System;
+using FWTL.Auth.Database.Configuration;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Auth.Database
 {
-    public class AuthDatabaseContext : IdentityDbContext<User, Role, long>
+    public class AuthDatabaseContext : IdentityDbContext<User, Role, Guid>
     {
         private readonly AuthDatabaseCredentials _credentials;
 

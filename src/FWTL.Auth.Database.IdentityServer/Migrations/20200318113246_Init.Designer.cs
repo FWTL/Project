@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FWTL.Auth.Database.IdentityServer.Migrations
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20200309231140_Init")]
+    [Migration("20200318113246_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

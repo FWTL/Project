@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FWTL.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthDatabaseContext))]
-    [Migration("20200316180538_Init")]
+    [Migration("20200318113139_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace FWTL.Auth.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("FWTL.Auth.Database.Entities.Role", b =>
+            modelBuilder.Entity("FWTL.Domain.Users.Role", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -48,7 +48,7 @@ namespace FWTL.Auth.Database.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("FWTL.Auth.Database.Entities.User", b =>
+            modelBuilder.Entity("FWTL.Domain.Users.User", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -92,6 +92,10 @@ namespace FWTL.Auth.Database.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TimeZoneId")
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -216,7 +220,7 @@ namespace FWTL.Auth.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
-                    b.HasOne("FWTL.Auth.Database.Entities.Role", null)
+                    b.HasOne("FWTL.Domain.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -225,7 +229,7 @@ namespace FWTL.Auth.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
-                    b.HasOne("FWTL.Auth.Database.Entities.User", null)
+                    b.HasOne("FWTL.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -234,7 +238,7 @@ namespace FWTL.Auth.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
-                    b.HasOne("FWTL.Auth.Database.Entities.User", null)
+                    b.HasOne("FWTL.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,13 +247,13 @@ namespace FWTL.Auth.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.HasOne("FWTL.Auth.Database.Entities.Role", null)
+                    b.HasOne("FWTL.Domain.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FWTL.Auth.Database.Entities.User", null)
+                    b.HasOne("FWTL.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -258,7 +262,7 @@ namespace FWTL.Auth.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.HasOne("FWTL.Auth.Database.Entities.User", null)
+                    b.HasOne("FWTL.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

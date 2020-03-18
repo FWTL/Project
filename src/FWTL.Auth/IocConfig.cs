@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
@@ -8,6 +9,7 @@ using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
+using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -69,6 +71,8 @@ namespace FWTL.Auth
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
+            services.AddScoped<ITelegramClient, TelegramClient.TelegramClient>();
+            services.AddSingleton<ITimeZonesService, TimeZonesService>();
 
         }
     }

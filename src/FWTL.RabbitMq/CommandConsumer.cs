@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Commands;
 using FWTL.Core.Commands;
@@ -29,12 +28,12 @@ namespace FWTL.RabbitMq
             try
             {
                 await _handler.ExecuteAsync(context.Message);
+                await context.RespondAsync(new Response(context.RequestId.Value));
+
                 foreach (var @event in _handler.Events)
                 {
-                    var eventComposite = _eventFactory.Make(@event);
-                    await _eventDispatcher.DispatchAsync(eventComposite);
+                    await context.Publish(@event);
                 }
-                await context.RespondAsync(new Response(context.RequestId.Value));
             }
             catch (ValidationException ex)
             {
