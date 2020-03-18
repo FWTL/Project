@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
@@ -117,7 +118,7 @@ namespace FWTL.Auth
                 var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
                     .ToList();
 
-                x.AddConsumers(typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
+                x.AddConsumers(typeof(CommandConsumer<RegisterUser.Command>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
@@ -141,9 +142,31 @@ namespace FWTL.Auth
 
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
-                        ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.RegisterUserCommand>));
+                        ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.Command>));
                     });
                 }));
+            });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo() { Title = "FWTL", Version = "v1" });
+                c.CustomSchemaIds(x =>
+                {
+                    int plusIndex = x.FullName.IndexOf("+");
+                    int lastIndexOfDot = x.FullName.LastIndexOf(".");
+                    int length = 0;
+
+                    if (plusIndex != -1)
+                    {
+                        length = plusIndex - lastIndexOfDot - 1;
+                    }
+                    else
+                    {
+                        length = x.FullName.Length - lastIndexOfDot - 1;
+                    }
+
+                    return x.FullName.Substring(lastIndexOfDot + 1, length);
+                });
             });
         }
 
@@ -155,6 +178,13 @@ namespace FWTL.Auth
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FWTL");
+                c.DisplayRequestDuration();
             });
 
             var serviceProvider = app.ApplicationServices;

@@ -16,7 +16,7 @@ namespace FWTL.Auth.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> Get(string phoneNumber, string code)
+        public IEnumerable<string> GetAll()
         {
             return _timeZonesService.GetAll();
         }

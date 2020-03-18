@@ -9,6 +9,7 @@ namespace FWTL.Auth.Database.Configuration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Property(x => x.Id).ValueGeneratedNever();
+            builder.Property(x => x.TimeZoneId).HasMaxLength(255);
         }
     }
 }

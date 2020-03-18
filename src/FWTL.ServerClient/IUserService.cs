@@ -4,8 +4,8 @@ namespace FWTL.TelegramClient
 {
     public interface IUserService
     {
-        void PhoneLogin(string sessionName, string phoneNumber);
+        bool PhoneLogin(string sessionName, string phoneNumber);
 
-        void CompletePhoneLogin(string sessionName, string code);
+        bool CompletePhoneLogin(string sessionName, string code);
     }
 }

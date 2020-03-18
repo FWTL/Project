@@ -4,78 +4,76 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using FWTL.Common.Extensions;
-using FWTL.Common.Helpers;
 using FWTL.Core.Commands;
+using FWTL.Core.Enums;
 using FWTL.Core.Events;
 using FWTL.Core.Validation;
+using FWTL.Events;
 using Microsoft.AspNetCore.Identity;
 
 namespace FWTL.Domain.Users
 {
     public class RegisterUser
     {
-        public class RegisterUserRequest : IRequest
+        public class Request : IRequest
         {
-            public string PhoneNumber { get; set; }
+            public string Email { get; set; }
 
             public string Password { get; set; }
 
             public string RepeatPassword { get; set; }
         }
 
-        public class RegisterUserCommand : RegisterUserRequest, ICommand
+        public class Command : Request, ICommand
         {
-            public long? NormalizedPhoneNumber { get; private set; }
-
-            public void NormalizePhoneNumber()
-            {
-                NormalizedPhoneNumber = RegexExpressions.ONLY_NUMBERS.Replace(PhoneNumber)?.To<long>();
-            }
         }
 
-        public class Handler : ICommandHandlerAsync<RegisterUserCommand>
+        public class Handler : ICommandHandlerAsync<Command>
         {
             private readonly UserManager<User> _userManager;
-            private RoleManager<Role> _roleManager;
-
-            public Handler(UserManager<User> userManager, RoleManager<Role> roleManager)
+           
+            public Handler(UserManager<User> userManager)
             {
                 _userManager = userManager;
-                _roleManager = roleManager;
             }
 
             public IList<IEvent> Events => new List<IEvent>();
 
-            public async Task ExecuteAsync(RegisterUserCommand command)
+            public async Task ExecuteAsync(Command command)
             {
                 var user = new User()
                 {
-                    Id = command.NormalizedPhoneNumber.Value,
-                    UserName = command.NormalizedPhoneNumber.Value.ToString()
+                    UserName = command.Email,
+                    Email = command.Email
                 };
 
                 var createUserResult = await _userManager.CreateAsync(user, command.Password);
                 if (!createUserResult.Succeeded)
                 {
-                    var errors = createUserResult.Errors.Select(x => new ValidationFailure(nameof(RegisterUserRequest), x.Description));
-                    throw new AppValidationException(errors);
+                    throw new ValidationException(createUserResult.GetErrors());
                 }
 
-                var addUserToRoleResult = await _userManager.AddToRoleAsync(user, "user");
+                var addUserToRoleResult = await _userManager.AddToRoleAsync(user, nameof(Roles.User));
                 if (!addUserToRoleResult.Succeeded)
                 {
-                    var errors = addUserToRoleResult.Errors.Select(x => new ValidationFailure(nameof(RegisterUserRequest), x.Description));
-                    throw new AppValidationException(errors);
+                    throw new ValidationException(addUserToRoleResult.GetErrors());
                 }
+
+                string activationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                Events.Add(new UserRegistered()
+                {
+                    Email = user.Email,
+                    ActivationCode = activationCode
+                });
             }
         }
 
-        public class Validator : AppAbstractValidation<RegisterUserCommand>
+        public class Validator : AppAbstractValidation<Command>
         {
             public Validator()
             {
-                RuleFor(x => x.PhoneNumber).NotEmpty();
-                RuleFor(x => x).Must(x => x.NormalizedPhoneNumber.HasValue).WithMessage("Incorrect Phone Number");
+                RuleFor(x => x.Email).EmailAddress();
                 RuleFor(x => x.Password).NotNull();
                 RuleFor(x => x.RepeatPassword).NotNull();
                 RuleFor(x => x.Password).Equal(x => x.RepeatPassword);

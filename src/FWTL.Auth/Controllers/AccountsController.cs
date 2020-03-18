@@ -2,6 +2,7 @@
 using FWTL.Core.Commands;
 using FWTL.Domain.Users;
 using FWTL.TelegramClient;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Auth.Controllers
@@ -19,16 +20,18 @@ namespace FWTL.Auth.Controllers
             _telegramClient = telegramClient;
         }
 
-        [HttpPatch("/CompletePhoneLogin")]
-        public void CompletePhoneLogin(string phoneNumber, string code)
-        {
-            _telegramClient.UserService.CompletePhoneLogin(phoneNumber, code);
-        }
+        //[HttpPost("{phoneNumber}/Code")]
+        //public void PhoneLogin(string phoneNumber)
+        //{
+        //    _telegramClient.SystemService.AddSession(phoneNumber);
+        //    _telegramClient.UserService.PhoneLogin(phoneNumber, phoneNumber);
+        //}
 
-        [HttpPatch("/Timezone")]
-        public async Task SetTimeZone(string zoneId)
-        {
-            await _commandDispatcher.DispatchAsync(new AssignTimeZoneToUser.Command() { ZoneId = zoneId } );
-        }
+        //[Authorize]
+        //[HttpPatch("Timezone")]
+        //public async Task AssignTimeZoneToUser(string zoneId)
+        //{
+        //    await _commandDispatcher.DispatchAsync<AssignTimeZoneToUser.Request, AssignTimeZoneToUser.Command>(new AssignTimeZoneToUser.Request() { ZoneId = zoneId });
+        //}
     }
 }
