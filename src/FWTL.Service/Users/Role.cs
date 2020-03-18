@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Auth.Database.Entities
+namespace FWTL.Domain.Users
 {
     public class Role : IdentityRole<long>
     {

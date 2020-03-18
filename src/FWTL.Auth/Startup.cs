@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using FluentValidation;
 using FWTL.Auth.Database;
-using FWTL.Auth.Database.Entities;
 using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
@@ -24,7 +22,7 @@ using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Serilog;
 
-namespace FWTL.Auth.Server
+namespace FWTL.Auth
 {
     public class Startup
     {

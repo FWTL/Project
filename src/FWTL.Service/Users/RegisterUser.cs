@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using FWTL.Auth.Database.Entities;
 using FWTL.Common.Extensions;
 using FWTL.Common.Helpers;
 using FWTL.Core.Commands;

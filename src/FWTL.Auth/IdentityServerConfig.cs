@@ -2,7 +2,7 @@
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace FWTL.Auth.Server
+namespace FWTL.Auth
 {
     public class IdentityServerConfig
     {

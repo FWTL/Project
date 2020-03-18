@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace FWTL.Auth.Server
+namespace FWTL.Auth
 {
     public class Program
     {

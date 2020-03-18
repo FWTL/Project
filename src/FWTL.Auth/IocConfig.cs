@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 
-namespace FWTL.Auth.Server
+namespace FWTL.Auth
 {
     public class IocConfig
     {

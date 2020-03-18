@@ -1,5 +1,5 @@
 ﻿using FWTL.Auth.Database.Configuration;
-using FWTL.Auth.Database.Entities;
+using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

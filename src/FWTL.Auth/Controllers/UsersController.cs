@@ -3,7 +3,7 @@ using FWTL.Core.Commands;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FWTL.Auth.Server.Controllers
+namespace FWTL.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

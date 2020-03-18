@@ -1,7 +1,7 @@
 ﻿using FWTL.TelegramClient.Responses;
 using RestSharp;
 
-namespace FWTL.TelegramClient
+namespace FWTL.TelegramClient.Services
 {
     public class UserService : IUserService
     {
