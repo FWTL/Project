@@ -4,7 +4,7 @@ using FWTL.Domain.Users;
 using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FWTL.Auth.Server.Controllers
+namespace FWTL.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -26,9 +26,9 @@ namespace FWTL.Auth.Server.Controllers
         }
 
         [HttpPatch("/Timezone")]
-        public async Task SetTimeZone(RegisterUser.RegisterUserRequest request)
+        public async Task SetTimeZone(string zoneId)
         {
-            await _commandDispatcher.DispatchAsync<RegisterUser.RegisterUserRequest, RegisterUser.RegisterUserCommand>(request, command => command.NormalizePhoneNumber());
+            await _commandDispatcher.DispatchAsync(new AssignTimeZoneToUser.Command() { ZoneId = zoneId } );
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using FWTL.Auth.Database.Entities;
 using FWTL.Common.Net.Helpers;
+using FWTL.Domain.Users;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Auth.Server
+namespace FWTL.Auth
 {
     public class ExternalGrantValidator : IExtensionGrantValidator
     {

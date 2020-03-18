@@ -5,5 +5,7 @@ namespace FWTL.Core.Services
     public interface ITimeZonesService
     {
         IEnumerable<string> GetAll();
+
+        bool AnyExist(string zoneId);
     }
 }

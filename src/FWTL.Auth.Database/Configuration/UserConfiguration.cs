@@ -1,4 +1,4 @@
-﻿using FWTL.Auth.Database.Entities;
+﻿using FWTL.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
