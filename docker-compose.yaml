@@ -21,7 +21,7 @@ services:
       ACCEPT_EULA : "Y"
       SA_PASSWORD : "KQlqqjercDE7d4YSF3O"
     volumes :
-     - FWTL-sql-data:/var/opt/mssql/data
+     - FWTL-sql-data:/var/opt/mssql
     networks :
      - backend
   telegram-api-server:

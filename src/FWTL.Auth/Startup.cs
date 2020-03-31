@@ -108,7 +108,6 @@ namespace FWTL.Auth
                             .Name));
                 })
                 .AddAspNetIdentity<User>()
-                .AddExtensionGrantValidator<ExternalGrantValidator>()
                 .AddDeveloperSigningCredential();
 
             IocConfig.RegisterDependencies(services, _hostingEnvironment);
@@ -174,6 +173,7 @@ namespace FWTL.Auth
         {
             app.UseIdentityServer();
             app.UseRouting();
+            app.UseCors(policy => policy.AllowAnyOrigin());
 
             app.UseEndpoints(endpoints =>
             {
@@ -183,7 +183,7 @@ namespace FWTL.Auth
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FWTL");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FWTL.Auth");
                 c.DisplayRequestDuration();
             });
 

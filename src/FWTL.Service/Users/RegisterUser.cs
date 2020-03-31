@@ -44,7 +44,8 @@ namespace FWTL.Domain.Users
                 var user = new User()
                 {
                     UserName = command.Email,
-                    Email = command.Email
+                    Email = command.Email,
+                    EmailConfirmed = false
                 };
 
                 var createUserResult = await _userManager.CreateAsync(user, command.Password);
