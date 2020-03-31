@@ -27,7 +27,7 @@ namespace FWTL.Auth.Database
 
         private async Task SeedRolesAsync()
         {
-            if ((await _roleManager.FindByNameAsync(Roles.User.ToString())).IsNull())
+            if ((await _roleManager.FindByNameAsync(nameof(Roles.User))).IsNull())
             {
                 await _roleManager.CreateAsync(_userRole);
             }
