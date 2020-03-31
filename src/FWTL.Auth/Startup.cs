@@ -66,6 +66,13 @@ namespace FWTL.Auth
             //    o.JsonSerializerOptions.IgnoreNullValues = true;
             //});
 
+            //services.AddCors(setup => setup.AddPolicy("*", new Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicy()
+            //{
+            //    a
+            //}))
+
+            services.AddCors();
+
             var defaultSettings = new JsonSerializerSettings()
                 .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
             JsonConvert.DefaultSettings = () => defaultSettings;
@@ -148,7 +155,7 @@ namespace FWTL.Auth
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo() { Title = "FWTL", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo() { Title = "FWTL.Auth", Version = "v1" });
                 c.CustomSchemaIds(x =>
                 {
                     int plusIndex = x.FullName.IndexOf("+");
@@ -173,7 +180,12 @@ namespace FWTL.Auth
         {
             app.UseIdentityServer();
             app.UseRouting();
-            app.UseCors(policy => policy.AllowAnyOrigin());
+            app.UseCors(policy =>
+            {
+                policy = policy.AllowAnyOrigin();
+                policy = policy.AllowAnyMethod();
+                policy = policy.AllowAnyHeader();
+            });
 
             app.UseEndpoints(endpoints =>
             {
