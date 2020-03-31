@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "swashbuckle.aspnetcore.cli": {
+      "version": "5.2.1",
+      "commands": [
+        "swagger"
+      ]
+    }
+  }
+}
+//dotnet swagger tofile --output api.json C:\Projects\FWTLAuth\src\FWTL.Auth\bin\Debug\netcoreapp3.1\FWTL.Auth.dll v1
