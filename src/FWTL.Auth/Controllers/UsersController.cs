@@ -24,7 +24,7 @@ namespace FWTL.Auth.Controllers
         }
 
         [HttpPost("Me/Link/Telegram")]
-        [Authorize]
+        //[Authorize]
         public async Task PhoneLogin(string phoneNumber)
         {
             await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber }, command => command.NormalizePhoneNumber());

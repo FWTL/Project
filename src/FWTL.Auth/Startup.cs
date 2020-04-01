@@ -9,6 +9,7 @@ using FWTL.Common.Net.Filters;
 using FWTL.Core.Commands;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
+using IdentityServer4.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,11 +18,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace FWTL.Auth
 {
@@ -56,6 +59,8 @@ namespace FWTL.Auth
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddMvc(configuration =>
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
@@ -65,13 +70,6 @@ namespace FWTL.Auth
             //    o.JsonSerializerOptions.Con;
             //    o.JsonSerializerOptions.IgnoreNullValues = true;
             //});
-
-            //services.AddCors(setup => setup.AddPolicy("*", new Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicy()
-            //{
-            //    a
-            //}))
-
-            services.AddCors();
 
             var defaultSettings = new JsonSerializerSettings()
                 .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -116,6 +114,12 @@ namespace FWTL.Auth
                 })
                 .AddAspNetIdentity<User>()
                 .AddDeveloperSigningCredential();
+
+            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
+            {
+                AllowAll = true
+            };
+            services.AddSingleton<ICorsPolicyService>(cors);
 
             IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
@@ -178,14 +182,15 @@ namespace FWTL.Auth
 
         public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            app.UseIdentityServer();
-            app.UseRouting();
             app.UseCors(policy =>
             {
                 policy = policy.AllowAnyOrigin();
                 policy = policy.AllowAnyMethod();
                 policy = policy.AllowAnyHeader();
             });
+
+            app.UseIdentityServer();
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
