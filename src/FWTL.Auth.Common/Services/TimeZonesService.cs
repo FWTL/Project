@@ -11,7 +11,7 @@ namespace FWTL.Common.Services
     {
         public IEnumerable<string> GetAll()
         {
-            return TzdbDateTimeZoneSource.Default.ZoneLocations.Select(zone => zone.ZoneId).ToList();
+            return TzdbDateTimeZoneSource.Default.ZoneLocations.Select(zone => zone.ZoneId).OrderBy(zone => zone).ToList();
         }
 
         public bool Exist(string zoneId)

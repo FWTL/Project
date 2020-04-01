@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Results;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Enums;
 using FWTL.Core.Events;
+using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Events;
 using Microsoft.AspNetCore.Identity;
@@ -26,12 +26,22 @@ namespace FWTL.Domain.Users
 
         public class Command : Request, ICommand
         {
+            public Guid UserId { get; set; }
+
+            public Command()
+            {
+            }
+
+            public Command(IGuidService guidService)
+            {
+                UserId = guidService.New;
+            }
         }
 
         public class Handler : ICommandHandlerAsync<Command>
         {
             private readonly UserManager<User> _userManager;
-           
+
             public Handler(UserManager<User> userManager)
             {
                 _userManager = userManager;
@@ -43,6 +53,7 @@ namespace FWTL.Domain.Users
             {
                 var user = new User()
                 {
+                    Id = command.UserId,
                     UserName = command.Email,
                     Email = command.Email,
                     EmailConfirmed = false
