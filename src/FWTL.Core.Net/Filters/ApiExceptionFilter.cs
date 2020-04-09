@@ -33,7 +33,7 @@ namespace FWTL.Common.Net.Filters
             {
                 context.HttpContext.Response.StatusCode = 400;
                 context.Result = new JsonResult(exceptionInner.Errors
-                    .GroupBy(e => e.PropertyName)
+                    .GroupBy(e => e.PropertyName.ToLower())
                     .ToDictionary(e => e.Key, e => e.Select(element => element.ErrorMessage).ToList()));
                 return;
             }
@@ -42,7 +42,7 @@ namespace FWTL.Common.Net.Filters
             {
                 context.HttpContext.Response.StatusCode = 400;
                 context.Result = new JsonResult(exception.Errors
-                    .GroupBy(e => e.PropertyName)
+                    .GroupBy(e => e.PropertyName.ToLower())
                     .ToDictionary(e => e.Key, e => e.Select(element => element.ErrorMessage).ToList()));
                 return;
             }

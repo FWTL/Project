@@ -28,6 +28,8 @@ using ILogger = Serilog.ILogger;
 
 namespace FWTL.Auth
 {
+    ////dotnet swagger tofile --output api.json C:\Projects\FWTLAuth\src\FWTL.Auth\bin\Debug\netcoreapp3.1\FWTL.Auth.dll v1
+
     public class Startup
     {
         private readonly IConfigurationRoot _configuration;
