@@ -56,7 +56,7 @@ namespace FWTL.Domain.Users
                     Id = command.UserId,
                     UserName = command.Email,
                     Email = command.Email,
-                    EmailConfirmed = false
+                    EmailConfirmed = true
                 };
 
                 var createUserResult = await _userManager.CreateAsync(user, command.Password);
@@ -88,7 +88,7 @@ namespace FWTL.Domain.Users
                 RuleFor(x => x.Email).EmailAddress();
                 RuleFor(x => x.Password).NotNull();
                 RuleFor(x => x.RepeatPassword).NotNull();
-                RuleFor(x => x.Password).Equal(x => x.RepeatPassword);
+                RuleFor(x => x.RepeatPassword).Equal(x => x.Password);
             }
         }
     }

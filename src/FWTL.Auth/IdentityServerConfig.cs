@@ -21,12 +21,12 @@ namespace FWTL.Auth
                 new Client
                 {
                     ClientId = "FWTL",
-                    AllowedGrantTypes = new List<string> {"external"},
+                    AllowedGrantTypes =  { GrantType.ResourceOwnerPassword },
                     RequireClientSecret = false,
                     AllowedScopes = new List<string> {"api"},
                     AccessTokenLifetime = 60 * 60,
                     AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.ReUse
+                    RefreshTokenUsage = TokenUsage.ReUse,
                 }
             };
         }

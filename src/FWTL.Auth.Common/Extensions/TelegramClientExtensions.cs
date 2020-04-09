@@ -14,9 +14,9 @@ namespace FWTL.Common.Extensions
             return @this.Errors.Select(error => new ValidationFailure(name, error));
         }
 
-        public static IEnumerable<ValidationFailure> GetErrors(this IdentityResult @this)
+        public static IEnumerable<ValidationFailure> GetErrors(this IdentityResult @this, string propertyName = nameof(IdentityResult))
         {
-            return @this.Errors.Select(error => new ValidationFailure(nameof(IdentityResult), error.Description));
+            return @this.Errors.Select(error => new ValidationFailure(propertyName, error.Description));
         }
     }
 }
