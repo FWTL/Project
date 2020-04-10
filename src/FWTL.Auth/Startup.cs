@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Auth.Database;
@@ -38,6 +39,8 @@ namespace FWTL.Auth
 
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
+            Console.WriteLine("Derp " + hostingEnvironment.EnvironmentName);
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", false, true)
