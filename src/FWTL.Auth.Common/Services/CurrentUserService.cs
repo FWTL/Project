@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using FWTL.Core.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace FWTL.Common.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
-        public CurrentUserService()
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
-            CurrentUser = Guid.Parse("9b96f1f9-ed7d-40b1-87e9-8373280afdb5");
+            var user = httpContextAccessor.HttpContext.User;
+            CurrentUserId = Guid.Parse(user.Claims.First(c => c.Type == "sub").Value);
         }
 
-        public Guid CurrentUser { get; }
+        public Guid CurrentUserId { get; }
     }
 }

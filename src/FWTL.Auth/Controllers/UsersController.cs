@@ -3,6 +3,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +17,10 @@ namespace FWTL.Auth.Controllers
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICurrentUserService _currentUserService;
 
-        public UsersController(ICommandDispatcher commandDispatcher, ICurrentUserService currentUserService)
+        public UsersController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher, ICurrentUserService currentUserService)
         {
             _commandDispatcher = commandDispatcher;
-            //_queryDispatcher = queryDispatcher;
+            _queryDispatcher = queryDispatcher;
             _currentUserService = currentUserService;
         }
 
@@ -30,12 +31,10 @@ namespace FWTL.Auth.Controllers
         }
 
         [HttpGet("Me")]
-        [Authorize]
-        public Task<GetMe.Result> Me()
+        [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<GetMe.Result> Me()
         {
-            int x = 1;
-            return Task.FromResult(new GetMe.Result());
-            //return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
+            return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
         }
 
         [HttpPost("Me/Link/Telegram")]

@@ -25,7 +25,7 @@ namespace FWTL.Domain.Users
 
             public Command(ICurrentUserService currentUserService)
             {
-                CurrentUserId = currentUserService.CurrentUser;
+                CurrentUserId = currentUserService.CurrentUserId;
             }
 
             public Guid CurrentUserId { get; set; }
