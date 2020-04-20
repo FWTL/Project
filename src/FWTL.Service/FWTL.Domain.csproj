@@ -16,8 +16,4 @@
     <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Accounts\" />
-  </ItemGroup>
-
 </Project>

@@ -7,9 +7,9 @@ namespace FWTL.Common.Services
     {
         public CurrentUserService()
         {
-            CurrentUser = 48727842501;
+            CurrentUser = Guid.Parse("9b96f1f9-ed7d-40b1-87e9-8373280afdb5");
         }
 
-        public long CurrentUser { get; }
+        public Guid CurrentUser { get; }
     }
 }

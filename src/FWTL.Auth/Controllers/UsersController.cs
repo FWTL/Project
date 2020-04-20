@@ -23,8 +23,15 @@ namespace FWTL.Auth.Controllers
             await _commandDispatcher.DispatchAsync<RegisterUser.Request, RegisterUser.Command>(request);
         }
 
-        [HttpPost("Me/Link/Telegram")]
+        //[HttpGet("Me")]
         //[Authorize]
+        //public async Task Me()
+        //{
+        //    await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber }, command => command.NormalizePhoneNumber());
+        //}
+
+        [HttpPost("Me/Link/Telegram")]
+        [Authorize]
         public async Task PhoneLogin(string phoneNumber)
         {
             await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber }, command => command.NormalizePhoneNumber());

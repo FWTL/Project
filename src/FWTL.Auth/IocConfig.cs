@@ -52,7 +52,7 @@ namespace FWTL.Auth
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandlerAsync<>)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
