@@ -19,7 +19,7 @@ namespace FWTL.Common.Commands
             {
                 var nestedClasses = @class.GetNestedTypes();
                 var command = nestedClasses.FirstOrDefault(t => typeof(ICommand).IsAssignableFrom(t));
-                var request = nestedClasses.FirstOrDefault(t => command.IsSubclassOf(t));
+                var request = nestedClasses.FirstOrDefault(t => command?.IsSubclassOf(t) ?? false);
                 if (command.IsNotNull() && request.IsNotNull())
                 {
                     CreateMap(request, command).ConstructUsingServiceLocator();

@@ -16,6 +16,8 @@ namespace FWTL.Domain.Users
             }
         }
 
-
+        public class Result
+        {
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Core.Commands;
@@ -27,7 +28,7 @@ namespace FWTL.Domain.Users
                 CurrentUserId = currentUserService.CurrentUser;
             }
 
-            public long CurrentUserId { get; set; }
+            public Guid CurrentUserId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>

@@ -51,7 +51,9 @@ namespace FWTL.RabbitMq
             return response.Message.Id;
         }
 
-        public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request) where TCommand : class, ICommand
+        public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request)
+            where TCommand : class, ICommand
+            where TRequest : class, IRequest
         {
             var command = _requestToCommandMapper.Map<TRequest, TCommand>(request);
             return await DispatchAsync(command);
@@ -59,6 +61,7 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap)
             where TCommand : class, ICommand
+            where TRequest : class, IRequest
         {
             var command = _requestToCommandMapper.Map(request, afterMap);
             return await DispatchAsync(command);
