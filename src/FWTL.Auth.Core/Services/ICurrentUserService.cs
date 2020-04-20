@@ -4,6 +4,6 @@ namespace FWTL.Core.Services
 {
     public interface ICurrentUserService
     {
-        long CurrentUser { get; }
+        Guid CurrentUser { get; }
     }
 }

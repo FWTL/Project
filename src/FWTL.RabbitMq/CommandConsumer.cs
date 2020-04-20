@@ -10,11 +10,11 @@ namespace FWTL.RabbitMq
     public class CommandConsumer<TCommand> : IConsumer<TCommand> where TCommand : class, ICommand
     {
         private readonly IEventDispatcher _eventDispatcher;
-        private readonly ICommandHandlerAsync<TCommand> _handler;
+        private readonly ICommandHandler<TCommand> _handler;
         private readonly IEventFactory _eventFactory;
 
         public CommandConsumer(
-            ICommandHandlerAsync<TCommand> handler,
+            ICommandHandler<TCommand> handler,
             IEventFactory eventFactory,
             IEventDispatcher eventDispatcher)
         {

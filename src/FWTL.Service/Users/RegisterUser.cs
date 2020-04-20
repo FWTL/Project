@@ -38,7 +38,7 @@ namespace FWTL.Domain.Users
             }
         }
 
-        public class Handler : ICommandHandlerAsync<Command>
+        public class Handler : ICommandHandler<Command>
         {
             private readonly UserManager<User> _userManager;
 

@@ -4,7 +4,7 @@ using FWTL.Core.Events;
 
 namespace FWTL.Core.Commands
 {
-    public interface ICommandHandlerAsync<in TCommand> where TCommand : ICommand
+    public interface ICommandHandler<in TCommand> where TCommand : ICommand
     {
         IList<IEvent> Events { get; }
 
