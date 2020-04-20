@@ -12,6 +12,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.Service\FWTL.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Validators\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Auth.Database;
@@ -7,10 +6,10 @@ using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
 using FWTL.Common.Net.Filters;
+using FWTL.Common.Queries;
 using FWTL.Core.Commands;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
-using IdentityServer4.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NodaTime;
@@ -39,8 +37,6 @@ namespace FWTL.Auth
 
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
-            Console.WriteLine("Derp " + hostingEnvironment.EnvironmentName);
-
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", false, true)
@@ -66,10 +62,11 @@ namespace FWTL.Auth
         {
             services.AddCors();
 
-            services.AddMvc(configuration =>
+            services.AddControllers(configuration =>
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
+
             //.AddJsonOptions(o =>
             //{
             //    o.JsonSerializerOptions.Con;
@@ -90,21 +87,24 @@ namespace FWTL.Auth
                 .CreateLogger());
 
             services.AddAutoMapper(
-                config => { config.AddProfile(new RequestToCommandProfile(typeof(RegisterUser))); },
-                typeof(RequestToCommandProfile).Assembly);
+                config =>
+                {
+                    config.AddProfile(new RequestToCommandProfile(typeof(RegisterUser)));
+                    config.AddProfile(new RequestToQueryProfile(typeof(RegisterUser)));
+                }, typeof(RequestToCommandProfile).Assembly);
 
             services.AddDbContext<AuthDatabaseContext>();
 
             services.AddIdentity<User, Role>(options =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = false;
-            })
-            .AddEntityFrameworkStores<AuthDatabaseContext>()
-            .AddDefaultTokenProviders();
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+                })
+                .AddEntityFrameworkStores<AuthDatabaseContext>()
+                .AddDefaultTokenProviders();
 
             services.AddIdentityServer()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
@@ -120,11 +120,13 @@ namespace FWTL.Auth
                 .AddAspNetIdentity<User>()
                 .AddDeveloperSigningCredential();
 
-            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
-            {
-                AllowAll = true
-            };
-            services.AddSingleton<ICorsPolicyService>(cors);
+            services.AddAuthentication()
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.ApiName = "api";
+                    options.RequireHttpsMetadata = false;
+                });
 
             IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
@@ -134,6 +136,7 @@ namespace FWTL.Auth
                     .ToList();
 
                 x.AddConsumers(typeof(CommandConsumer<RegisterUser.Command>));
+                x.AddConsumers(typeof(QueryConsumer<GetMe.Query,GetMe.Result>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
@@ -158,6 +161,11 @@ namespace FWTL.Auth
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
                         ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.Command>));
+                    });
+
+                    cfg.ReceiveEndpoint("queries", ec =>
+                    {
+                        ec.ConfigureConsumer(context, typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
                     });
                 }));
             });
@@ -187,15 +195,10 @@ namespace FWTL.Auth
 
         public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            app.UseCors(policy =>
-            {
-                policy = policy.AllowAnyOrigin();
-                policy = policy.AllowAnyMethod();
-                policy = policy.AllowAnyHeader();
-            });
-
             app.UseIdentityServer();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -208,8 +211,6 @@ namespace FWTL.Auth
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FWTL.Auth");
                 c.DisplayRequestDuration();
             });
-
-            var serviceProvider = app.ApplicationServices;
 
             Task startBusTask = Task.Run(async () => await ConfigureAsync(app));
             startBusTask.Wait();

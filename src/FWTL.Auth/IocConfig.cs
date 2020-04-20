@@ -3,14 +3,18 @@ using System.Reflection;
 using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
+using FWTL.Common.Net.Helpers;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
+using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
 using FWTL.TelegramClient;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -58,19 +62,36 @@ namespace FWTL.Auth
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
                     .AddClasses(filter => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );
 
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
+                    .AsSelf()
+                    .WithScopedLifetime()
+            );
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IProfileService, UserProfileService>();
+
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
-            services.AddScoped<ICommandDispatcher, RequestDispatcher>();
+            services.AddScoped<IQueryDispatcher, QueryDispatcher>();
             services.AddScoped<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
+            services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
             services.AddScoped<ITelegramClient, TelegramClient.TelegramClient>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
 

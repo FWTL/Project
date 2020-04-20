@@ -9,7 +9,6 @@ namespace FWTL.Common.Commands
     {
         public Response()
         {
-                
         }
 
         public Response(Guid id)
@@ -25,5 +24,15 @@ namespace FWTL.Common.Commands
         public Guid Id { get; set; }
 
         public IEnumerable<ValidationFailure> Errors { get; set; } = new List<ValidationFailure>();
+    }
+
+    public class Response<TResult> : Response
+    {
+        public Response(Guid id, TResult result) : base(id)
+        {
+            Result = result;
+        }
+
+        public TResult Result { get; set; }
     }
 }
