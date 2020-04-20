@@ -3,7 +3,7 @@
     "FWTL.Auth.Server": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Doker"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000",
       "launchUrl": "swagger"

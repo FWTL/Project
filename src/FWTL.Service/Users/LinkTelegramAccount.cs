@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Extensions;
@@ -31,7 +32,7 @@ namespace FWTL.Domain.Users
                 NormalizedPhoneNumber = RegexExpressions.ONLY_NUMBERS.Replace(PhoneNumber)?.To<long>();
             }
 
-            public long CurrentUserId { get; set; }
+            public Guid CurrentUserId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>
