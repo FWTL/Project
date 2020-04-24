@@ -8,12 +8,19 @@ namespace FWTL.Common.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
+        private readonly ClaimsPrincipal _principal;
+
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
-            var user = httpContextAccessor.HttpContext.User;
-            CurrentUserId = Guid.Parse(user.Claims.First(c => c.Type == "sub").Value);
+            _principal = httpContextAccessor.HttpContext.User;
         }
 
-        public Guid CurrentUserId { get; }
+        public Guid CurrentUserId
+        {
+            get
+            {
+                return Guid.Parse(_principal.Claims.First(c => c.Type == "sub").Value);
+            }
+        }
     }
 }

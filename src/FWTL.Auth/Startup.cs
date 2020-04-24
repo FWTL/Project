@@ -195,6 +195,13 @@ namespace FWTL.Auth
 
         public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
+            app.UseCors(policy =>
+            {
+                policy = policy.AllowAnyOrigin();
+                policy = policy.AllowAnyMethod();
+                policy = policy.AllowAnyHeader();
+            });
+
             app.UseIdentityServer();
             app.UseRouting();
             app.UseAuthentication();
