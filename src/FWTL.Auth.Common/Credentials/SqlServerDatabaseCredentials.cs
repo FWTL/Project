@@ -19,7 +19,7 @@ namespace FWTL.Common.Credentials
         public SqlServerDatabaseCredentials(IConfiguration configuration, string prefix)
         {
             _url = configuration[$"{prefix}:Url"];
-            _port = configuration[$"{prefix}:Port"].To<int>();
+            _port = configuration.GetValue<int>($"{prefix}:Port");
             _catalog = configuration[$"{prefix}:Catalog"];
             _user = configuration[$"{prefix}:User"];
             _password = configuration[$"{prefix}:Password"];

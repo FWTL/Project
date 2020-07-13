@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "FWTL.Auth.Server": {
+    "FWTL.Auth": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000",
-      "launchUrl": "swagger"
+      "launchUrl": ".well-known/openid-configuration"
     }
   }
 }
