@@ -1,29 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UserSecretsId>21fa6e55-5688-46af-af70-9b7e24b13d57</UserSecretsId>
+    <UserSecretsId>727e84d1-861f-4a41-8f00-982e9d49bbfe</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="IdentityServer4" Version="3.1.2" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.2" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.2.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="6.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Scrutor" Version="3.2.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth.Common\FWTL.Common.csproj" />
-    <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
-    <ProjectReference Include="..\FWTL.Auth.Database.IdentityServer\FWTL.Auth.Database.IdentityServer.csproj" />
     <ProjectReference Include="..\FWTL.Auth.Database\FWTL.Auth.Database.csproj" />
     <ProjectReference Include="..\FWTL.Core.Net\FWTL.Common.Net.csproj" />
+    <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
   </ItemGroup>
 
 </Project>
