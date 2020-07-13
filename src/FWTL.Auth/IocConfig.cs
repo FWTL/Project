@@ -1,24 +1,14 @@
-﻿using System;
-using System.Reflection;
-using FluentValidation;
-using FWTL.Auth.Database;
+﻿using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Credentials;
 using FWTL.Common.Net.Helpers;
 using FWTL.Common.Services;
-using FWTL.Core.Commands;
-using FWTL.Core.Events;
-using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.Domain.Users;
-using FWTL.RabbitMq;
-using FWTL.TelegramClient;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
 
 namespace FWTL.Auth
 {
@@ -33,14 +23,12 @@ namespace FWTL.Auth
             services.AddSingleton(b =>
             {
                 var configuration = b.GetService<IConfiguration>();
-                return new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Auth"));
+                return new AuthIdentityServerDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Auth"));
             });
         }
 
         public static void RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
-            var domainAssembly = typeof(RegisterUser).GetTypeInfo().Assembly;
-
             RegisterCredentials(services);
 
             if (env.IsDevelopment())
@@ -48,53 +36,11 @@ namespace FWTL.Auth
                 OverrideWithLocalCredentials(services);
             }
 
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)))
-                    .AsImplementedInterfaces().WithTransientLifetime()
-            );
-
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
-                    .AsImplementedInterfaces().WithScopedLifetime()
-            );
-
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
-                    .AsImplementedInterfaces().WithScopedLifetime()
-            );
-
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
-                    .AddClasses(filter => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
-                    .AsSelf()
-                    .WithScopedLifetime()
-            );
-
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
-                    .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
-                    .AsSelf()
-                    .WithScopedLifetime()
-            );
-
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IProfileService, UserProfileService>();
 
-            services.AddScoped<IEventDispatcher, EventDispatcher>();
-            services.AddScoped<IEventFactory, EventFactory>();
-            services.AddScoped<ICommandDispatcher, RequestDispatcher>();
-            services.AddScoped<IQueryDispatcher, QueryDispatcher>();
             services.AddScoped<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddSingleton<IClock>(b => SystemClock.Instance);
-            services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
-            services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
-            services.AddScoped<ITelegramClient, TelegramClient.TelegramClient>();
-            services.AddSingleton<ITimeZonesService, TimeZonesService>();
-
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace FWTL.Common.Net.Middlewares
 {

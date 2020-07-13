@@ -1,5 +1,5 @@
-﻿using System;
-using FWTL.Core.Services;
+﻿using FWTL.Core.Services;
+using System;
 
 namespace FWTL.Common.Services
 {
