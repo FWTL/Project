@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Auth.Database;
 using FWTL.Common.Commands;
@@ -18,11 +20,9 @@ using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Serilog;
-using System.Linq;
-using System.Threading.Tasks;
 using ILogger = Serilog.ILogger;
 
-namespace FWTL.Api
+namespace FWTL.Management
 {
     ////dotnet swagger tofile --output api.json C:\Projects\FWTLAuth\src\FWTL.Api\bin\Debug\netcoreapp3.1\FWTL.Api.dll v1
 

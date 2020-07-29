@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Common.Services;
@@ -14,9 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
-using System.Reflection;
 
-namespace FWTL.Api
+namespace FWTL.Management
 {
     public class IocConfig
     {

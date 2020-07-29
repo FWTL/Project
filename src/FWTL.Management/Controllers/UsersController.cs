@@ -1,11 +1,11 @@
-﻿using FWTL.Core.Commands;
+﻿using System.Threading.Tasks;
+using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
-namespace FWTL.Auth.Controllers
+namespace FWTL.Management.Controllers
 {
     [Route("[controller]")]
     [ApiController]
