@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace FWTL.Api
+namespace FWTL.Management
 {
     public class Program
     {

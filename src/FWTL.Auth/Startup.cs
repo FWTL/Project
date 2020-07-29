@@ -5,7 +5,6 @@ using FWTL.Common.Net.Filters;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,9 +64,7 @@ namespace FWTL.Auth
                 .CreateLogger());
 
             services.AddDbContext<AuthDatabaseContext>();
-            services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<AuthDatabaseContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<User, Role>().AddEntityFrameworkStores<AuthDatabaseContext>();
 
             services.AddIdentityServer()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
