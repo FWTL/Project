@@ -33,7 +33,7 @@ namespace FWTL.RabbitMq
             var validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
-                var validationResult = validator.Validate(command);
+                var validationResult = await validator.ValidateAsync(command);
                 if (!validationResult.IsValid)
                 {
                     throw new ValidationException(validationResult.Errors);

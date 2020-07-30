@@ -34,7 +34,7 @@ namespace FWTL.RabbitMq
             var validator = _context.GetService<IValidator<TQuery>>();
             if (validator.IsNotNull())
             {
-                var validationResult = validator.Validate(command);
+                var validationResult = await validator.ValidateAsync(command);
                 if (!validationResult.IsValid)
                 {
                     throw new ValidationException(validationResult.Errors);
@@ -63,7 +63,7 @@ namespace FWTL.RabbitMq
             where TQuery : class, IQuery
             where TRequest : class, IRequest
         {
-            var query = _requestToQueryMapper.Map<TRequest, TQuery>(request, afterMap);
+            var query = _requestToQueryMapper.Map(request, afterMap);
             return await DispatchAsync<TQuery, TResult>(query);
         }
     }

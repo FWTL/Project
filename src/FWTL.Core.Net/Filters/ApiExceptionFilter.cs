@@ -1,13 +1,14 @@
-﻿using System.IO;
-using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
-using Serilog;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Linq;
 
 namespace FWTL.Common.Net.Filters
 {
@@ -19,7 +20,7 @@ namespace FWTL.Common.Net.Filters
         private readonly ILogger _logger;
         private readonly string _source;
 
-        public ApiExceptionFilter(ILogger logger, IWebHostEnvironment hosting, IGuidService guid, string source)
+        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger, IWebHostEnvironment hosting, IGuidService guid, string source)
         {
             _logger = logger;
             _hosting = hosting;
@@ -48,6 +49,7 @@ namespace FWTL.Common.Net.Filters
             }
 
             context.HttpContext.Response.StatusCode = 500;
+            context.HttpContext.Request.EnableBuffering();
 
             string body = string.Empty;
             if (context.HttpContext.Request.Body.CanSeek)
@@ -60,7 +62,7 @@ namespace FWTL.Common.Net.Filters
             }
 
             var exceptionId = _guid.New;
-            _logger.Error(
+            _logger.LogError(
                 "ExceptionId: {exceptionId} Url: {url} Body: {body} Exception: {exception} Source: {source}",
                 exceptionId,
                 context.HttpContext.Request.GetDisplayUrl(),
@@ -70,11 +72,11 @@ namespace FWTL.Common.Net.Filters
 
             if (_hosting.IsDevelopment())
             {
-                context.Result = new ContentResult {Content = context.Exception.ToString()};
+                context.Result = new ContentResult { Content = context.Exception.ToString() };
             }
             else
             {
-                context.Result = new ContentResult {Content = exceptionId.ToString()};
+                context.Result = new ContentResult { Content = exceptionId.ToString() };
             }
         }
     }

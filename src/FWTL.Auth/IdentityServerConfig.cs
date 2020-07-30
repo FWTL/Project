@@ -26,7 +26,7 @@ namespace FWTL.Auth
                     AllowedScopes = new List<string> {"api"},
                     AccessTokenLifetime = 60 * 60,
                     AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.ReUse,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
                 }
             };
         }
