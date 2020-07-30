@@ -3,6 +3,8 @@ using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Management.Controllers
@@ -26,6 +28,13 @@ namespace FWTL.Management.Controllers
         public async Task Register(RegisterUser.Request request)
         {
             await _commandDispatcher.DispatchAsync<RegisterUser.Request, RegisterUser.Command>(request);
+        }
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public string Test()
+        {
+            return "Hello";
         }
 
         //[HttpGet("Me")]

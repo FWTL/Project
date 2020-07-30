@@ -1,7 +1,6 @@
 ﻿using FWTL.Auth.Database;
 using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Credentials;
-using FWTL.Common.Net.Filters;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,12 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using ILogger = Serilog.ILogger;
+using Serilog.Events;
 
 namespace FWTL.Auth
 {
-    ////dotnet swagger tofile --output api.json C:\Projects\FWTLAuth\src\FWTL.Auth\bin\Debug\netcoreapp3.1\FWTL.Auth.dll v1
-
     public class Startup
     {
         private readonly IConfigurationRoot _configuration;
@@ -29,16 +26,12 @@ namespace FWTL.Auth
                 .AddJsonFile("appsettings.json", false, true)
                 .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
-            _configuration = configuration.Build();
 
-            if (!hostingEnvironment.IsDevelopment())
-            {
-                _configuration = configuration.Build();
-            }
+            _configuration = configuration.Build();
 
             if (hostingEnvironment.IsDevelopment())
             {
-                configuration.AddUserSecrets<Startup>();
+                configuration.AddUserSecrets<Startup>(true);
                 _configuration = configuration.Build();
             }
 
@@ -47,21 +40,26 @@ namespace FWTL.Auth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-
-            services.AddControllers(configuration =>
+            services.AddCors(options =>
             {
-                configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("localhost").AllowAnyHeader().AllowAnyMethod();
+                    });
             });
 
             const string format =
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
 
-            services.AddSingleton<ILogger>(b => new LoggerConfiguration()
-                .MinimumLevel.Information()
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .WriteTo.Console(outputTemplate: format)
+                .Enrich.FromLogContext()
                 .WriteTo.Seq(_configuration["Seq:Url"])
-                .CreateLogger());
+                .CreateLogger();
 
             services.AddDbContext<AuthDatabaseContext>();
             services.AddIdentity<User, Role>().AddEntityFrameworkStores<AuthDatabaseContext>();
@@ -85,12 +83,7 @@ namespace FWTL.Auth
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseCors(policy =>
-            {
-                policy = policy.AllowAnyOrigin();
-                policy = policy.AllowAnyMethod();
-                policy = policy.AllowAnyHeader();
-            });
+            app.UseCors();
 
             app.UseIdentityServer();
             app.UseRouting();

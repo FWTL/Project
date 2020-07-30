@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Auth.Database;
 using FWTL.Common.Commands;
@@ -20,7 +18,10 @@ using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Serilog;
-using ILogger = Serilog.ILogger;
+using Serilog.Events;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FWTL.Management
 {
@@ -39,16 +40,12 @@ namespace FWTL.Management
                 .AddJsonFile("appsettings.json", false, true)
                 .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
-            _configuration = configuration.Build();
 
-            if (!hostingEnvironment.IsDevelopment())
-            {
-                _configuration = configuration.Build();
-            }
+            _configuration = configuration.Build();
 
             if (hostingEnvironment.IsDevelopment())
             {
-                configuration.AddUserSecrets<Startup>();
+                configuration.AddUserSecrets<Startup>(true);
                 _configuration = configuration.Build();
             }
 
@@ -77,11 +74,14 @@ namespace FWTL.Management
             const string format =
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
 
-            services.AddSingleton<ILogger>(b => new LoggerConfiguration()
-                .MinimumLevel.Information()
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .WriteTo.Console(outputTemplate: format)
-                .WriteTo.Seq(_configuration["Seq:Url"])
-                .CreateLogger());
+                .Enrich.FromLogContext()
+                    .WriteTo.Seq(_configuration["Seq:Url"])
+                .CreateLogger();
 
             services.AddAutoMapper(
                 config =>
@@ -103,11 +103,11 @@ namespace FWTL.Management
             .AddEntityFrameworkStores<AuthDatabaseContext>()
             .AddDefaultTokenProviders();
 
-            services.AddAuthentication()
-                .AddIdentityServerAuthentication(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
                     options.Authority = "http://localhost:5000";
-                    options.ApiName = "api";
+                    options.Audience = "api";
                     options.RequireHttpsMetadata = false;
                 });
 
@@ -178,6 +178,8 @@ namespace FWTL.Management
 
         public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
+            app.UseSerilogRequestLogging();
+
             app.UseCors(policy =>
             {
                 policy = policy.AllowAnyOrigin();
