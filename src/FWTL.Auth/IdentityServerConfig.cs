@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace FWTL.Auth
 {

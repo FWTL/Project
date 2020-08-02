@@ -20,6 +20,7 @@
     <PackageReference Include="NodaTime" Version="2.4.7" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="TimeZoneNames" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -36,18 +36,32 @@ namespace FWTL.Management.Controllers
             return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
         }
 
-        //[HttpPost("Me/Link/Telegram")]
-        //[Authorize]
-        //public async Task PhoneLogin(string phoneNumber)
-        //{
-        //    await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber }, command => command.NormalizePhoneNumber());
-        //}
+        [Authorize]
+        [HttpPatch("Me/Timezone")]
+        public async Task AssignTimeZoneToUser(string timeZoneId)
+        {
+            await _commandDispatcher.DispatchAsync<AssignTimeZoneToUser.Request, AssignTimeZoneToUser.Command>(new AssignTimeZoneToUser.Request() { TimeZoneId = timeZoneId });
+        }
 
-        //[Authorize]
-        //[HttpPatch("Me/Timezone")]
-        //public async Task AssignTimeZoneToUser(string zoneId)
-        //{
-        //    await _commandDispatcher.DispatchAsync<AssignTimeZoneToUser.Request, AssignTimeZoneToUser.Command>(new AssignTimeZoneToUser.Request() { ZoneId = zoneId });
-        //}
+        [HttpPost("Me/Link/Telegram")]
+        [Authorize]
+        public async Task LinkTelegramAccount(string phoneNumber)
+        {
+            await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
+        }
+
+        [HttpPost("Me/Verify/Telegram")]
+        [Authorize]
+        public async Task VerifyTelegramAccount(string code)
+        {
+            await _commandDispatcher.DispatchAsync<VerifyTelegramAccount.Request, VerifyTelegramAccount.Command>(new VerifyTelegramAccount.Request() { Code = code });
+        }
+
+        [HttpPost("Me/Unlink/Telegram")]
+        [Authorize]
+        public async Task PhoneLogin(string phoneNumber)
+        {
+            await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
+        }
     }
 }
