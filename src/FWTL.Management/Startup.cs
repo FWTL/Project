@@ -4,10 +4,12 @@ using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
 using FWTL.Core.Commands;
+using FWTL.Core.Queries;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +24,6 @@ using Serilog;
 using Serilog.Events;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FWTL.Management
 {
@@ -122,7 +123,7 @@ namespace FWTL.Management
             services.AddAuthorization(x =>
             {
                 x.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(new[] {JwtBearerDefaults.AuthenticationScheme})
+                    .AddAuthenticationSchemes(new[] { JwtBearerDefaults.AuthenticationScheme })
                     .RequireAuthenticatedUser().Build();
             });
 
@@ -133,7 +134,23 @@ namespace FWTL.Management
                 var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
                     .ToList();
 
-                x.AddConsumers(typeof(CommandConsumer<RegisterUser.Command>));
+                foreach (var commandType in commands)
+                {
+                    x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(commandType));
+                }
+
+                var queries = typeof(RegisterUser).Assembly.GetTypes()
+                    .Where(t => t.IsNested && t.Name == "Handler")
+                    .Select(t => t.GetInterfaces().First())
+                    .Where(t => typeof(IQueryHandler<,>).IsAssignableFrom(t.GetGenericTypeDefinition()))
+                    .ToList();
+
+                foreach (var queryType in queries)
+                {
+                    var typeArguments = queryType.GetGenericArguments();
+                    x.AddConsumer(typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
+                }
+
                 x.AddConsumers(typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
@@ -158,12 +175,19 @@ namespace FWTL.Management
 
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
-                        ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.Command>));
+                        foreach (var commandType in commands)
+                        {
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(commandType));
+                        }
                     });
 
                     cfg.ReceiveEndpoint("queries", ec =>
                     {
-                        ec.ConfigureConsumer(context, typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
+                        foreach (var queryType in queries)
+                        {
+                            var typeArguments = queryType.GetGenericArguments();
+                            ec.ConfigureConsumer(context,typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
+                        }
                     });
                 }));
             });
@@ -187,6 +211,28 @@ namespace FWTL.Management
                     }
 
                     return x.FullName.Substring(lastIndexOfDot + 1, length);
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Bearer",
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Description = "Specify the authorization token.",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new string[] { }
+                    }
                 });
             });
         }

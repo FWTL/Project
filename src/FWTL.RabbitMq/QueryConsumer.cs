@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Commands;
+using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using MassTransit;
 
@@ -9,10 +11,12 @@ namespace FWTL.RabbitMq
     public class QueryConsumer<TQuery, TResult> : IConsumer<TQuery> where TQuery : class, IQuery
     {
         private readonly IQueryHandler<TQuery, TResult> _handler;
+        private readonly IExceptionHandler _exceptionHandler;
 
-        public QueryConsumer(IQueryHandler<TQuery, TResult> handler)
+        public QueryConsumer(IQueryHandler<TQuery, TResult> handler, IExceptionHandler exceptionHandler)
         {
             _handler = handler;
+            _exceptionHandler = exceptionHandler;
         }
 
         public async Task Consume(ConsumeContext<TQuery> context)
@@ -25,6 +29,11 @@ namespace FWTL.RabbitMq
             catch (ValidationException ex)
             {
                 await context.RespondAsync(new Response(ex));
+            }
+            catch (Exception ex)
+            {
+                var exceptionId = _exceptionHandler.Handle(ex, context.Message);
+                await context.RespondAsync(new Response(exceptionId));
             }
         }
     }

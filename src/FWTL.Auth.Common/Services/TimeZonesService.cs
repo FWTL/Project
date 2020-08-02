@@ -1,17 +1,16 @@
-﻿using System;
+﻿using FWTL.Core.Services;
+using NodaTime.TimeZones;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FWTL.Core.Services;
-using NodaTime.TimeZones;
+using TimeZoneNames;
 
 namespace FWTL.Common.Services
 {
     public class TimeZonesService : ITimeZonesService
     {
-        public IEnumerable<string> GetAll()
+        public IDictionary<string, string> GetAll()
         {
-            return TzdbDateTimeZoneSource.Default.ZoneLocations.Select(zone => zone.ZoneId).OrderBy(zone => zone).ToList();
+            return TZNames.GetDisplayNames("en-US", true);
         }
 
         public bool Exist(string zoneId)
