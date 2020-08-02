@@ -20,8 +20,8 @@ namespace FWTL.Common.Net.Filters
 
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
-            return new ApiExceptionFilter(
-                serviceProvider.GetRequiredService<ILogger<ApiExceptionFilter>>(),
+            return new ApiExceptionAttribute(
+                serviceProvider.GetRequiredService<ILogger<ApiExceptionAttribute>>(),
                 serviceProvider.GetRequiredService<IWebHostEnvironment>(),
                 serviceProvider.GetRequiredService<IGuidService>(),
                 _source);

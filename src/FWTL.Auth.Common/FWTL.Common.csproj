@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Models\**" />
+    <EmbeddedResource Remove="Services\Models\**" />
+    <None Remove="Services\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.2" />
@@ -18,9 +24,5 @@
   <ItemGroup>
     <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\Models\" />
   </ItemGroup>
 </Project>

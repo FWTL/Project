@@ -1,18 +1,16 @@
 ﻿using FluentValidation;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using System.Linq;
 
 namespace FWTL.Common.Net.Filters
 {
-    public sealed class ApiExceptionFilter : ExceptionFilterAttribute
+    public sealed class ApiExceptionAttribute : ExceptionFilterAttribute
     {
         private readonly IGuidService _guid;
         private readonly IWebHostEnvironment _hosting;
@@ -20,7 +18,7 @@ namespace FWTL.Common.Net.Filters
         private readonly ILogger _logger;
         private readonly string _source;
 
-        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger, IWebHostEnvironment hosting, IGuidService guid, string source)
+        public ApiExceptionAttribute(ILogger logger, IWebHostEnvironment hosting, IGuidService guid, string source)
         {
             _logger = logger;
             _hosting = hosting;
@@ -49,24 +47,15 @@ namespace FWTL.Common.Net.Filters
             }
 
             context.HttpContext.Response.StatusCode = 500;
-            context.HttpContext.Request.EnableBuffering();
-
-            string body = string.Empty;
-            if (context.HttpContext.Request.Body.CanSeek)
-            {
-                context.HttpContext.Request.Body.Position = 0;
-                using (var reader = new StreamReader(context.HttpContext.Request.Body))
-                {
-                    body = reader.ReadToEnd();
-                }
-            }
 
             var exceptionId = _guid.New;
             _logger.LogError(
-                "ExceptionId: {exceptionId} Url: {url} Body: {body} Exception: {exception} Source: {source}",
+                "ExceptionId: {exceptionId} {NewLine}" +
+                       "Url: {url} {NewLine}" +
+                       "Exception: {exception} {NewLine}" +
+                       "Source: {source}",
                 exceptionId,
                 context.HttpContext.Request.GetDisplayUrl(),
-                body,
                 context.Exception,
                 _source);
 

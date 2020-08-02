@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-
-namespace FWTL.Common.Helpers
+﻿namespace FWTL.Common.Helpers
 {
     public static class RegexExpressions
     {
