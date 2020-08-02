@@ -40,7 +40,7 @@ namespace FWTL.Auth
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IProfileService, UserProfileService>();
 
-            services.AddScoped<IGuidService, GuidService>();
+            services.AddSingleton<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
         }

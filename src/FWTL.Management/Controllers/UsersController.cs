@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using FWTL.Core.Commands;
+﻿using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FWTL.Management.Controllers
 {
@@ -30,19 +29,12 @@ namespace FWTL.Management.Controllers
             await _commandDispatcher.DispatchAsync<RegisterUser.Request, RegisterUser.Command>(request);
         }
 
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public string Test()
+        [HttpGet("Me")]
+        [Authorize]
+        public async Task<GetMe.Result> Me()
         {
-            return "Hello";
+            return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
         }
-
-        //[HttpGet("Me")]
-        //[Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
-        //public async Task<GetMe.Result> Me()
-        //{
-        //    return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
-        //}
 
         //[HttpPost("Me/Link/Telegram")]
         //[Authorize]

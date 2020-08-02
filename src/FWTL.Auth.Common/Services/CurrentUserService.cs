@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using FWTL.Core.Services;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 
 namespace FWTL.Common.Services
@@ -19,7 +20,7 @@ namespace FWTL.Common.Services
         {
             get
             {
-                return Guid.Parse(_principal.Claims.First(c => c.Type == "sub").Value);
+                return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             }
         }
     }
