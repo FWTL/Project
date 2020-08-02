@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Common.Commands;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
@@ -9,6 +6,9 @@ using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace FWTL.RabbitMq
 {
@@ -40,12 +40,16 @@ namespace FWTL.RabbitMq
                 }
             }
 
-            var client =
-                _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
+            var client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
             var response = await client.GetResponse<Response>(command);
-            if (response.Message.Errors.Any())
+            if (response.Message.StatusCode == HttpStatusCode.BadRequest)
             {
                 throw new AppValidationException(response.Message.Errors);
+            }
+
+            if (response.Message.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.Message.Id.ToString());
             }
 
             return response.Message.Id;

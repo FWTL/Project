@@ -2,9 +2,11 @@
 using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
+using FWTL.Common.Helpers;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
+using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
@@ -81,12 +83,13 @@ namespace FWTL.Management
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
             services.AddScoped<IQueryDispatcher, QueryDispatcher>();
-            services.AddScoped<IGuidService, GuidService>();
+            services.AddSingleton<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
             services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
+            services.AddSingleton<IExceptionHandler, ExceptionHandler>();
         }
     }
 }

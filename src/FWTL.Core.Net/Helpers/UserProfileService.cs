@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FWTL.Domain.Users;
+using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -25,7 +26,8 @@ namespace FWTL.Common.Net.Helpers
 
             var claims = new List<Claim>
             {
-                new Claim("phone_number", user.PhoneNumber ?? string.Empty)
+                new Claim(JwtClaimTypes.Email, user.Email),
+                new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber ?? string.Empty)
             };
 
             context.IssuedClaims = claims;

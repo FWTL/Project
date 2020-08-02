@@ -22,6 +22,7 @@ using Serilog;
 using Serilog.Events;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FWTL.Management
 {
@@ -54,7 +55,14 @@ namespace FWTL.Management
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("localhost").AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
 
             services.AddControllers(configuration =>
             {
@@ -103,13 +111,20 @@ namespace FWTL.Management
             .AddEntityFrameworkStores<AuthDatabaseContext>()
             .AddDefaultTokenProviders();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
                     options.Authority = "http://localhost:5000";
                     options.Audience = "api";
                     options.RequireHttpsMetadata = false;
                 });
+
+            services.AddAuthorization(x =>
+            {
+                x.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(new[] {JwtBearerDefaults.AuthenticationScheme})
+                    .RequireAuthenticatedUser().Build();
+            });
 
             IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
@@ -119,7 +134,7 @@ namespace FWTL.Management
                     .ToList();
 
                 x.AddConsumers(typeof(CommandConsumer<RegisterUser.Command>));
-                //x.AddConsumers(typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
+                x.AddConsumers(typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
@@ -146,10 +161,10 @@ namespace FWTL.Management
                         ec.ConfigureConsumer(context, typeof(CommandConsumer<RegisterUser.Command>));
                     });
 
-                    //cfg.ReceiveEndpoint("queries", ec =>
-                    //{
-                    //    ec.ConfigureConsumer(context, typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
-                    //});
+                    cfg.ReceiveEndpoint("queries", ec =>
+                    {
+                        ec.ConfigureConsumer(context, typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
+                    });
                 }));
             });
 

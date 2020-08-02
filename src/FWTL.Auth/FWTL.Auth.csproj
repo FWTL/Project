@@ -27,4 +27,10 @@
     <ProjectReference Include="..\FWTL.Core.Net\FWTL.Common.Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="tempkey.rsa">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

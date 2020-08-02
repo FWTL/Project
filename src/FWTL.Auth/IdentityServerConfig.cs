@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace FWTL.Auth
 {
-    public class IdentityServerConfig
+    public static class IdentityServerConfig
     {
         public static IEnumerable<ApiResource> GetApiResources()
         {
@@ -26,7 +26,8 @@ namespace FWTL.Auth
                     AllowedScopes = new List<string> {"api"},
                     AccessTokenLifetime = 60 * 60,
                     AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenUsage = TokenUsage.ReUse,
+                    AlwaysIncludeUserClaimsInIdToken = true
                 }
             };
         }

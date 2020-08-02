@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Enums;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
-using FWTL.Events;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
 {
@@ -70,14 +69,6 @@ namespace FWTL.Domain.Users
                 {
                     throw new ValidationException(addUserToRoleResult.GetErrors());
                 }
-
-                string activationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                Events.Add(new UserRegistered()
-                {
-                    Email = user.Email,
-                    ActivationCode = activationCode
-                });
             }
         }
 

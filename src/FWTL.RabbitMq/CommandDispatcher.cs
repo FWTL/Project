@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 
 namespace FWTL.RabbitMq
 {
