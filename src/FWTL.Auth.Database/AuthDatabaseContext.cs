@@ -20,11 +20,11 @@ namespace FWTL.Auth.Database
             optionsBuilder.UseSqlServer(_credentials.ConnectionString);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            base.OnModelCreating(modelBuilder);
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new RoleConfiguration());
+            base.OnModelCreating(builder);
         }
     }
 }

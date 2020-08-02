@@ -11,7 +11,7 @@ namespace FWTL.Common.Helpers
                 return null;
             }
 
-            return Regex.Replace(input, pattern, "");
+            return Regex.Replace(input, pattern, string.Empty);
         }
     }
 }

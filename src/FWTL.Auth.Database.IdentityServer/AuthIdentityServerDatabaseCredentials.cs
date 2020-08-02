@@ -1,15 +1,10 @@
-﻿using FWTL.Common.Credentials;
+﻿using FWTL.Core.Credentials;
 
 namespace FWTL.Auth.Database.IdentityServer
 {
     public class AuthIdentityServerDatabaseCredentials
     {
-        public AuthIdentityServerDatabaseCredentials(LocalDatabaseCredentials credentials)
-        {
-            ConnectionString = credentials.ConnectionString;
-        }
-
-        public AuthIdentityServerDatabaseCredentials(SqlServerDatabaseCredentials credentials)
+        public AuthIdentityServerDatabaseCredentials(IConnectionString credentials)
         {
             ConnectionString = credentials.ConnectionString;
         }
