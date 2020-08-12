@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
 using FWTL.TelegramClient;
@@ -17,6 +18,11 @@ namespace FWTL.Common.Extensions
         public static IEnumerable<ValidationFailure> GetErrors(this IdentityResult @this, string propertyName = nameof(IdentityResult))
         {
             return @this.Errors.Select(error => new ValidationFailure(propertyName, error.Description));
+        }
+
+        public static string ToSession(this Guid userId, string phoneNumber)
+        {
+            return userId + "/" + phoneNumber;
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using FWTL.TelegramClient.Exceptions;
-using FWTL.TelegramClient.Responses;
 using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,17 +20,39 @@ namespace FWTL.TelegramClient.Services
             return response.Response;
         }
 
-        public static async Task<TResponse> HandleAsync<TResponse>(this IRestClient client, string url, Func<Error, bool> handleErrors)
+        public static async Task<TResponse> HandleAsyncWithoutSession<TResponse>(this IRestClient client, string url)
         {
             var request = new RestRequest(url);
             var response = await client.PostAsync<ResponseWrapper<TResponse>>(request);
 
-            if (!response.IsSuccess && !response.Errors.All(handleErrors))
+            if (!response.IsSuccess && response.Errors.All(e => !e.Message.Contains("Session not found")))
             {
                 throw new TelegramClientException(response.Errors);
             }
 
             return response.Response;
+        }
+
+        public static async Task HandleAsyncWithoutSession(this IRestClient client, string url)
+        {
+            var request = new RestRequest(url);
+            var response = await client.PostAsync<ResponseWrapper>(request);
+
+            if (!response.IsSuccess && !response.Errors.All(e => e.Message.Contains("Session not found") || e.Message.Contains("No sessions available")))
+            {
+                throw new TelegramClientException(response.Errors);
+            }
+        }
+
+        public static async Task HandleAsync(this IRestClient client, string url)
+        {
+            var request = new RestRequest(url);
+            var response = await client.PostAsync<ResponseWrapper>(request);
+
+            if (!response.IsSuccess)
+            {
+                throw new TelegramClientException(response.Errors);
+            }
         }
 
         public static string ToPascalCase(this string source)

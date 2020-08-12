@@ -8,5 +8,7 @@ namespace FWTL.TelegramClient
         Task<GetSessionListResponse> GetSessionListAsync();
 
         Task AddSessionAsync(string sessionName);
+
+        Task RemoveSession(string sessionName);
     }
 }

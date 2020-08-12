@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FWTL.Aggragate;
+using FWTL.Common.Extensions;
 using FWTL.Core.Database;
 
 namespace FWTL.Domain.Users
@@ -48,7 +49,7 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId + "/" + command.PhoneNumber;
+                string sessionName = command.UserId.ToSession(command.PhoneNumber);
                 await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
 
                 await _dbAuthDatabaseContext.TelegramAccount.AddAsync(new TelegramAccount()
@@ -56,6 +57,7 @@ namespace FWTL.Domain.Users
                     Number = command.PhoneNumber,
                     UserId = command.UserId
                 });
+                await _dbAuthDatabaseContext.SaveChangesAsync();
             }
         }
     }
