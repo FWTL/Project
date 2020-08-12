@@ -25,9 +25,9 @@ namespace FWTL.TelegramClient.Services
 
         public async Task RemoveSession(string sessionName)
         {
-            await _client.HandleAsync($"/api/users/{sessionName}/logout");
-            await _client.HandleAsync($"/system/removeSession?session=users/{sessionName}");
-            //await _client.HandleAsyncWithoutSession($"/system/unlinkSessionFile?session=users/{sessionName}"); //seems not to work 
+            await _client.HandleAsyncWithoutSession($"/api/users/{sessionName}/logout");
+            await _client.HandleAsyncWithoutSession($"/system/removeSession?session=users/{sessionName}");
+            await _client.HandleWithoutExceptions($"/system/unlinkSessionFile?session=users/{sessionName}"); //seems not to work
         }
     }
 }

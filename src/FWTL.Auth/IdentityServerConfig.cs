@@ -24,7 +24,7 @@ namespace FWTL.Auth
                     AllowedGrantTypes =  { GrantType.ResourceOwnerPassword },
                     RequireClientSecret = false,
                     AllowedScopes = new List<string> {"api"},
-                    AccessTokenLifetime = 60 * 60,
+                    AccessTokenLifetime = 60 * 60 * 10,
                     AllowOfflineAccess = true,
                     RefreshTokenUsage = TokenUsage.ReUse,
                     AlwaysIncludeUserClaimsInIdToken = true

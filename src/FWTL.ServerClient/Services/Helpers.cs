@@ -1,7 +1,9 @@
-﻿using FWTL.TelegramClient.Exceptions;
+﻿using System.Collections.Generic;
+using FWTL.TelegramClient.Exceptions;
 using RestSharp;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -20,17 +22,11 @@ namespace FWTL.TelegramClient.Services
             return response.Response;
         }
 
-        public static async Task<TResponse> HandleAsyncWithoutSession<TResponse>(this IRestClient client, string url)
+        public static async Task<IEnumerable<Error>> HandleWithoutExceptions(this IRestClient client, string url)
         {
             var request = new RestRequest(url);
-            var response = await client.PostAsync<ResponseWrapper<TResponse>>(request);
-
-            if (!response.IsSuccess && response.Errors.All(e => !e.Message.Contains("Session not found")))
-            {
-                throw new TelegramClientException(response.Errors);
-            }
-
-            return response.Response;
+            var response = await client.PostAsync<ResponseWrapper>(request);
+            return response.Errors;
         }
 
         public static async Task HandleAsyncWithoutSession(this IRestClient client, string url)

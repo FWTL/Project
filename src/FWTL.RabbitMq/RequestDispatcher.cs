@@ -47,7 +47,7 @@ namespace FWTL.RabbitMq
                 throw new AppValidationException(response.Message.Errors);
             }
 
-            if (response.Message.StatusCode == HttpStatusCode.BadRequest)
+            if (response.Message.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new Exception(response.Message.Id.ToString());
             }
