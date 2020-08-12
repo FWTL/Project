@@ -20,7 +20,14 @@ namespace FWTL.TelegramClient.Services
 
         public Task AddSessionAsync(string sessionName)
         {
-            return _client.HandleAsync<GetSessionListResponse>($"/system/addSession?session=users/{sessionName}");
+            return _client.HandleAsync($"/system/addSession?session=users/{sessionName}");
+        }
+
+        public async Task RemoveSession(string sessionName)
+        {
+            await _client.HandleAsync($"/api/users/{sessionName}/logout");
+            await _client.HandleAsync($"/system/removeSession?session=users/{sessionName}");
+            //await _client.HandleAsyncWithoutSession($"/system/unlinkSessionFile?session=users/{sessionName}"); //seems not to work 
         }
     }
 }

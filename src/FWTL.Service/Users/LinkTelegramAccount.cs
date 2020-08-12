@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FWTL.Common.Extensions;
 using FWTL.Common.Helpers;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
@@ -45,7 +46,8 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId + "/" + command.PhoneNumber;
+                string sessionName = command.UserId.ToSession(command.PhoneNumber);
+
                 await _telegramClient.SystemService.AddSessionAsync(sessionName);
                 await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.PhoneNumber);
             }

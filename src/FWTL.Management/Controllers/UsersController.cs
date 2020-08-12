@@ -1,5 +1,4 @@
-﻿using FWTL.Common.Helpers;
-using FWTL.Core.Commands;
+﻿using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
@@ -55,7 +54,7 @@ namespace FWTL.Management.Controllers
         [Authorize]
         public async Task PhoneLogin(string phoneNumber)
         {
-            await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
+            await _commandDispatcher.DispatchAsync<UnlinkTelegramAccount.Request, UnlinkTelegramAccount.Command>(new UnlinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
         }
     }
 }

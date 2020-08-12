@@ -1,4 +1,5 @@
 using AutoMapper;
+using FWTL.Aggragate;
 using FWTL.Auth.Database;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
@@ -24,7 +25,6 @@ using Serilog;
 using Serilog.Events;
 using System.Linq;
 using System.Threading.Tasks;
-using FWTL.Aggragate;
 
 namespace FWTL.Management
 {
@@ -196,20 +196,16 @@ namespace FWTL.Management
                 c.SwaggerDoc("v1", new OpenApiInfo() { Title = "FWTL.Api", Version = "v1" });
                 c.CustomSchemaIds(x =>
                 {
-                    int plusIndex = x.FullName.IndexOf("+");
-                    int lastIndexOfDot = x.FullName.LastIndexOf(".");
-                    int length = 0;
-
-                    if (plusIndex != -1)
+                    var fragments = x.FullName.Split("+");
+                    var dotFragments = fragments[0].Split(".");
+                    if (fragments.Length <= 2)
                     {
-                        length = plusIndex - lastIndexOfDot - 1;
-                    }
-                    else
-                    {
-                        length = x.FullName.Length - lastIndexOfDot - 1;
+                        return dotFragments.Last();
                     }
 
-                    return x.FullName.Substring(lastIndexOfDot + 1, length);
+                    var leftPart = dotFragments.Last();
+                    var rightPart = string.Join(".", fragments.Where((f, index) => index > 1));
+                    return leftPart + "." + rightPart;
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

@@ -4,6 +4,7 @@ using FluentValidation;
 using FWTL.Common.Commands;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
+using FWTL.TelegramClient.Exceptions;
 using MassTransit;
 
 namespace FWTL.RabbitMq
@@ -27,6 +28,10 @@ namespace FWTL.RabbitMq
                 await context.RespondAsync(new Common.Commands.Response<TResult>(context.RequestId.Value, result));
             }
             catch (ValidationException ex)
+            {
+                await context.RespondAsync(new Response(ex));
+            }
+            catch (TelegramClientException ex)
             {
                 await context.RespondAsync(new Response(ex));
             }
