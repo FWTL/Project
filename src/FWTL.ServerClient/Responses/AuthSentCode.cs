@@ -1,4 +1,6 @@
-﻿namespace FWTL.TelegramClient.Responses
+﻿using FWTL.TelegramClient.Types;
+
+namespace FWTL.TelegramClient.Responses
 {
     public class AuthSentCode
     {
