@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FWTL.Core.Services
 {
@@ -6,6 +7,6 @@ namespace FWTL.Core.Services
     {
         Guid CurrentUserId { get; }
 
-        ulong PhoneNumber { get; }
+        IReadOnlyList<string> TelegramNumbers { get; }
     }
 }

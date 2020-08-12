@@ -5,8 +5,8 @@ namespace FWTL.TelegramClient
 {
     public interface ISystemService
     {
-        Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync();
+        Task<GetSessionListResponse> GetSessionListAsync();
 
-        Task<ResponseWrapper<GetSessionListResponse>> AddSessionAsync(string sessionName);
+        Task AddSessionAsync(string sessionName);
     }
 }

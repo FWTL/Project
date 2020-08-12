@@ -13,12 +13,12 @@ namespace FWTL.TelegramClient.Services
             _client = client;
         }
 
-        public Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync()
+        public Task<GetSessionListResponse> GetSessionListAsync()
         {
             return _client.HandleAsync<GetSessionListResponse>("/system/getSessionList");
         }
 
-        public Task<ResponseWrapper<GetSessionListResponse>> AddSessionAsync(string sessionName)
+        public Task AddSessionAsync(string sessionName)
         {
             return _client.HandleAsync<GetSessionListResponse>($"/system/addSession?session=users/{sessionName}");
         }

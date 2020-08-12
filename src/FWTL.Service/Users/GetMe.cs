@@ -18,11 +18,9 @@ namespace FWTL.Domain.Users
             public Query(ICurrentUserService currentUserService)
             {
                 UserId = currentUserService.CurrentUserId;
-                PhoneNumber = currentUserService.PhoneNumber;
             }
 
             public Guid UserId { get; set; }
-            public ulong PhoneNumber { get; set; }
         }
 
         public class Result
@@ -52,8 +50,7 @@ namespace FWTL.Domain.Users
             public async Task<Result> HandleAsync(Query query)
             {
                 var user = await _userManager.FindByIdAsync(query.UserId.ToString());
-                var getSelfResponse = await _telegramClient.UserService.GetSelfAsync(query.PhoneNumber.ToString());
-                var telegramUser = getSelfResponse.Response;
+                var telegramUser = await _telegramClient.UserService.GetSelfAsync(query.UserId.ToString());
 
                 return new Result()
                 {

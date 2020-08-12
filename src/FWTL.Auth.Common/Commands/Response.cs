@@ -2,7 +2,9 @@
 using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using FWTL.TelegramClient.Exceptions;
 
 namespace FWTL.Common.Commands
 {
@@ -27,6 +29,12 @@ namespace FWTL.Common.Commands
         public Response(ValidationException validationException)
         {
             Errors = validationException.Errors;
+            StatusCode = HttpStatusCode.BadRequest;
+        }
+
+        public Response(TelegramClientException telegramClientException)
+        {
+            Errors = telegramClientException.Errors.Select(error => new ValidationFailure("Telegram", error.Message));
             StatusCode = HttpStatusCode.BadRequest;
         }
 

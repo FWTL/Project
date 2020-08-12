@@ -46,9 +46,9 @@ namespace FWTL.Management.Controllers
 
         [HttpPost("Me/Verify/Telegram")]
         [Authorize]
-        public async Task VerifyTelegramAccount(string code)
+        public async Task VerifyTelegramAccount(string phoneNumber, string code)
         {
-            await _commandDispatcher.DispatchAsync<VerifyTelegramAccount.Request, VerifyTelegramAccount.Command>(new VerifyTelegramAccount.Request() { Code = code });
+            await _commandDispatcher.DispatchAsync<VerifyTelegramAccount.Request, VerifyTelegramAccount.Command>(new VerifyTelegramAccount.Request() { PhoneNumber = phoneNumber, Code = code });
         }
 
         [HttpPost("Me/Unlink/Telegram")]
