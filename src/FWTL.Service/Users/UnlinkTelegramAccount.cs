@@ -1,18 +1,16 @@
-﻿using FWTL.Common.Extensions;
+﻿using FluentValidation;
+using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
+using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
+using FWTL.Core.Validation;
 using FWTL.TelegramClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
-using FWTL.Aggragate;
-using FWTL.Core.Database;
-using Microsoft.EntityFrameworkCore;
-using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Users
 {
@@ -55,7 +53,7 @@ namespace FWTL.Domain.Users
                 string sessionName = command.UserId.ToSession(command.PhoneNumber);
 
                 await _telegramClient.SystemService.RemoveSession(sessionName);
-                var telegramAccount = await _databaseContext.TelegramAccount.Where(ta =>  ta.UserId == command.UserId && ta.Number == command.PhoneNumber).FirstOrDefaultAsync();
+                var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Number == command.PhoneNumber).FirstOrDefaultAsync();
                 if (telegramAccount.IsNull())
                 {
                     throw new AppValidationException(nameof(Command.PhoneNumber), "Telegram account not found");

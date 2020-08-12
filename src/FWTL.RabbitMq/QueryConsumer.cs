@@ -38,7 +38,7 @@ namespace FWTL.RabbitMq
             catch (Exception ex)
             {
                 var exceptionId = _exceptionHandler.Handle(ex, context.Message);
-                await context.RespondAsync(new Response(exceptionId));
+                await context.RespondAsync(new Response(exceptionId,ex));
             }
         }
     }

@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using FWTL.TelegramClient.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using FWTL.TelegramClient.Exceptions;
 
 namespace FWTL.Common.Commands
 {
@@ -12,12 +12,6 @@ namespace FWTL.Common.Commands
     {
         public Response()
         {
-        }
-
-        public Response(Guid id, HttpStatusCode statusCode)
-        {
-            Id = id;
-            StatusCode = statusCode;
         }
 
         public Response(Guid id)
@@ -36,6 +30,12 @@ namespace FWTL.Common.Commands
         {
             Errors = telegramClientException.Errors.Select(error => new ValidationFailure("Telegram", error.Message));
             StatusCode = HttpStatusCode.BadRequest;
+        }
+
+        public Response(Guid exceptionId, Exception exception)
+        {
+            Id = exceptionId;
+            StatusCode = HttpStatusCode.InternalServerError;
         }
 
         public Guid Id { get; set; }
