@@ -1,5 +1,6 @@
 ﻿using FWTL.TelegramClient.Responses;
 using RestSharp;
+using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -12,14 +13,14 @@ namespace FWTL.TelegramClient.Services
             _client = client;
         }
 
-        public ResponseWrapper<GetSessionListResponse> GetSessionList()
+        public Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync()
         {
-            return _client.Handle<GetSessionListResponse>("/system/getSessionList");
+            return _client.HandleAsync<GetSessionListResponse>("/system/getSessionList");
         }
 
-        public ResponseWrapper<GetSessionListResponse> AddSession(string sessionName)
+        public Task<ResponseWrapper<GetSessionListResponse>> AddSessionAsync(string sessionName)
         {
-            return _client.Handle<GetSessionListResponse>($"/system/addSession?session=users/{sessionName}");
+            return _client.HandleAsync<GetSessionListResponse>($"/system/addSession?session=users/{sessionName}");
         }
     }
 }

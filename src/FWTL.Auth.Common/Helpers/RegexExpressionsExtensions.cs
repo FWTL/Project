@@ -4,7 +4,7 @@ namespace FWTL.Common.Helpers
 {
     public static class RegexExpressionsExtensions
     {
-        public static string Replace(this string pattern, string input)
+        public static string Replace(this string input, string pattern)
         {
             if (string.IsNullOrEmpty(input))
             {

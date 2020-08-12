@@ -1,13 +1,18 @@
-﻿using FWTL.Core.Commands;
+﻿using FluentValidation;
+using FWTL.Common.Helpers;
+using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
+using FWTL.Core.Validation;
+using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
 {
-    public class UnlinkTelegramAccount
+    public class LinkTelegramAccount
     {
         public class Request : IRequest
         {
@@ -16,6 +21,10 @@ namespace FWTL.Domain.Users
 
         public class Command : Request, ICommand
         {
+            public Command()
+            {
+            }
+
             public Command(ICurrentUserService currentUserService)
             {
                 UserId = currentUserService.CurrentUserId;
@@ -26,11 +35,35 @@ namespace FWTL.Domain.Users
 
         public class Handler : ICommandHandler<Command>
         {
-            public IList<IEvent> Events => throw new NotImplementedException();
+            private readonly ITelegramClient _telegramClient;
 
-            public Task ExecuteAsync(Command command)
+            public IList<IEvent> Events => new List<IEvent>();
+
+            public Handler(ITelegramClient telegramClient)
             {
-                throw new NotImplementedException();
+                _telegramClient = telegramClient;
+            }
+
+            public async Task ExecuteAsync(Command command)
+            {
+                var addSessionResponse = await _telegramClient.SystemService.AddSessionAsync(command.PhoneNumber);
+                bool doesSessionAlreadyExist = !addSessionResponse.IsSuccess &&
+                                               addSessionResponse.Errors.Any(x =>
+                                                   x.Message == "Session already exists");
+                if (doesSessionAlreadyExist)
+                {
+                  return;
+                }
+
+                _telegramClient.UserService.PhoneLogin(command.PhoneNumber, command.PhoneNumber);
+            }
+        }
+
+        public class Validator : AppAbstractValidation<Command>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.PhoneNumber).Matches(RegexExpressions.ONLY_NUMBERS);
             }
         }
     }

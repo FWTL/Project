@@ -151,8 +151,6 @@ namespace FWTL.Management
                     x.AddConsumer(typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
                 }
 
-                x.AddConsumers(typeof(QueryConsumer<GetMe.Query, GetMe.Result>));
-
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
                     cfg.ConfigureJsonSerializer(config =>
@@ -186,7 +184,7 @@ namespace FWTL.Management
                         foreach (var queryType in queries)
                         {
                             var typeArguments = queryType.GetGenericArguments();
-                            ec.ConfigureConsumer(context,typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
+                            ec.ConfigureConsumer(context, typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
                         }
                     });
                 }));

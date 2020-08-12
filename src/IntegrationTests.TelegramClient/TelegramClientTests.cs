@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using FWTL.TelegramClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -6,24 +7,24 @@ namespace Integration.TelegramClientTests
     [TestClass]
     public class TelegramClientTests
     {
-        private static TelegramClient _client;
+        private static Client _client;
 
         [ClassInitialize]
         public static void TestFixtureSetup(TestContext context)
         {
-            _client = new TelegramClient("http://127.0.0.1:9503");
+            _client = new Client("http://127.0.0.1:9503");
         }
 
         [TestMethod]
-        public void GetSessionList()
+        public async Task GetSessionList()
         {
-            _client.SystemService.GetSessionList();
+            await _client.SystemService.GetSessionListAsync();
         }
 
         [TestMethod]
-        public void AddSession()
+        public async Task AddSession()
         {
-            _client.SystemService.AddSession("test");
+            await _client.SystemService.AddSessionAsync("test");
         }
     }
 }

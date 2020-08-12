@@ -1,4 +1,5 @@
-﻿using FWTL.Core.Commands;
+﻿using FWTL.Common.Helpers;
+using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
@@ -34,13 +35,6 @@ namespace FWTL.Management.Controllers
         public async Task<GetMe.Result> Me()
         {
             return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
-        }
-
-        [Authorize]
-        [HttpPatch("Me/Timezone")]
-        public async Task AssignTimeZoneToUser(string timeZoneId)
-        {
-            await _commandDispatcher.DispatchAsync<AssignTimeZoneToUser.Request, AssignTimeZoneToUser.Command>(new AssignTimeZoneToUser.Request() { TimeZoneId = timeZoneId });
         }
 
         [HttpPost("Me/Link/Telegram")]

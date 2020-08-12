@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
 {
-    public class LinkTelegramAccount
+    public class UnlinkTelegramAccount
     {
         public class Request : IRequest
         {
@@ -16,6 +16,10 @@ namespace FWTL.Domain.Users
 
         public class Command : Request, ICommand
         {
+            public Command()
+            {
+            }
+
             public Command(ICurrentUserService currentUserService)
             {
                 UserId = currentUserService.CurrentUserId;
