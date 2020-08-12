@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FWTL.TelegramClient.Responses
+﻿namespace FWTL.TelegramClient.Types
 {
     public interface IAuthSentCodeType
     {

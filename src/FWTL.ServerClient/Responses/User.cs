@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FWTL.TelegramClient.Types;
+using Newtonsoft.Json;
 
 namespace FWTL.TelegramClient.Responses
 {
