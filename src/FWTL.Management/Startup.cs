@@ -24,6 +24,7 @@ using Serilog;
 using Serilog.Events;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Aggragate;
 
 namespace FWTL.Management
 {

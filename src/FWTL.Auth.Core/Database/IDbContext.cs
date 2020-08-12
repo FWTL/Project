@@ -1,4 +1,6 @@
-﻿namespace FWTL.Core.Database
+﻿using System.Threading.Tasks;
+
+namespace FWTL.Core.Database
 {
     public interface IDbContext
     {
@@ -6,6 +8,8 @@
 
         void RollbackTransaction();
 
-        void SaveChanges();
+        void SaveChangesSync();
+
+        Task SaveChangesAsync();
     }
 }

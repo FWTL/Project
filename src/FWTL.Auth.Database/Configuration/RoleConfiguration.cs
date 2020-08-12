@@ -1,4 +1,4 @@
-﻿using FWTL.Domain.Users;
+﻿using FWTL.Aggragate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

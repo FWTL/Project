@@ -4,6 +4,7 @@ using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
+using FWTL.Aggragate;
 
 namespace FWTL.Domain.Users
 {
