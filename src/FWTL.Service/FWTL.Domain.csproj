@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FWTL.Aggragate\FWTL.Aggragate.csproj" />
     <ProjectReference Include="..\FWTL.Auth.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Events\FWTL.Events.csproj" />

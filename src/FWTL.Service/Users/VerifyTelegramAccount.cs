@@ -5,6 +5,8 @@ using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Aggragate;
+using FWTL.Core.Database;
 
 namespace FWTL.Domain.Users
 {
@@ -21,7 +23,6 @@ namespace FWTL.Domain.Users
         {
             public Command()
             {
-                    
             }
 
             public Command(ICurrentUserService currentUserService)
@@ -35,17 +36,26 @@ namespace FWTL.Domain.Users
         public class Handler : ICommandHandler<Command>
         {
             private readonly ITelegramClient _telegramClient;
+            private readonly IAuthDatabaseContext _dbAuthDatabaseContext;
 
-            public Handler(ITelegramClient telegramClient)
+            public Handler(ITelegramClient telegramClient, IAuthDatabaseContext dbAuthDatabaseContext)
             {
                 _telegramClient = telegramClient;
+                _dbAuthDatabaseContext = dbAuthDatabaseContext;
             }
 
             public IList<IEvent> Events => new List<IEvent>();
 
             public async Task ExecuteAsync(Command command)
             {
-                await _telegramClient.UserService.CompletePhoneLoginAsync(command.UserId + "/" + command.PhoneNumber, command.Code);
+                string sessionName = command.UserId + "/" + command.PhoneNumber;
+                await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
+
+                await _dbAuthDatabaseContext.TelegramAccount.AddAsync(new TelegramAccount()
+                {
+                    Number = command.PhoneNumber,
+                    UserId = command.UserId
+                });
             }
         }
     }

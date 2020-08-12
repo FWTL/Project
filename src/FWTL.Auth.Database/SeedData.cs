@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using FWTL.Aggragate;
 using FWTL.Common.Extensions;
 using FWTL.Core.Enums;
-using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace FWTL.Auth.Database

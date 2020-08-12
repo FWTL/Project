@@ -5,6 +5,7 @@ using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
+using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
@@ -97,6 +98,7 @@ namespace FWTL.Management
                 var url = configuration["Telegram:Url"];
                 return new Client(url);
             });
+            services.AddScoped<IAuthDatabaseContext, AuthDatabaseContext>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using FWTL.Domain.Users;
+﻿using FWTL.Aggragate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +9,6 @@ namespace FWTL.Auth.Database.Configuration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Property(x => x.Id).ValueGeneratedNever();
-            builder.Property(x => x.TimeZoneId).HasMaxLength(255);
         }
     }
 }

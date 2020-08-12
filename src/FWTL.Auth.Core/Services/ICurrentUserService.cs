@@ -7,6 +7,6 @@ namespace FWTL.Core.Services
     {
         Guid CurrentUserId { get; }
 
-        IReadOnlyList<string> TelegramNumbers { get; }
+        string SessionName(string phoneNumber);
     }
 }

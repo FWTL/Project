@@ -1,4 +1,5 @@
-﻿using FWTL.Auth.Database;
+﻿using FWTL.Aggragate;
+using FWTL.Auth.Database;
 using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Credentials;
 using FWTL.Domain.Users;

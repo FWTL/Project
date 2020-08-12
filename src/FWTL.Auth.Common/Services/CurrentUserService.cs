@@ -21,14 +21,6 @@ namespace FWTL.Common.Services
             get { return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); }
         }
 
-        public IReadOnlyList<string> TelegramNumbers
-        {
-            get
-            {
-                return _principal.Claims.Where(c => c.Type == "TelegramNumber").Select(c => c.Value).ToList();
-            }
-        }
-
-        public string SessionId(string phoneNumber) => CurrentUserId + "/" + phoneNumber;
+        public string SessionName(string phoneNumber) => CurrentUserId + "/" + phoneNumber;
     }
 }
