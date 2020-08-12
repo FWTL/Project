@@ -23,5 +23,14 @@ namespace FWTL.Common.Services
                 return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             }
         }
+
+        public ulong PhoneNumber
+        {
+            get
+            {
+                return 48536276554;
+                //return ulong.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.MobilePhone).Value);
+            }
+        }
     }
 }

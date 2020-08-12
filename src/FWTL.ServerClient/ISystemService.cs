@@ -1,11 +1,12 @@
-﻿using FWTL.TelegramClient.Responses;
+﻿using System.Threading.Tasks;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient
 {
     public interface ISystemService
     {
-        ResponseWrapper<GetSessionListResponse> GetSessionList();
+        Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync();
 
-        ResponseWrapper<GetSessionListResponse> AddSession(string sessionName);
+        Task<ResponseWrapper<GetSessionListResponse>> AddSessionAsync(string sessionName);
     }
 }

@@ -5,5 +5,7 @@ namespace FWTL.Core.Services
     public interface ICurrentUserService
     {
         Guid CurrentUserId { get; }
+
+        ulong PhoneNumber { get; }
     }
 }

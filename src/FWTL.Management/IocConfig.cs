@@ -11,6 +11,7 @@ using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
+using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ using NodaTime;
 
 namespace FWTL.Management
 {
-    public class IocConfig
+    public static class IocConfig
     {
         public static void OverrideWithLocalCredentials(IServiceCollection services)
         {
@@ -90,6 +91,12 @@ namespace FWTL.Management
             services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
+            services.AddSingleton<ITelegramClient>(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
+                var url = configuration["Telegram:Url"];
+                return new Client(url);
+            });
         }
     }
 }

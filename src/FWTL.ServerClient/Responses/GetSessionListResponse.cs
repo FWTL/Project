@@ -4,7 +4,7 @@ namespace FWTL.TelegramClient.Responses
 {
     public class GetSessionListResponse
     {
-        public Dictionary<string, SessionInfo> Sessions = new Dictionary<string, SessionInfo>();
+        public Dictionary<string, SessionInfo> Sessions { get; set; } = new Dictionary<string, SessionInfo>();
 
         public class SessionInfo
         {

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient
 {
@@ -10,7 +9,7 @@ namespace FWTL.TelegramClient
         [JsonProperty("success")]
         public bool IsSuccess { get; set; }
 
-        public IEnumerable<string> Errors { get; set; } = new List<string>();
+        public IEnumerable<Error> Errors { get; set; } = new List<Error>();
 
         public TResponse Response { get; set; }
     }

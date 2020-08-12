@@ -1,20 +1,14 @@
-﻿using System;
-using RestSharp;
+﻿using RestSharp;
+using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient.Services
 {
     public static class Helpers
     {
-        public static ResponseWrapper<TResponse> Handle<TResponse>(this IRestClient client, string url)
+        public static async Task<ResponseWrapper<TResponse>> HandleAsync<TResponse>(this IRestClient client, string url)
         {
             var request = new RestRequest(url);
-            var response = client.Post<ResponseWrapper<TResponse>>(request);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-
-            return response.Data;
+            return await client.PostAsync<ResponseWrapper<TResponse>>(request);
         }
     }
 }
