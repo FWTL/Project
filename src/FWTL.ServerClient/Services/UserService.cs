@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using FWTL.TelegramClient.Responses;
+﻿using FWTL.TelegramClient.Responses;
 using RestSharp;
+using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -14,23 +13,19 @@ namespace FWTL.TelegramClient.Services
             _client = client;
         }
 
-        public bool CompletePhoneLogin(string sessionName, string code)
+        public async Task CompletePhoneLoginAsync(string sessionName, string code)
         {
-            //var response = _client.HandleAsync<GetSessionListResponse>($"api/users/{sessionName}aa/completePhoneLogin?code={code}");
-            //return response.IsSuccess;
-            throw new NotImplementedException();
+            await _client.HandleAsync<AuthAuthorization>($"api/users/{sessionName}/completePhoneLogin?code={code}");
         }
 
-        public Task<ResponseWrapper<User>> GetSelfAsync(string sessionName)
+        public Task<User> GetSelfAsync(string sessionName)
         {
             return _client.HandleAsync<User>($"api/users/{sessionName}/getSelf");
         }
 
-        public bool PhoneLogin(string sessionName, string phoneNumber)
+        public async Task PhoneLoginAsync(string sessionName, string phoneNumber)
         {
-            var response = _client.HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
-            //return response.IsSuccess;
-            throw new NotImplementedException();
+            await _client.HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
         }
     }
 }

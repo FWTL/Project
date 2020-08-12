@@ -1,12 +1,12 @@
-﻿using FWTL.TelegramClient.Types;
+﻿using Newtonsoft.Json;
 
 namespace FWTL.TelegramClient.Responses
 {
     public class AuthSentCode
     {
-        public IAuthSentCodeType Type { get; set; }
+        [JsonProperty("phone_code_hash")]
         public string PhoneCodeHash { get; set; }
-        public IAuthCodeType AuthCodeType { get; set; }
+
         public int? Timeout { get; set; }
     }
 }

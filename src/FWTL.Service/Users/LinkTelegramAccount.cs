@@ -7,7 +7,6 @@ using FWTL.Core.Validation;
 using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
@@ -46,16 +45,9 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                var addSessionResponse = await _telegramClient.SystemService.AddSessionAsync(command.PhoneNumber);
-                bool doesSessionAlreadyExist = !addSessionResponse.IsSuccess &&
-                                               addSessionResponse.Errors.Any(x =>
-                                                   x.Message == "Session already exists");
-                if (doesSessionAlreadyExist)
-                {
-                  return;
-                }
-
-                _telegramClient.UserService.PhoneLogin(command.PhoneNumber, command.PhoneNumber);
+                string sessionName = command.UserId + "/" + command.PhoneNumber;
+                await _telegramClient.SystemService.AddSessionAsync(sessionName);
+                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.PhoneNumber);
             }
         }
 

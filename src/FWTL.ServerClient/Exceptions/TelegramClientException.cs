@@ -4,13 +4,13 @@ using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient.Exceptions
 {
-    class TelegramClientException : Exception
+    public class TelegramClientException : Exception
     {
-        private readonly IEnumerable<Error> _errors;
+        public IEnumerable<Error> Errors { get; }
 
         public TelegramClientException(IEnumerable<Error> errors)
         {
-            _errors = errors;
+            Errors = errors;
         }
     }
 }

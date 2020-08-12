@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FWTL.Core.Services;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using FWTL.Core.Services;
-using IdentityModel;
-using Microsoft.AspNetCore.Http;
 
 namespace FWTL.Common.Services
 {
@@ -18,19 +18,17 @@ namespace FWTL.Common.Services
 
         public Guid CurrentUserId
         {
-            get
-            {
-                return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            }
+            get { return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); }
         }
 
-        public ulong PhoneNumber
+        public IReadOnlyList<string> TelegramNumbers
         {
             get
             {
-                return 48536276554;
-                //return ulong.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.MobilePhone).Value);
+                return _principal.Claims.Where(c => c.Type == "TelegramNumber").Select(c => c.Value).ToList();
             }
         }
+
+        public string SessionId(string phoneNumber) => CurrentUserId + "/" + phoneNumber;
     }
 }

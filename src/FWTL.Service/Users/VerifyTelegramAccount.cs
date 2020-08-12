@@ -1,6 +1,7 @@
 ﻿using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
+using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,11 +12,18 @@ namespace FWTL.Domain.Users
     {
         public class Request : IRequest
         {
+            public string PhoneNumber { get; set; }
+
             public string Code { get; set; }
         }
 
         public class Command : Request, ICommand
         {
+            public Command()
+            {
+                    
+            }
+
             public Command(ICurrentUserService currentUserService)
             {
                 UserId = currentUserService.CurrentUserId;
@@ -26,11 +34,18 @@ namespace FWTL.Domain.Users
 
         public class Handler : ICommandHandler<Command>
         {
-            public IList<IEvent> Events => throw new NotImplementedException();
+            private readonly ITelegramClient _telegramClient;
 
-            public Task ExecuteAsync(Command command)
+            public Handler(ITelegramClient telegramClient)
             {
-                throw new NotImplementedException();
+                _telegramClient = telegramClient;
+            }
+
+            public IList<IEvent> Events => new List<IEvent>();
+
+            public async Task ExecuteAsync(Command command)
+            {
+                await _telegramClient.UserService.CompletePhoneLoginAsync(command.UserId + "/" + command.PhoneNumber, command.Code);
             }
         }
     }

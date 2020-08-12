@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using FWTL.TelegramClient.Responses;
+using FWTL.TelegramClient.Services;
 
 namespace FWTL.TelegramClient.Converters
 {
@@ -21,7 +22,7 @@ namespace FWTL.TelegramClient.Converters
 
             var jsonObject = JObject.Load(reader);
             var type = jsonObject["_"].ToString();
-            var pascalCase = char.ToUpper(type[0]) + type.Substring(1);
+            var pascalCase = type.ToPascalCase();
             string typeFullName = $"FWTL.TelegramClient.Responses.{pascalCase}";
             var dotNetType = Type.GetType(typeFullName);
 

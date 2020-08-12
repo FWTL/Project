@@ -6,6 +6,7 @@ using FWTL.Core.Helpers;
 using MassTransit;
 using System;
 using System.Threading.Tasks;
+using FWTL.TelegramClient.Exceptions;
 
 namespace FWTL.RabbitMq
 {
@@ -41,6 +42,10 @@ namespace FWTL.RabbitMq
                 }
             }
             catch (ValidationException ex)
+            {
+                await context.RespondAsync(new Response(ex));
+            }
+            catch (TelegramClientException ex)
             {
                 await context.RespondAsync(new Response(ex));
             }
