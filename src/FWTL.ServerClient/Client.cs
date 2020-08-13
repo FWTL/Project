@@ -1,9 +1,5 @@
-﻿using FWTL.TelegramClient.Converters;
-using FWTL.TelegramClient.Services;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
+﻿using FWTL.TelegramClient.Services;
+using System.Net.Http;
 
 namespace FWTL.TelegramClient
 {
@@ -13,15 +9,8 @@ namespace FWTL.TelegramClient
 
         public ISystemService SystemService { get; }
 
-        public Client(string url)
+        public Client(HttpClient client)
         {
-            IRestClient client = new RestClient(url);
-
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new TypeConverter());
-
-            client.UseNewtonsoftJson(settings);
-
             UserService = new UserService(client);
             SystemService = new SystemService(client);
         }

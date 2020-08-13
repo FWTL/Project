@@ -10,5 +10,7 @@ namespace FWTL.TelegramClient
         Task CompletePhoneLoginAsync(string sessionName, string code);
 
         Task<User> GetSelfAsync(string sessionName);
+
+        Task LogoutAsync(string sessionName);
     }
 }

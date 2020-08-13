@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
@@ -19,6 +18,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
+using Polly;
+using Polly.Extensions.Http;
+using System;
+using System.Net.Http;
+using System.Reflection;
 
 namespace FWTL.Management
 {
@@ -92,13 +96,27 @@ namespace FWTL.Management
             services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
-            services.AddSingleton<ITelegramClient>(b =>
+
+            services.AddHttpClient<ITelegramClient, Client>((service, client) =>
             {
-                var configuration = b.GetService<IConfiguration>();
-                var url = configuration["Telegram:Url"];
-                return new Client(url);
-            });
+                var configuration = service.GetService<IConfiguration>();
+                client.BaseAddress = new Uri(configuration["Telegram:Url"]);
+            })
+            .AddPolicyHandler(GetRetryPolicy())
+            .AddPolicyHandler(TimeoutPolicy(10));
+
             services.AddScoped<IAuthDatabaseContext, AuthDatabaseContext>();
         }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        }
+
+        public static IAsyncPolicy<HttpResponseMessage> TimeoutPolicy(int seconds = 2) =>
+            Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(seconds));
     }
 }

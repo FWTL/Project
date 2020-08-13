@@ -1,33 +1,33 @@
 ﻿using FWTL.TelegramClient.Responses;
-using RestSharp;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient.Services
 {
-    public class SystemService : ISystemService
+    public class SystemService : BaseService, ISystemService
     {
-        private readonly IRestClient _client;
-
-        public SystemService(IRestClient client)
+        public SystemService(HttpClient client) : base(client)
         {
-            _client = client;
         }
 
         public Task<GetSessionListResponse> GetSessionListAsync()
         {
-            return _client.HandleAsync<GetSessionListResponse>("/system/getSessionList");
+            return HandleAsync<GetSessionListResponse>("/system/getSessionList");
         }
 
         public Task AddSessionAsync(string sessionName)
         {
-            return _client.HandleAsync($"/system/addSession?session=users/{sessionName}");
+            return HandleAsync($"/system/addSession?session=users/{sessionName}");
         }
 
-        public async Task RemoveSession(string sessionName)
+        public Task RemoveSessionAsync(string sessionName)
         {
-            await _client.HandleAsyncWithoutSession($"/api/users/{sessionName}/logout");
-            await _client.HandleAsyncWithoutSession($"/system/removeSession?session=users/{sessionName}");
-            await _client.HandleWithoutExceptions($"/system/unlinkSessionFile?session=users/{sessionName}"); //seems not to work
+            return HandleAsync($"/system/removeSession?session=users/{sessionName}");
+        }
+
+        public Task UnlinkSessionFileAsync(string sessionName)
+        {
+            return HandleAsync($"/system/unlinkSessionFile?session=users/{sessionName}");
         }
     }
 }

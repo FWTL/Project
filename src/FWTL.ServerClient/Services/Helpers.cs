@@ -1,71 +1,87 @@
-﻿using System.Collections.Generic;
-using FWTL.TelegramClient.Exceptions;
-using RestSharp;
-using System.Linq;
+﻿using FWTL.TelegramClient.Exceptions;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient.Services
 {
-    public static class Helpers
+    public class BaseService
     {
-        public static async Task<TResponse> HandleAsync<TResponse>(this IRestClient client, string url)
-        {
-            var request = new RestRequest(url);
-            var response = await client.PostAsync<ResponseWrapper<TResponse>>(request);
+        private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _serializeOptions;
 
-            if (!response.IsSuccess)
+        public BaseService(HttpClient client)
+        {
+            _client = client;
+
+            _serializeOptions = new JsonSerializerOptions
             {
-                throw new TelegramClientException(response.Errors);
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+        }
+
+        protected async Task<TResponse> HandleAsync<TResponse>(string url)
+        {
+            var response = await _client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException(response.StatusCode + " " + response.Content);
             }
 
-            return response.Response;
-        }
+            ResponseWrapper<TResponse> result;
 
-        public static async Task<IEnumerable<Error>> HandleWithoutExceptions(this IRestClient client, string url)
-        {
-            var request = new RestRequest(url);
-            var response = await client.PostAsync<ResponseWrapper>(request);
-            return response.Errors;
-        }
-
-        public static async Task HandleAsyncWithoutSession(this IRestClient client, string url)
-        {
-            var request = new RestRequest(url);
-            var response = await client.PostAsync<ResponseWrapper>(request);
-
-            if (!response.IsSuccess && !response.Errors.All(e => e.Message.Contains("Session not found") || e.Message.Contains("No sessions available")))
+            using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
-                throw new TelegramClientException(response.Errors);
+                result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, _serializeOptions);
+            }
+
+            if (!result.IsSuccess)
+            {
+                throw new TelegramClientException(result.Errors);
+            }
+
+            return result.Response;
+        }
+
+        protected async Task HandleAsync(string url)
+        {
+            var response = await _client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
+            {
+                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
+            }
+
+            ResponseWrapper result;
+            using (var responseStream = await response.Content.ReadAsStreamAsync())
+            {
+                result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, _serializeOptions);
+            }
+
+            if (!result.IsSuccess)
+            {
+                throw new TelegramClientException(result.Errors);
             }
         }
 
-        public static async Task HandleAsync(this IRestClient client, string url)
-        {
-            var request = new RestRequest(url);
-            var response = await client.PostAsync<ResponseWrapper>(request);
+        //public static string ToPascalCase(this string source)
+        //{
+        //    var list = source.ToList();
+        //    list[0] = char.ToUpper(list[0]);
+        //    for (int i = 1; i < list.Count; i++)
+        //    {
+        //        if (list[i] == '.')
+        //        {
+        //            list[i + 1] = char.ToUpper(list[i + 1]);
+        //            list.RemoveAt(i);
+        //            i++;
+        //        }
+        //    }
 
-            if (!response.IsSuccess)
-            {
-                throw new TelegramClientException(response.Errors);
-            }
-        }
-
-        public static string ToPascalCase(this string source)
-        {
-            var list = source.ToList();
-            list[0] = char.ToUpper(list[0]);
-            for (int i = 1; i < list.Count; i++)
-            {
-                if (list[i] == '.')
-                {
-                    list[i + 1] = char.ToUpper(list[i + 1]);
-                    list.RemoveAt(i);
-                    i++;
-                }
-            }
-
-            return string.Concat(list);
-        }
+        //    return string.Concat(list);
+        //}
     }
 }

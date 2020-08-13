@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace FWTL.TelegramClient.Responses
 {
     public class AuthAuthorization
     {
-        [JsonProperty("tmp_sessions")]
+        [JsonPropertyName("tmp_sessions")]
         public int TmpSessions { get; set; }
     }
 }

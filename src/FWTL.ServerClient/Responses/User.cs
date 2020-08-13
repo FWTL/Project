@@ -1,18 +1,17 @@
-﻿using FWTL.TelegramClient.Types;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace FWTL.TelegramClient.Responses
 {
     public class User
     {
-        [JsonProperty("first_name")]
-        public string FirstName { get; set; }
+        [JsonPropertyName("first_name")]
+        public string Firstname { get; set; }
 
-        [JsonProperty("last_name")]
-        public string LastName { get; set; }
+        [JsonPropertyName("last_name")]
+        public string Lastname { get; set; }
 
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
-        public IUserProfilePhoto Photo { get; set; }
+        //public IUserProfilePhoto Photo { get; set; }
     }
 }

@@ -47,6 +47,10 @@ namespace FWTL.Common.Commands
 
     public class Response<TResult> : Response
     {
+        public Response()
+        {
+        }
+
         public Response(Guid id, TResult result) : base(id)
         {
             Result = result;
