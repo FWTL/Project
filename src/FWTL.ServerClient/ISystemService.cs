@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using FWTL.TelegramClient.Responses;
+﻿using FWTL.TelegramClient.Responses;
+using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient
 {
@@ -9,6 +9,8 @@ namespace FWTL.TelegramClient
 
         Task AddSessionAsync(string sessionName);
 
-        Task RemoveSession(string sessionName);
+        Task RemoveSessionAsync(string sessionName);
+
+        Task UnlinkSessionFileAsync(string sessionName);
     }
 }

@@ -49,7 +49,7 @@ namespace FWTL.RabbitMq
 
             if (response.Message.StatusCode == HttpStatusCode.InternalServerError)
             {
-                throw new Exception(response.Message.Id.ToString());
+                throw new InvalidOperationException(response.Message.Id.ToString());
             }
 
             return response.Message.Id;

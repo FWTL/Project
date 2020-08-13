@@ -12,7 +12,7 @@ namespace Integration.TelegramClientTests
         [ClassInitialize]
         public static void TestFixtureSetup(TestContext context)
         {
-            _client = new Client("http://127.0.0.1:9503");
+            _client = new Client(null);
         }
 
         [TestMethod]

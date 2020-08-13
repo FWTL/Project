@@ -6,7 +6,10 @@ using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.TelegramClient;
+using FWTL.TelegramClient.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Polly;
+using Polly.Fallback;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +42,7 @@ namespace FWTL.Domain.Users
         {
             private readonly ITelegramClient _telegramClient;
             private readonly IAuthDatabaseContext _databaseContext;
+            private AsyncFallbackPolicy _ignoreBadRequestsPolicy;
 
             public IList<IEvent> Events => new List<IEvent>();
 
@@ -46,13 +50,20 @@ namespace FWTL.Domain.Users
             {
                 _telegramClient = telegramClient;
                 _databaseContext = databaseContext;
+
+                _ignoreBadRequestsPolicy = Policy
+                    .Handle<TelegramClientException>()
+                    .FallbackAsync(token => Task.CompletedTask);
             }
 
             public async Task ExecuteAsync(Command command)
             {
                 string sessionName = command.UserId.ToSession(command.PhoneNumber);
 
-                await _telegramClient.SystemService.RemoveSession(sessionName);
+                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.UserService.LogoutAsync(sessionName));
+                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.RemoveSessionAsync(sessionName));
+                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.UnlinkSessionFileAsync(sessionName));
+
                 var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Number == command.PhoneNumber).FirstOrDefaultAsync();
                 if (telegramAccount.IsNull())
                 {

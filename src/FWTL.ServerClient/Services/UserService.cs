@@ -1,31 +1,33 @@
 ﻿using FWTL.TelegramClient.Responses;
-using RestSharp;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient.Services
 {
-    public class UserService : IUserService
+    public class UserService : BaseService, IUserService
     {
-        private readonly IRestClient _client;
-
-        public UserService(IRestClient client)
+        public UserService(HttpClient client) : base(client)
         {
-            _client = client;
         }
 
-        public async Task CompletePhoneLoginAsync(string sessionName, string code)
+        public Task CompletePhoneLoginAsync(string sessionName, string code)
         {
-            await _client.HandleAsync<AuthAuthorization>($"api/users/{sessionName}/completePhoneLogin?code={code}");
+            return HandleAsync<AuthAuthorization>($"api/users/{sessionName}/completePhoneLogin?code={code}");
         }
 
         public Task<User> GetSelfAsync(string sessionName)
         {
-            return _client.HandleAsync<User>($"api/users/{sessionName}/getSelf");
+            return HandleAsync<User>($"api/users/{sessionName}/getSelf");
         }
 
-        public async Task PhoneLoginAsync(string sessionName, string phoneNumber)
+        public Task PhoneLoginAsync(string sessionName, string phoneNumber)
         {
-            await _client.HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
+            return HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
+        }
+
+        public Task LogoutAsync(string sessionName)
+        {
+            return HandleAsync($"/api/users/{sessionName}/logout");
         }
     }
 }

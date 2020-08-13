@@ -1,4 +1,6 @@
 ﻿using FWTL.Aggragate;
+using FWTL.Common.Extensions;
+using FWTL.Core.Database;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.TelegramClient;
@@ -7,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FWTL.Common.Extensions;
-using FWTL.Core.Database;
 
 namespace FWTL.Domain.Users
 {
@@ -64,7 +64,8 @@ namespace FWTL.Domain.Users
             public async Task<Result> HandleAsync(Query query)
             {
                 var user = await _userManager.FindByIdAsync(query.UserId.ToString());
-                var accounts = _dbAuthDatabaseContext.TelegramAccount.Where(ta => ta.UserId == query.UserId)
+                var accounts = _dbAuthDatabaseContext.TelegramAccount
+                    .Where(ta => ta.UserId == query.UserId)
                     .Select(ta => ta.Number).ToList();
 
                 var telegramAccounts = new List<Result.TelegramAccount>();
@@ -75,10 +76,10 @@ namespace FWTL.Domain.Users
 
                     telegramAccounts.Add(new Result.TelegramAccount()
                     {
-                        FirstName = result.FirstName,
-                        LastName = result.LastName,
+                        FirstName = result.Firstname,
+                        LastName = result.Lastname,
                         Number = account,
-                        UserName = result.UserName
+                        UserName = result.Username,
                     });
                 }
 

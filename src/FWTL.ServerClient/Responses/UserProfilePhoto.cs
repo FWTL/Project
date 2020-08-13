@@ -1,14 +1,14 @@
 ﻿using FWTL.TelegramClient.Types;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace FWTL.TelegramClient.Responses
 {
     public class UserProfilePhoto : IUserProfilePhoto
     {
-        [JsonProperty("photo_id")]
+        [JsonPropertyName("photo_id")]
         public long photo_id { get; set; }
 
-        [JsonProperty("dc_id")]
+        [JsonPropertyName("dc_id")]
         public int dc_id { get; set; }
     }
 }
