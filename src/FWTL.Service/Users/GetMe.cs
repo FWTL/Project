@@ -1,13 +1,8 @@
 ﻿using FWTL.Aggragate;
-using FWTL.Common.Extensions;
-using FWTL.Core.Database;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
@@ -33,61 +28,25 @@ namespace FWTL.Domain.Users
             public Guid Id { get; set; }
 
             public string Email { get; set; }
-
-            public List<TelegramAccount> TelegramAccounts { get; set; }
-
-            public class TelegramAccount
-            {
-                public string Number { get; set; }
-
-                public string FirstName { get; set; }
-
-                public string LastName { get; set; }
-
-                public string UserName { get; set; }
-            }
         }
 
         public class Handler : IQueryHandler<Query, Result>
         {
             private readonly UserManager<User> _userManager;
-            private readonly ITelegramClient _telegramClient;
-            private readonly IAuthDatabaseContext _dbAuthDatabaseContext;
 
-            public Handler(UserManager<User> userManager, ITelegramClient telegramClient, IAuthDatabaseContext dbAuthDatabaseContext)
+            public Handler(UserManager<User> userManager)
             {
                 _userManager = userManager;
-                _telegramClient = telegramClient;
-                _dbAuthDatabaseContext = dbAuthDatabaseContext;
             }
 
             public async Task<Result> HandleAsync(Query query)
             {
                 var user = await _userManager.FindByIdAsync(query.UserId.ToString());
-                var accounts = _dbAuthDatabaseContext.TelegramAccount
-                    .Where(ta => ta.UserId == query.UserId)
-                    .Select(ta => ta.Number).ToList();
-
-                var telegramAccounts = new List<Result.TelegramAccount>();
-                foreach (string account in accounts)
-                {
-                    string sessionName = query.UserId.ToSession(account);
-                    var result = await _telegramClient.UserService.GetSelfAsync(sessionName);
-
-                    telegramAccounts.Add(new Result.TelegramAccount()
-                    {
-                        FirstName = result.Firstname,
-                        LastName = result.Lastname,
-                        Number = account,
-                        UserName = result.Username,
-                    });
-                }
 
                 return new Result()
                 {
                     Id = user.Id,
-                    Email = user.Email,
-                    TelegramAccounts = telegramAccounts
+                    Email = user.Email
                 };
             }
         }

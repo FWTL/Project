@@ -1,4 +1,5 @@
-﻿using FWTL.Core.Commands;
+﻿using System.Collections.Generic;
+using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
@@ -36,25 +37,32 @@ namespace FWTL.Management.Controllers
             return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));
         }
 
-        [HttpPost("Me/Link/Telegram")]
+        [HttpGet("Me/Accounts")]
+        [Authorize]
+        public async Task<IReadOnlyList<GetAccounts.Result>> GetTelegramAccounts()
+        {
+            return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
+        }
+
+        [HttpPost("Me/Accounts/{phoneNumber}")]
         [Authorize]
         public async Task LinkTelegramAccount(string phoneNumber)
         {
-            await _commandDispatcher.DispatchAsync<LinkTelegramAccount.Request, LinkTelegramAccount.Command>(new LinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
+            await _commandDispatcher.DispatchAsync<LinkAccount.Request, LinkAccount.Command>(new LinkAccount.Request() { PhoneNumber = phoneNumber });
         }
 
-        [HttpPost("Me/Verify/Telegram")]
+        [HttpPost("Me/Accounts/{phoneNumber}/Verify")]
         [Authorize]
         public async Task VerifyTelegramAccount(string phoneNumber, string code)
         {
-            await _commandDispatcher.DispatchAsync<VerifyTelegramAccount.Request, VerifyTelegramAccount.Command>(new VerifyTelegramAccount.Request() { PhoneNumber = phoneNumber, Code = code });
+            await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { PhoneNumber = phoneNumber, Code = code });
         }
 
-        [HttpDelete("Me/Unlink/Telegram")]
+        [HttpDelete("Me/Accounts/{phoneNumber}")]
         [Authorize]
-        public async Task PhoneLogin(string phoneNumber)
+        public async Task DeleteAccount(string phoneNumber)
         {
-            await _commandDispatcher.DispatchAsync<UnlinkTelegramAccount.Request, UnlinkTelegramAccount.Command>(new UnlinkTelegramAccount.Request() { PhoneNumber = phoneNumber });
+            await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { PhoneNumber = phoneNumber });
         }
     }
 }

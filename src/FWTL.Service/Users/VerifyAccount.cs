@@ -1,10 +1,7 @@
-﻿using FluentValidation;
-using FWTL.Common.Extensions;
-using FWTL.Common.Helpers;
+﻿using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
 using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
@@ -12,11 +9,13 @@ using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
 {
-    public class LinkTelegramAccount
+    public class VerifyAccount
     {
         public class Request : IRequest
         {
             public string PhoneNumber { get; set; }
+
+            public string Code { get; set; }
         }
 
         public class Command : Request, ICommand
@@ -37,27 +36,17 @@ namespace FWTL.Domain.Users
         {
             private readonly ITelegramClient _telegramClient;
 
-            public IList<IEvent> Events => new List<IEvent>();
-
             public Handler(ITelegramClient telegramClient)
             {
                 _telegramClient = telegramClient;
             }
 
+            public IList<IEvent> Events => new List<IEvent>();
+
             public async Task ExecuteAsync(Command command)
             {
                 string sessionName = command.UserId.ToSession(command.PhoneNumber);
-
-                await _telegramClient.SystemService.AddSessionAsync(sessionName);
-                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.PhoneNumber);
-            }
-        }
-
-        public class Validator : AppAbstractValidation<Command>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.PhoneNumber).Matches(RegexExpressions.ONLY_NUMBERS);
+                await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
             }
         }
     }

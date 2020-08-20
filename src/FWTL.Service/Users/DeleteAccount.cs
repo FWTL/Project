@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace FWTL.Domain.Users
 {
-    public class UnlinkTelegramAccount
+    public class DeleteAccount
     {
         public class Request : IRequest
         {
@@ -42,7 +42,10 @@ namespace FWTL.Domain.Users
         {
             private readonly ITelegramClient _telegramClient;
             private readonly IAuthDatabaseContext _databaseContext;
-            private AsyncFallbackPolicy _ignoreBadRequestsPolicy;
+
+            private static readonly AsyncFallbackPolicy IgnoreBadRequestsPolicy = Policy
+                .Handle<TelegramClientException>()
+                .FallbackAsync(token => Task.CompletedTask);
 
             public IList<IEvent> Events => new List<IEvent>();
 
@@ -50,19 +53,15 @@ namespace FWTL.Domain.Users
             {
                 _telegramClient = telegramClient;
                 _databaseContext = databaseContext;
-
-                _ignoreBadRequestsPolicy = Policy
-                    .Handle<TelegramClientException>()
-                    .FallbackAsync(token => Task.CompletedTask);
             }
 
             public async Task ExecuteAsync(Command command)
             {
                 string sessionName = command.UserId.ToSession(command.PhoneNumber);
 
-                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.UserService.LogoutAsync(sessionName));
-                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.RemoveSessionAsync(sessionName));
-                await _ignoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.UnlinkSessionFileAsync(sessionName));
+                await IgnoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.UserService.LogoutAsync(sessionName));
+                await IgnoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.RemoveSessionAsync(sessionName));
+                await IgnoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.SystemService.UnlinkSessionFileAsync(sessionName));
 
                 var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Number == command.PhoneNumber).FirstOrDefaultAsync();
                 if (telegramAccount.IsNull())

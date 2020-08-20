@@ -10,32 +10,31 @@ namespace FWTL.TelegramClient.Services
     public class BaseService
     {
         private readonly HttpClient _client;
-        private readonly JsonSerializerOptions _serializeOptions;
+
+        private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         public BaseService(HttpClient client)
         {
             _client = client;
-
-            _serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
         }
 
         protected async Task<TResponse> HandleAsync<TResponse>(string url)
         {
             var response = await _client.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
             {
-                throw new InvalidOperationException(response.StatusCode + " " + response.Content);
+                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
             }
 
             ResponseWrapper<TResponse> result;
 
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, _serializeOptions);
+                result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
             }
 
             if (!result.IsSuccess)
@@ -58,7 +57,7 @@ namespace FWTL.TelegramClient.Services
             ResponseWrapper result;
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, _serializeOptions);
+                result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
             }
 
             if (!result.IsSuccess)
