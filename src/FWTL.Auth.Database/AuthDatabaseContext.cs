@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
-using FWTL.Aggragate;
+using FWTL.Aggregate;
 using FWTL.Core.Database;
 
 namespace FWTL.Auth.Database

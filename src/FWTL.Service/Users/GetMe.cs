@@ -1,4 +1,4 @@
-﻿using FWTL.Aggragate;
+﻿using FWTL.Aggregate;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Identity;

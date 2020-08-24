@@ -1,5 +1,5 @@
 using AutoMapper;
-using FWTL.Aggragate;
+using FWTL.Aggregate;
 using FWTL.Auth.Database;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;

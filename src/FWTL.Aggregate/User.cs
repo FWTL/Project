@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Aggragate
+namespace FWTL.Aggregate
 {
     public class User : IdentityUser<Guid>
     {

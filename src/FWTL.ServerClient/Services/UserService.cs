@@ -1,6 +1,8 @@
 ﻿using FWTL.TelegramClient.Responses;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FWTL.TelegramClient.Exceptions;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -15,9 +17,16 @@ namespace FWTL.TelegramClient.Services
             return HandleAsync<AuthAuthorization>($"api/users/{sessionName}/completePhoneLogin?code={code}");
         }
 
-        public Task<User> GetSelfAsync(string sessionName)
+        public async Task<User> GetSelfAsync(string sessionName)
         {
-            return HandleAsync<User>($"api/users/{sessionName}/getSelf");
+            try
+            {
+                return await HandleAsync<User>($"api/users/{sessionName}/getSelf");
+            }
+            catch (TelegramClientException e)
+            {
+                return null;
+            }
         }
 
         public Task PhoneLoginAsync(string sessionName, string phoneNumber)

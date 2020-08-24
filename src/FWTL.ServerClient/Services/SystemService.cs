@@ -1,4 +1,6 @@
-﻿using FWTL.TelegramClient.Responses;
+﻿using FWTL.TelegramClient.Exceptions;
+using FWTL.TelegramClient.Responses;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -22,12 +24,26 @@ namespace FWTL.TelegramClient.Services
 
         public Task RemoveSessionAsync(string sessionName)
         {
-            return HandleAsync($"/system/removeSession?session=users/{sessionName}");
+            try
+            {
+                return HandleAsync($"/system/removeSession?session=users/{sessionName}");
+            }
+            catch (TelegramClientException e)
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public Task UnlinkSessionFileAsync(string sessionName)
         {
-            return HandleAsync($"/system/unlinkSessionFile?session=users/{sessionName}");
+            try
+            {
+                return HandleAsync($"/system/unlinkSessionFile?session=users/{sessionName}");
+            }
+            catch (TelegramClientException e)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }
