@@ -60,7 +60,7 @@ namespace FWTL.Domain.Users
             {
                 var accounts = _dbAuthDatabaseContext.TelegramAccount
                     .Where(ta => ta.UserId == query.UserId)
-                    .Select(ta => ta.Number).ToList();
+                    .Select(ta => ta.Id).ToList();
 
                 var telegramAccounts = new List<Result>();
                 foreach (string account in accounts)

@@ -8,6 +8,6 @@ namespace FWTL.Aggregate
 
         public virtual User User { get; set; }
 
-        public string Number { get; set; }
+        public string Id { get; set; }
     }
 }
