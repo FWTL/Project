@@ -10,12 +10,12 @@ using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FWTL.Aggragate;
+using FWTL.Aggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Users
 {
-    public class LinkAccount
+    public class AddTelegramAccount
     {
         public class Request : IRequest
         {

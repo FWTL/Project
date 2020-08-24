@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FWTL.Aggragate
+namespace FWTL.Aggregate
 {
     public class TelegramAccount
     {

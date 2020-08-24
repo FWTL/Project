@@ -1,4 +1,4 @@
-﻿using FWTL.Aggragate;
+﻿using FWTL.Aggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Core.Database

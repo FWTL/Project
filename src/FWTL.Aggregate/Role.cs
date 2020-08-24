@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace FWTL.Aggragate
+namespace FWTL.Aggregate
 {
     public class Role : IdentityRole<Guid>
     {

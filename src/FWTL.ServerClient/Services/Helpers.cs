@@ -1,5 +1,6 @@
 ﻿using FWTL.TelegramClient.Exceptions;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -39,6 +40,11 @@ namespace FWTL.TelegramClient.Services
 
             if (!result.IsSuccess)
             {
+                if (result.Errors.All(e => e.Message.Contains("No sessions available")))
+                {
+                    throw new TelegramSessionNotFoundException(url);
+                }
+
                 throw new TelegramClientException(result.Errors);
             }
 
@@ -62,6 +68,11 @@ namespace FWTL.TelegramClient.Services
 
             if (!result.IsSuccess)
             {
+                if (result.Errors.All(e => e.Message.Contains("No sessions available") || e.Message.Contains("Session not found")))
+                {
+                    throw new TelegramSessionNotFoundException(url);
+                }
+
                 throw new TelegramClientException(result.Errors);
             }
         }

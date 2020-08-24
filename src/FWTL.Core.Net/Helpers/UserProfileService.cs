@@ -1,4 +1,4 @@
-﻿using FWTL.Aggragate;
+﻿using FWTL.Aggregate;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;

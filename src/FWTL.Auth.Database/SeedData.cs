@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using FWTL.Aggragate;
+using FWTL.Aggregate;
 using FWTL.Common.Extensions;
 using FWTL.Core.Enums;
 using Microsoft.AspNetCore.Identity;

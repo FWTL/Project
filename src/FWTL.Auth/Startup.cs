@@ -1,8 +1,7 @@
-﻿using FWTL.Aggragate;
+﻿using FWTL.Aggregate;
 using FWTL.Auth.Database;
 using FWTL.Auth.Database.IdentityServer;
 using FWTL.Common.Credentials;
-using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
