@@ -19,7 +19,7 @@ namespace FWTL.Domain.Users
     {
         public class Request : IRequest
         {
-            public string PhoneNumber { get; set; }
+            public string AccountId { get; set; }
         }
 
         public class Command : Request, ICommand
@@ -51,19 +51,19 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.PhoneNumber);
+                string sessionName = command.UserId.ToSession(command.AccountId);
 
                 await _telegramClient.SystemService.AddSessionAsync(sessionName);
-                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.PhoneNumber);
+                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.AccountId);
 
                 bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.TelegramAccount.AnyAsync(ta =>
-                    ta.Number == command.PhoneNumber && ta.UserId == command.UserId);
+                    ta.Id == command.AccountId && ta.UserId == command.UserId);
 
                 if (!doesAccountAlreadyExist)
                 {
                     await _dbAuthDatabaseContext.TelegramAccount.AddAsync(new TelegramAccount()
                     {
-                        Number = command.PhoneNumber,
+                        Id = command.AccountId,
                         UserId = command.UserId
                     });
                     await _dbAuthDatabaseContext.SaveChangesAsync();
@@ -75,7 +75,7 @@ namespace FWTL.Domain.Users
         {
             public Validator()
             {
-                RuleFor(x => x.PhoneNumber).Matches(RegexExpressions.ONLY_NUMBERS);
+                RuleFor(x => x.AccountId).Matches(RegexExpressions.ONLY_NUMBERS);
             }
         }
     }

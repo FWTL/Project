@@ -13,7 +13,7 @@ namespace FWTL.Domain.Users
     {
         public class Request : IRequest
         {
-            public string PhoneNumber { get; set; }
+            public string AccountId { get; set; }
 
             public string Code { get; set; }
         }
@@ -45,7 +45,7 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.PhoneNumber);
+                string sessionName = command.UserId.ToSession(command.AccountId);
                 await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
             }
         }

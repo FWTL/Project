@@ -44,25 +44,25 @@ namespace FWTL.Management.Controllers
             return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
         }
 
-        [HttpPost("Me/Accounts/{phoneNumber}")]
+        [HttpPost("Me/Accounts/{accountId}")]
         [Authorize]
-        public async Task AddTelegramAccount(string phoneNumber)
+        public async Task AddTelegramAccount(string accountId)
         {
-            await _commandDispatcher.DispatchAsync<AddTelegramAccount.Request, AddTelegramAccount.Command>(new AddTelegramAccount.Request() { PhoneNumber = phoneNumber });
+            await _commandDispatcher.DispatchAsync<AddTelegramAccount.Request, AddTelegramAccount.Command>(new AddTelegramAccount.Request() { AccountId = accountId });
         }
 
-        [HttpPost("Me/Accounts/{phoneNumber}/Verify")]
+        [HttpPost("Me/Accounts/{accountId}/Verify")]
         [Authorize]
-        public async Task VerifyTelegramAccount(string phoneNumber, string code)
+        public async Task VerifyTelegramAccount(string accountId, string code)
         {
-            await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { PhoneNumber = phoneNumber, Code = code });
+            await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { AccountId = accountId, Code = code });
         }
 
-        [HttpDelete("Me/Accounts/{phoneNumber}")]
+        [HttpDelete("Me/Accounts/{accountId}")]
         [Authorize]
-        public async Task DeleteAccount(string phoneNumber)
+        public async Task DeleteAccount(string accountId)
         {
-            await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { PhoneNumber = phoneNumber });
+            await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
         }
     }
 }

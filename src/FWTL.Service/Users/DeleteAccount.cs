@@ -18,7 +18,7 @@ namespace FWTL.Domain.Users
     {
         public class Request : IRequest
         {
-            public string PhoneNumber { get; set; }
+            public string AccountId { get; set; }
         }
 
         public class Command : Request, ICommand
@@ -50,16 +50,16 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.PhoneNumber);
+                string sessionName = command.UserId.ToSession(command.AccountId);
 
                 await _telegramClient.UserService.LogoutAsync(sessionName);
                 await _telegramClient.SystemService.RemoveSessionAsync(sessionName);
                 //_telegramClient.SystemService.UnlinkSessionFileAsync(sessionName); // doesn't work
 
-                var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Number == command.PhoneNumber).FirstOrDefaultAsync();
+                var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Id == command.AccountId).FirstOrDefaultAsync();
                 if (telegramAccount.IsNull())
                 {
-                    throw new AppValidationException(nameof(Command.PhoneNumber), "Telegram account not found");
+                    throw new AppValidationException(nameof(Command.AccountId), "Telegram account not found");
                 }
 
                 _databaseContext.TelegramAccount.Remove(telegramAccount);
