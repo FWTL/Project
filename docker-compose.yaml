@@ -21,7 +21,7 @@ services:
       - "1433:1433"
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "KQlqqjercDE7d4YSF3O"
+      SA_PASSWORD: "!QAZ2wsx"
     volumes:
       - FWTL-sql-data:/var/opt/mssql
     networks:

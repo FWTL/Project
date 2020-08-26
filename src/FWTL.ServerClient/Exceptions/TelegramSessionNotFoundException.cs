@@ -4,7 +4,7 @@ namespace FWTL.TelegramClient.Exceptions
 {
     public class TelegramSessionNotFoundException : Exception
     {
-        public TelegramSessionNotFoundException(string url) : base($"Session not found for request: {url}")
+        public TelegramSessionNotFoundException() : base($"Session not found")
         {
         }
     }

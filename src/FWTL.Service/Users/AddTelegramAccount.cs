@@ -1,24 +1,25 @@
-﻿using FWTL.Common.Extensions;
+﻿using FluentValidation;
+using FWTL.Aggregate;
+using FWTL.Common.Extensions;
+using FWTL.Common.Helpers;
 using FWTL.Core.Commands;
+using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
+using FWTL.Core.Validation;
 using FWTL.TelegramClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentValidation;
-using FWTL.Common.Helpers;
-using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Users
 {
-    public class VerifyAccount
+    public class SendCode
     {
         public class Request : IRequest
         {
             public string AccountId { get; set; }
-
-            public string Code { get; set; }
         }
 
         public class Command : Request, ICommand
@@ -38,18 +39,20 @@ namespace FWTL.Domain.Users
         public class Handler : ICommandHandler<Command>
         {
             private readonly ITelegramClient _telegramClient;
-
-            public Handler(ITelegramClient telegramClient)
-            {
-                _telegramClient = telegramClient;
-            }
+            private readonly IAuthDatabaseContext _dbAuthDatabaseContext;
 
             public IList<IEvent> Events => new List<IEvent>();
+
+            public Handler(ITelegramClient telegramClient, IAuthDatabaseContext dbAuthDatabaseContext)
+            {
+                _telegramClient = telegramClient;
+                _dbAuthDatabaseContext = dbAuthDatabaseContext;
+            }
 
             public async Task ExecuteAsync(Command command)
             {
                 string sessionName = command.UserId.ToSession(command.AccountId);
-                await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
+                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.AccountId);
             }
         }
 
@@ -58,7 +61,6 @@ namespace FWTL.Domain.Users
             public Validator()
             {
                 RuleFor(x => x.AccountId).Matches(RegexExpressions.ONLY_NUMBERS);
-                RuleFor(x => x.Code).Matches(RegexExpressions.ONLY_NUMBERS);
             }
         }
     }

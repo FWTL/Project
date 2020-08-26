@@ -103,7 +103,7 @@ namespace FWTL.Management
                 client.BaseAddress = new Uri(configuration["Telegram:Url"]);
             })
             .AddPolicyHandler(GetRetryPolicy())
-            .AddPolicyHandler(TimeoutPolicy(10));
+            .AddPolicyHandler(TimeoutPolicy(30));
 
             services.AddScoped<IAuthDatabaseContext, AuthDatabaseContext>();
         }

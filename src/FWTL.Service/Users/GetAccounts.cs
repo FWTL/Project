@@ -3,10 +3,6 @@ using FWTL.Core.Database;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.TelegramClient;
-using FWTL.TelegramClient.Exceptions;
-using FWTL.TelegramClient.Responses;
-using Polly;
-using Polly.Fallback;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,8 +44,6 @@ namespace FWTL.Domain.Users
             private readonly ITelegramClient _telegramClient;
             private readonly IAuthDatabaseContext _dbAuthDatabaseContext;
 
-            private static readonly AsyncFallbackPolicy<User> IgnoreBadRequestsPolicy = Policy<User>.Handle<TelegramClientException>().FallbackAsync(fallbackValue: null);
-
             public Handler(ITelegramClient telegramClient, IAuthDatabaseContext dbAuthDatabaseContext)
             {
                 _telegramClient = telegramClient;
@@ -66,7 +60,7 @@ namespace FWTL.Domain.Users
                 foreach (string account in accounts)
                 {
                     string sessionName = query.UserId.ToSession(account);
-                    var result = await IgnoreBadRequestsPolicy.ExecuteAsync(() => _telegramClient.UserService.GetSelfAsync(sessionName));
+                    var result = await _telegramClient.UserService.GetSelfAsync(sessionName);
 
                     if (result.IsNotNull())
                     {
