@@ -11,7 +11,5 @@ namespace FWTL.TelegramClient.Responses
         public string Lastname { get; set; }
 
         public string Username { get; set; }
-
-        //public IUserProfilePhoto Photo { get; set; }
     }
 }

@@ -1,8 +1,8 @@
-﻿using FWTL.TelegramClient.Responses;
-using System;
+﻿using FWTL.TelegramClient.Exceptions;
+using FWTL.TelegramClient.Responses;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using FWTL.TelegramClient.Exceptions;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -23,7 +23,11 @@ namespace FWTL.TelegramClient.Services
             {
                 return await HandleAsync<User>($"api/users/{sessionName}/getSelf");
             }
-            catch (TelegramClientException e)
+            catch (TelegramSessionNotFoundException)
+            {
+                return null;
+            }
+            catch (JsonException) //This occurs when user has session, but it is not authenticated yet. Response returns success but in response returns false instead of object O.o'
             {
                 return null;
             }
@@ -34,9 +38,15 @@ namespace FWTL.TelegramClient.Services
             return HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
         }
 
-        public Task LogoutAsync(string sessionName)
+        public async Task LogoutAsync(string sessionName)
         {
-            return HandleAsync($"/api/users/{sessionName}/logout");
+            try
+            {
+                await HandleAsync($"/api/users/{sessionName}/logout");
+            }
+            catch (TelegramSessionNotFoundException)
+            {
+            }
         }
     }
 }

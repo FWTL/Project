@@ -51,6 +51,13 @@ namespace FWTL.Management.Controllers
             await _commandDispatcher.DispatchAsync<AddTelegramAccount.Request, AddTelegramAccount.Command>(new AddTelegramAccount.Request() { AccountId = accountId });
         }
 
+        [HttpPost("Me/Accounts/{accountId}/Code")]
+        [Authorize]
+        public async Task SendCode(string accountId)
+        {
+            await _commandDispatcher.DispatchAsync<SendCode.Request, SendCode.Command>(new SendCode.Request() { AccountId = accountId });
+        }
+
         [HttpPost("Me/Accounts/{accountId}/Verify")]
         [Authorize]
         public async Task VerifyTelegramAccount(string accountId, string code)

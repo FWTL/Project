@@ -38,15 +38,7 @@ namespace FWTL.TelegramClient.Services
                 result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
             }
 
-            if (!result.IsSuccess)
-            {
-                if (result.Errors.All(e => e.Message.Contains("No sessions available")))
-                {
-                    throw new TelegramSessionNotFoundException(url);
-                }
-
-                throw new TelegramClientException(result.Errors);
-            }
+            HandleResponse(result);
 
             return result.Response;
         }
@@ -66,15 +58,22 @@ namespace FWTL.TelegramClient.Services
                 result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
             }
 
-            if (!result.IsSuccess)
-            {
-                if (result.Errors.All(e => e.Message.Contains("No sessions available") || e.Message.Contains("Session not found")))
-                {
-                    throw new TelegramSessionNotFoundException(url);
-                }
+            HandleResponse(result);
+        }
 
-                throw new TelegramClientException(result.Errors);
+        private void HandleResponse(ResponseWrapper result)
+        {
+            if (result.IsSuccess)
+            {
+                return;
             }
+
+            if (result.Errors.All(e => e.Message.Contains("No sessions available") || e.Message.Contains("Session not found")))
+            {
+                throw new TelegramSessionNotFoundException();
+            }
+
+            throw new TelegramClientException(result.Errors);
         }
 
         //public static string ToPascalCase(this string source)
