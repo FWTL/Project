@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using FWTL.Core.Commands;
+﻿using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FWTL.Management.Controllers
@@ -70,6 +70,13 @@ namespace FWTL.Management.Controllers
         public async Task DeleteAccount(string accountId)
         {
             await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
+        }
+
+        [HttpGet("Me/Accounts/{accountId}/Dialogs")]
+        [Authorize]
+        public async Task<IReadOnlyList<GetDialogs.Result>> GetDialogs(string accountId)
+        {
+            return await _queryDispatcher.DispatchAsync<GetDialogs.Request, GetDialogs.Query, IReadOnlyList<GetDialogs.Result>>( new GetDialogs.Request() {AccountId = accountId});
         }
     }
 }

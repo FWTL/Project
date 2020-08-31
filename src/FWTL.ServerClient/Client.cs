@@ -9,10 +9,16 @@ namespace FWTL.TelegramClient
 
         public ISystemService SystemService { get; }
 
+        public IContactService ContactService { get; }
+
+        public IMessageService MessageService { get; }
+
         public Client(HttpClient client)
         {
             UserService = new UserService(client);
             SystemService = new SystemService(client);
+            ContactService = new ContactService(client);
+            MessageService = new MessageService(client);
         }
     }
 }

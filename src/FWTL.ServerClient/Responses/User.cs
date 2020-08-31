@@ -4,6 +4,8 @@ namespace FWTL.TelegramClient.Responses
 {
     public class User
     {
+        public int Id { get; set; }
+
         [JsonPropertyName("first_name")]
         public string Firstname { get; set; }
 

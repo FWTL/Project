@@ -14,7 +14,7 @@ namespace FWTL.TelegramClient.Services
 
         public Task CompletePhoneLoginAsync(string sessionName, string code)
         {
-            return HandleAsync<AuthAuthorization>($"api/users/{sessionName}/completePhoneLogin?code={code}");
+            return HandleAsync($"api/users/{sessionName}/completePhoneLogin?code={code}");
         }
 
         public async Task<User> GetSelfAsync(string sessionName)
@@ -35,7 +35,7 @@ namespace FWTL.TelegramClient.Services
 
         public Task PhoneLoginAsync(string sessionName, string phoneNumber)
         {
-            return HandleAsync<AuthSentCode>($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
+            return HandleAsync($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
         }
 
         public async Task LogoutAsync(string sessionName)
