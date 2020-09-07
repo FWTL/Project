@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Aggregate;
 using static System.String;
 
 namespace FWTL.Domain.Users
@@ -16,6 +17,10 @@ namespace FWTL.Domain.Users
         public class Request : IRequest
         {
             public string AccountId { get; set; }
+
+            public int Limit { get; set; }
+
+            public int Start { get; set; }
         }
 
         public class Query : Request, IQuery
@@ -28,6 +33,8 @@ namespace FWTL.Domain.Users
             {
                 UserId = currentUserService.CurrentUserId;
             }
+
+            public string SessionName => UserId.ToSession(AccountId);
 
             public Guid UserId { get; set; }
         }
@@ -61,39 +68,12 @@ namespace FWTL.Domain.Users
 
             public async Task<IReadOnlyList<Result>> HandleAsync(Query query)
             {
-                string sessionName = query.UserId.ToSession(query.AccountId);
-                var allContacts = await _telegramClient.ContactService.GetAllContactsAsync(sessionName);
-                var allChats = await _telegramClient.MessageService.GetAllChatsAsync(sessionName);
-
-                var dialogs = new List<Result>();
-                dialogs.AddRange(allContacts.Users.Select(u =>
+                var dialogs = await _telegramClient.UserService.GetDialogsAsync(query.SessionName);
+                foreach (var dialog in dialogs)
                 {
-                    string name = u.Firstname;
-                    if (!IsNullOrEmpty(u.Lastname))
-                    {
-                        name += " " + u.Lastname;
-                    }
-                    name = IsNullOrEmpty(name) ? u.Username : name;
-
-                    return new Result()
-                    {
-                        Id = u.Id,
-                        Type = Result.PeerType.User,
-                        Name = name
-                    };
-                }));
-
-                dialogs.AddRange(allChats.Chats.Where(u => u.MigratedTo.IsNull()).Select(chat => new Result()
-                {
-                    Id = chat.Id,
-                    Type = chat.Type == "chat" ? Result.PeerType.Chat : Result.PeerType.Channel,
-                    Name = chat.Title,
-                    MigratedFromChat = allChats.Chats.Where(x => x.MigratedTo?.ChannelId == chat.Id).Select(x => (int?)x.Id).FirstOrDefault()
-                }));
-
-                dialogs = dialogs.OrderBy(x => x.Type).ThenBy(x => x.Name).ToList();
-
-                return dialogs;
+                    await _telegramClient.ContactService.GetInfoAsync(query.SessionName, dialog.Type, dialog.Id);
+                }
+                return null;
             }
         }
     }

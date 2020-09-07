@@ -20,9 +20,9 @@ namespace FWTL.Common.Extensions
             return @this.Errors.Select(error => new ValidationFailure(propertyName, error.Description));
         }
 
-        public static string ToSession(this Guid userId, string phoneNumber)
+        public static string ToSession(this Guid userId, string accountId)
         {
-            return userId + "/" + phoneNumber;
+            return userId + "/" + accountId;
         }
     }
 }

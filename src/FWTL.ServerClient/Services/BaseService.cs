@@ -1,5 +1,8 @@
-﻿using FWTL.TelegramClient.Exceptions;
+﻿using FWTL.TelegramClient.Converters;
+using FWTL.TelegramClient.Exceptions;
+using Microsoft.AspNetCore.WebUtilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +17,8 @@ namespace FWTL.TelegramClient.Services
 
         private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new GetDialogsConverter() }
         };
 
         public BaseService(HttpClient client)
@@ -22,8 +26,14 @@ namespace FWTL.TelegramClient.Services
             _client = client;
         }
 
-        protected async Task<TResponse> HandleAsync<TResponse>(string url)
+        protected Task<TResponse> HandleAsync<TResponse>(string url)
         {
+            return HandleAsync<TResponse>(url, new Dictionary<string, string>());
+        }
+
+        protected async Task<TResponse> HandleAsync<TResponse>(string url, IDictionary<string, string> query)
+        {
+            url = QueryHelpers.AddQueryString(url, query);
             var response = await _client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
@@ -43,8 +53,14 @@ namespace FWTL.TelegramClient.Services
             return result.Response;
         }
 
-        protected async Task HandleAsync(string url)
+        protected Task HandleAsync(string url)
         {
+            return HandleAsync(url, new Dictionary<string, string>());
+        }
+
+        protected async Task HandleAsync(string url, IDictionary<string, string> query)
+        {
+            url = QueryHelpers.AddQueryString(url, query);
             var response = await _client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
