@@ -1,5 +1,6 @@
 ﻿using FWTL.TelegramClient.Exceptions;
 using FWTL.TelegramClient.Responses;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace FWTL.TelegramClient.Services
             {
                 return null;
             }
-            catch (JsonException) //This occurs when user has session, but it is not authenticated yet. Response returns success but in response returns false instead of object O.o'
+            catch (JsonException) //This occurs when user has session, but it is not authenticated yet. Response returns success but in response body equals to false instead of an object O.o'
             {
                 return null;
             }
@@ -44,9 +45,12 @@ namespace FWTL.TelegramClient.Services
             {
                 await HandleAsync($"/api/users/{sessionName}/logout");
             }
-            catch (TelegramSessionNotFoundException)
-            {
-            }
+            catch (TelegramSessionNotFoundException) { }
+        }
+
+        public async Task<List<Dialog>> GetDialogsAsync(string sessionName)
+        {
+            return await HandleAsync<List<Dialog>>($"api/users/{sessionName}/getDialogs");
         }
     }
 }

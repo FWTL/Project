@@ -1,4 +1,5 @@
-﻿using FWTL.TelegramClient.Responses;
+﻿using System.Collections.Generic;
+using FWTL.TelegramClient.Responses;
 using System.Threading.Tasks;
 
 namespace FWTL.TelegramClient
@@ -12,5 +13,7 @@ namespace FWTL.TelegramClient
         Task<User> GetSelfAsync(string sessionName);
 
         Task LogoutAsync(string sessionName);
+
+        Task<List<Dialog>> GetDialogsAsync(string sessionName);
     }
 }
