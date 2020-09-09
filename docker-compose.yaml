@@ -50,6 +50,15 @@ services:
       - FWTL-data:/var/lib/rabbitmq
     networks:
       - backend
+  redis:
+    image: redis:alpine
+    container_name: "pjoterparker-redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - FWTL-data:/var/lib/redis/data
+    networks:
+      - backend
 
 volumes:
   FWTL-sql-data:
