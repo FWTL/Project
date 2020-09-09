@@ -17,7 +17,7 @@ namespace FWTL.TelegramClient.Services
             return HandleAsync<ContactsContacts>($"/api/users/{sessionName}/contacts.getContacts");
         }
 
-        public Task GetInfoAsync(string sessionName, Dialog.DialogType type, int id)
+        public Task<Info> GetInfoAsync(string sessionName, Dialog.DialogType type, int id)
         {
             string dialogType = Enum.GetName(typeof(Dialog.DialogType), type).ToLower();
             var queryParams = new Dictionary<string, string>()
@@ -25,7 +25,7 @@ namespace FWTL.TelegramClient.Services
                 {"id", $"{dialogType}#{id}"}
             };
 
-            return HandleAsync($"/api/users/{sessionName}/getInfo", queryParams);
+            return HandleAsync<Info>($"/api/users/{sessionName}/getInfo", queryParams);
         }
     }
 }

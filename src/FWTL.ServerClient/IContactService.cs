@@ -7,6 +7,6 @@ namespace FWTL.TelegramClient
     {
         Task<ContactsContacts> GetAllContactsAsync(string sessionName);
 
-        Task GetInfoAsync(string sessionName, Dialog.DialogType type, int id);
+        Task<Info> GetInfoAsync(string sessionName, Dialog.DialogType type, int id);
     }
 }

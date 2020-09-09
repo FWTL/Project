@@ -18,7 +18,7 @@ namespace FWTL.TelegramClient.Services
         private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new GetDialogsConverter() }
+            Converters = { new GetDialogsConverter(), new DateConverterFactory() }
         };
 
         public BaseService(HttpClient client)

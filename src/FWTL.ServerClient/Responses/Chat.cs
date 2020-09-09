@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using NodaTime;
 
 namespace FWTL.TelegramClient.Responses
 {
@@ -13,6 +14,8 @@ namespace FWTL.TelegramClient.Responses
 
         [JsonPropertyName("migrated_to")]
         public InputChannel MigratedTo { get; set; }
+
+        public Instant Date { get; set; }
     }
 
     public class InputChannel
