@@ -23,6 +23,7 @@ using Polly.Extensions.Http;
 using System;
 using System.Net.Http;
 using System.Reflection;
+using StackExchange.Redis;
 
 namespace FWTL.Management
 {
@@ -38,6 +39,12 @@ namespace FWTL.Management
             {
                 var configuration = b.GetService<IConfiguration>();
                 return new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Auth"));
+            });
+
+            services.AddSingleton(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
+                return new RedisCredentials(new RedisLocalCredentialsBase(configuration));
             });
         }
 
@@ -106,6 +113,27 @@ namespace FWTL.Management
             .AddPolicyHandler(TimeoutPolicy(30));
 
             services.AddScoped<IAuthDatabaseContext, AuthDatabaseContext>();
+
+            services.AddSingleton(b =>
+            {
+                var credentials = b.GetService<RedisCredentials>();
+                return ConnectionMultiplexer.Connect(credentials.ConnectionString);
+            });
+
+            services.AddSingleton(b =>
+            {
+                var redis = b.GetService<ConnectionMultiplexer>();
+                return redis.GetDatabase();
+            });
+
+            services.AddSingleton(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
+                var redis = b.GetService<ConnectionMultiplexer>();
+                return redis.GetServer(host: configuration["Redis:Url"], port: 6379);
+            });
+
+            services.AddScoped<ICacheService, CacheService>();
         }
 
         private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()

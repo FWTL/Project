@@ -1,5 +1,6 @@
 #docker-compose -p fwtl -f "docker-compose.yaml" up -d --build
 #docker-compose -p fwtl -f "docker-compose.yaml" -f "docker-compose.local.yaml" up -d --build
+#docker cp .env.docker FWTL-telegram-api-server:/app/.env.docker
 version: "3"
 
 services:
@@ -52,7 +53,7 @@ services:
       - backend
   redis:
     image: redis:alpine
-    container_name: "pjoterparker-redis"
+    container_name: "FWTL-redis"
     ports:
       - "6379:6379"
     volumes:

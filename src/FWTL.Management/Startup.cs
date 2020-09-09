@@ -25,6 +25,7 @@ using Serilog;
 using Serilog.Events;
 using System.Linq;
 using System.Threading.Tasks;
+using NodaTime.Serialization.SystemTextJson;
 
 namespace FWTL.Management
 {
@@ -57,6 +58,11 @@ namespace FWTL.Management
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            });
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -70,12 +76,6 @@ namespace FWTL.Management
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
-
-            //.AddJsonOptions(o =>
-            //{
-            //    o.JsonSerializerOptions.Con;
-            //    o.JsonSerializerOptions.IgnoreNullValues = true;
-            //});
 
             var defaultSettings = new JsonSerializerSettings()
                 .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
