@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Domain.Mixins;
 
 namespace FWTL.Domain.Users
 {
@@ -21,7 +22,7 @@ namespace FWTL.Domain.Users
             public string AccountId { get; set; }
         }
 
-        public class Command : Request, ICommand
+        public class Command : Request, ICommand, ISessionNameMixin
         {
             public Command()
             {
@@ -50,10 +51,9 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.AccountId);
-
-                await _telegramClient.UserService.LogoutAsync(sessionName);
-                await _telegramClient.SystemService.RemoveSessionAsync(sessionName);
+               
+                await _telegramClient.UserService.LogoutAsync(command.SessionName());
+                await _telegramClient.SystemService.RemoveSessionAsync(command.SessionName());
                 //_telegramClient.SystemService.UnlinkSessionFileAsync(sessionName); // doesn't work
 
                 var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.Id == command.AccountId).FirstOrDefaultAsync();

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FWTL.Aggregate;
+using FWTL.Domain.Mixins;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Users
@@ -22,7 +23,7 @@ namespace FWTL.Domain.Users
             public string AccountId { get; set; }
         }
 
-        public class Command : Request, ICommand
+        public class Command : Request, ICommand, ISessionNameMixin
         {
             public Command()
             {
@@ -51,10 +52,9 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.AccountId);
-
-                await _telegramClient.SystemService.AddSessionAsync(sessionName);
-                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.AccountId);
+                
+                await _telegramClient.SystemService.AddSessionAsync(command.SessionName());
+                await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
 
                 bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.TelegramAccount.AnyAsync(ta =>
                     ta.Id == command.AccountId && ta.UserId == command.UserId);

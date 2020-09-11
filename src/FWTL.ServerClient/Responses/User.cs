@@ -13,5 +13,8 @@ namespace FWTL.TelegramClient.Responses
         public string Lastname { get; set; }
 
         public string Username { get; set; }
+
+        [JsonPropertyName("deleted")]
+        public bool IsDeleted { get; set; }
     }
 }

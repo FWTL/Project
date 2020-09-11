@@ -32,17 +32,28 @@ namespace FWTL.Common.Services
             return JsonSerializer.Deserialize<T>(json);
         }
 
-        public async Task<T> GetAsync<T>(string key, Func<Task<T>> fallback, TimeSpan? expire) where T : class
+        public async Task<T> GetAsync<T>(string key, Func<Task<T>> fallback, bool isForced, TimeSpan? expire) where T : class
         {
-            var json = _cache.StringGet(key);
-            if (string.IsNullOrWhiteSpace(json))
+            if (isForced)
             {
                 var result = await fallback();
                 Set<T>(key, result, expire);
                 return result;
             }
 
-            return JsonSerializer.Deserialize<T>(json);
+            RedisValueWithExpiry redisValue = _cache.StringGetWithExpiry(key);
+            if (string.IsNullOrWhiteSpace(redisValue.Value))
+            {
+                var result = await fallback();
+                Set<T>(key, result, expire);
+                return result;
+            }
+            else if(expire.HasValue && redisValue.Expiry?.TotalSeconds < expire.Value.TotalSeconds / 2)
+            {
+                _cache.KeyExpire(key, expire);
+            }
+
+            return JsonSerializer.Deserialize<T>(redisValue.Value);
         }
     }
 }
