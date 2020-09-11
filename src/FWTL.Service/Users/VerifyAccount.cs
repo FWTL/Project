@@ -1,14 +1,14 @@
-﻿using FWTL.Common.Extensions;
+﻿using FluentValidation;
+using FWTL.Common.Helpers;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
+using FWTL.Core.Validation;
+using FWTL.Domain.Mixins;
 using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentValidation;
-using FWTL.Common.Helpers;
-using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Users
 {
@@ -21,7 +21,7 @@ namespace FWTL.Domain.Users
             public string Code { get; set; }
         }
 
-        public class Command : Request, ICommand
+        public class Command : Request, ICommand, ISessionNameMixin
         {
             public Command()
             {
@@ -48,8 +48,7 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.AccountId);
-                await _telegramClient.UserService.CompletePhoneLoginAsync(sessionName, command.Code);
+                await _telegramClient.UserService.CompletePhoneLoginAsync(command.SessionName(), command.Code);
             }
         }
 

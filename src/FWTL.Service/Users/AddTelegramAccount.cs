@@ -6,6 +6,7 @@ using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
+using FWTL.Domain.Mixins;
 using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace FWTL.Domain.Users
             public string AccountId { get; set; }
         }
 
-        public class Command : Request, ICommand
+        public class Command : Request, ICommand, ISessionNameMixin
         {
             public Command()
             {
@@ -47,8 +48,7 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                string sessionName = command.UserId.ToSession(command.AccountId);
-                await _telegramClient.UserService.PhoneLoginAsync(sessionName, command.AccountId);
+                await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
             }
         }
 

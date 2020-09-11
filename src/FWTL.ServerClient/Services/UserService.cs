@@ -1,6 +1,7 @@
 ﻿using FWTL.TelegramClient.Exceptions;
 using FWTL.TelegramClient.Responses;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -50,7 +51,10 @@ namespace FWTL.TelegramClient.Services
 
         public async Task<List<Dialog>> GetDialogsAsync(string sessionName)
         {
-            return await HandleAsync<List<Dialog>>($"api/users/{sessionName}/getDialogs");
+            //it seems Telegram returns dialogs from least frequently used.
+            var result = await HandleAsync<List<Dialog>>($"api/users/{sessionName}/getDialogs");
+            result.Reverse();
+            return result;
         }
     }
 }

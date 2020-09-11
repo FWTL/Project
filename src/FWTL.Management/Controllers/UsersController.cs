@@ -74,13 +74,14 @@ namespace FWTL.Management.Controllers
 
         [HttpGet("Me/Accounts/{accountId}/Dialogs")]
         [Authorize]
-        public async Task<IReadOnlyList<GetDialogs.Result>> GetDialogs(string accountId, int start, int limit)
+        public async Task<IReadOnlyList<GetDialogs.Result>> GetDialogs(string accountId, int start, int limit, bool isForced)
         {
             return await _queryDispatcher.DispatchAsync<GetDialogs.Request, GetDialogs.Query, IReadOnlyList<GetDialogs.Result>>(new GetDialogs.Request()
             {
                 AccountId = accountId,
                 Start = start,
-                Limit = limit
+                Limit = limit,
+                IsForced = isForced
             });
         }
     }

@@ -60,6 +60,13 @@ services:
       - FWTL-data:/var/lib/redis/data
     networks:
       - backend
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: "FWTL-redisinsight"
+    ports:
+      - "8005:8001"
+    networks:
+      - backend
 
 volumes:
   FWTL-sql-data:
