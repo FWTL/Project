@@ -5,7 +5,6 @@ using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Domain.Cache;
-using FWTL.Domain.Mixins;
 using FWTL.TelegramClient;
 using FWTL.TelegramClient.Responses;
 using NodaTime;
@@ -13,12 +12,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Domain.Traits;
 
 namespace FWTL.Domain.Users
 {
     public class GetDialogs
     {
-        public class Request : IRequest
+        public class Request : IRequest, IPagingTrait
         {
             public string AccountId { get; set; }
 
@@ -29,7 +29,7 @@ namespace FWTL.Domain.Users
             public bool IsForced { get; set; }
         }
 
-        public class Query : Request, IQuery, ISessionNameMixin
+        public class Query : Request, IQuery, ISessionNameTrait
         {
             public Query()
             {
@@ -141,7 +141,7 @@ namespace FWTL.Domain.Users
 
         public class Validator : AppAbstractValidation<Query>
         {
-            public Validator(IValidator<ISessionNameMixin> validator)
+            public Validator(IValidator<ISessionNameTrait> validator)
             {
                 RuleFor(x => x).SetValidator(validator);
             }

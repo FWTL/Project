@@ -6,11 +6,11 @@ using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
-using FWTL.Domain.Mixins;
 using FWTL.TelegramClient;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Domain.Traits;
 
 namespace FWTL.Domain.Users
 {
@@ -21,7 +21,7 @@ namespace FWTL.Domain.Users
             public string AccountId { get; set; }
         }
 
-        public class Command : Request, ICommand, ISessionNameMixin
+        public class Command : Request, ICommand, ISessionNameTrait
         {
             public Command()
             {
