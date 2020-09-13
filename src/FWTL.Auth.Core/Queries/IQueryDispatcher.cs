@@ -6,7 +6,7 @@ namespace FWTL.Core.Queries
 {
     public interface IQueryDispatcher
     {
-        Task<TResult> DispatchAsync<TQuery, TResult>(TQuery command)
+        Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : class, IQuery;
 
         Task<TResult> DispatchAsync<TRequest, TQuery, TResult>(TRequest request)

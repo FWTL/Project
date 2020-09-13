@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FWTL.Domain.Mixins;
+using FWTL.Domain.Traits;
 
 namespace FWTL.Domain.Users
 {
@@ -22,7 +22,7 @@ namespace FWTL.Domain.Users
             public string AccountId { get; set; }
         }
 
-        public class Command : Request, ICommand, ISessionNameMixin
+        public class Command : Request, ICommand, ISessionNameTrait
         {
             public Command()
             {

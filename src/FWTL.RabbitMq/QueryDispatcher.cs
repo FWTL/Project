@@ -1,14 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
+using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWTL.RabbitMq
 {
@@ -28,13 +29,16 @@ namespace FWTL.RabbitMq
             _requestToQueryMapper = requestToQueryMapper;
         }
 
-        public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery command)
+        public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : class, IQuery
         {
+            await TraitValidationAsync<TQuery, ISessionNameTrait>(query);
+            await TraitValidationAsync<TQuery, IPagingTrait>(query);
+
             var validator = _context.GetService<IValidator<TQuery>>();
             if (validator.IsNotNull())
             {
-                var validationResult = await validator.ValidateAsync(command);
+                var validationResult = await validator.ValidateAsync(query);
                 if (!validationResult.IsValid)
                 {
                     throw new ValidationException(validationResult.Errors);
@@ -42,7 +46,7 @@ namespace FWTL.RabbitMq
             }
 
             var client = _clientFactory.CreateRequestClient<TQuery>(new Uri("queue:queries"), TimeSpan.FromMinutes(10));
-            var response = await client.GetResponse<Common.Commands.Response<TResult>>(command);
+            var response = await client.GetResponse<Common.Commands.Response<TResult>>(query);
             if (response.Message.Errors.Any())
             {
                 throw new AppValidationException(response.Message.Errors);
@@ -65,6 +69,20 @@ namespace FWTL.RabbitMq
         {
             var query = _requestToQueryMapper.Map(request, afterMap);
             return await DispatchAsync<TQuery, TResult>(query);
+        }
+
+        public async Task TraitValidationAsync<TQuery, TTraitValidator>(TQuery query)
+            where TQuery : class, IQuery
+        {
+            if (query is TTraitValidator)
+            {
+                var pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
+                var pagingValidatorResult = await pagingValidator.ValidateAsync(query);
+                if (!pagingValidatorResult.IsValid)
+                {
+                    throw new ValidationException(pagingValidatorResult.Errors);
+                }
+            }
         }
     }
 }

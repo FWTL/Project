@@ -2,6 +2,7 @@
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
+using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -30,6 +31,8 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
+            await TraitValidationAsync<TCommand, ISessionNameTrait>(command);
+
             var validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
@@ -45,6 +48,19 @@ namespace FWTL.RabbitMq
             var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:commands"));
             await endpoint.Send(command, x => { x.CorrelationId = correlationId; });
             return correlationId;
+        }
+
+        private async Task TraitValidationAsync<TCommand, TTraitValidator>(TCommand command) where TCommand : class, ICommand
+        {
+            if (command is TTraitValidator)
+            {
+                var pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
+                var pagingValidatorResult = await pagingValidator.ValidateAsync(command);
+                if (!pagingValidatorResult.IsValid)
+                {
+                    throw new ValidationException(pagingValidatorResult.Errors);
+                }
+            }
         }
 
         public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request)

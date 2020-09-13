@@ -1,4 +1,4 @@
-﻿using FWTL.Domain.Mixins;
+﻿using FWTL.Domain.Traits;
 using FWTL.Domain.Users;
 using FWTL.TelegramClient.Responses;
 
