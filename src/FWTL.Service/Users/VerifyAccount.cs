@@ -56,7 +56,6 @@ namespace FWTL.Domain.Users
         {
             public Validator()
             {
-                RuleFor(x => x.AccountId).Matches(RegexExpressions.ONLY_NUMBERS);
                 RuleFor(x => x.Code).Matches(RegexExpressions.ONLY_NUMBERS);
             }
         }
