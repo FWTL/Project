@@ -1,7 +1,7 @@
 #docker-compose -p fwtl -f "docker-compose.yaml" up -d --build
 #docker-compose -p fwtl -f "docker-compose.yaml" -f "docker-compose.local.yaml" up -d --build
 #docker cp .env.docker FWTL-telegram-api-server:/app/.env.docker
-version: "3"
+version: "3.4"
 
 services:
   seq:
@@ -67,11 +67,44 @@ services:
       - "8005:8001"
     networks:
       - backend
+  eventStore:
+    image: docker.pkg.github.com/eventstore/eventstore/eventstore:20.6.1-alpha.0.69.1-buster-slim
+    container_name : "FWTL-eventStore"
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=True
+      - EVENTSTORE_DB=/var/lib/eventstore-data
+      - EVENTSTORE_INDEX=/var/lib/eventstore-index
+      - EVENTSTORE_LOG=/var/log/eventstore
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_EXT_HTTP_PORT=2113
+      - EVENTSTORE_DEV=True
+      - EVENTSTORE_INSECURE=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: FWTL-eventstore-volume-data
+        target: /var/lib/eventstore-data
+      - type: volume
+        source: FWTL-eventstore-volume-index
+        target: /var/lib/eventstore-index
+      - type: volume
+        source: FWTL-eventstore-volume-logs
+        target: /var/log/eventstore
+    networks: 
+      - backend
 
 volumes:
   FWTL-sql-data:
   FWTL-data:
   FWTL-sessions:
+  FWTL-eventstore-volume-data:
+  FWTL-eventstore-volume-ca:
+  FWTL-eventstore-volume-index:
+  FWTL-eventstore-volume-logs:
 
 networks:
   backend:

@@ -4,6 +4,7 @@ using FWTL.Core.Services;
 using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,7 +40,7 @@ namespace FWTL.Management.Controllers
         public async Task AddTelegramAccount(string accountId)
         {
             await _commandDispatcher.DispatchAsync<AddTelegramAccount.Request, AddTelegramAccount.Command>(
-                new AddTelegramAccount.Request() {AccountId = accountId});
+                new AddTelegramAccount.Request() { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Code")]
@@ -47,7 +48,7 @@ namespace FWTL.Management.Controllers
         public async Task SendCode(string accountId)
         {
             await _commandDispatcher.DispatchAsync<SendCode.Request, SendCode.Command>(new SendCode.Request()
-                {AccountId = accountId});
+            { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Verify")]
@@ -55,7 +56,7 @@ namespace FWTL.Management.Controllers
         public async Task VerifyTelegramAccount(string accountId, string code)
         {
             await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(
-                new VerifyAccount.Request() {AccountId = accountId, Code = code});
+                new VerifyAccount.Request() { AccountId = accountId, Code = code });
         }
 
         [HttpDelete("{accountId}")]
@@ -63,7 +64,7 @@ namespace FWTL.Management.Controllers
         public async Task DeleteAccount(string accountId)
         {
             await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(
-                new DeleteAccount.Request() {AccountId = accountId});
+                new DeleteAccount.Request() { AccountId = accountId });
         }
 
         [HttpGet("{accountId}/Dialogs")]
@@ -80,6 +81,18 @@ namespace FWTL.Management.Controllers
                         Limit = limit,
                         IsForced = isForced
                     });
+        }
+
+        [HttpGet("{accountId}/Jobs")]
+        public async Task GetJobs(string accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost("{accountId}/Dialogs/{dialogId}/Jobs")]
+        public Task Create(string accountId, string dialogId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

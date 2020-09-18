@@ -52,7 +52,7 @@ namespace FWTL.Domain.Users
             public Result(Dialog dialog, User user)
             {
                 Id = dialog.Id;
-                Type = (PeerType)dialog.Type;
+                Type = dialog.Type;
 
                 if (user.IsDeleted)
                 {
@@ -83,8 +83,8 @@ namespace FWTL.Domain.Users
             public Result(Dialog dialog, Chat info)
             {
                 Id = dialog.Id;
-                Type = (PeerType)dialog.Type;
-                Created = info.Date;
+                Type = dialog.Type;
+                CreatedAt = info.Date;
                 Name = info.Title;
             }
 
@@ -92,16 +92,9 @@ namespace FWTL.Domain.Users
 
             public string Name { get; set; }
 
-            public PeerType Type { get; set; }
+            public Dialog.DialogType Type { get; set; }
 
-            public Instant? Created { get; set; }
-
-            public enum PeerType
-            {
-                User = 1,
-                Chat = 2,
-                Channel = 3,
-            }
+            public Instant? CreatedAt { get; set; }
         }
 
         public class Handler : IQueryHandler<Query, IReadOnlyList<Result>>
