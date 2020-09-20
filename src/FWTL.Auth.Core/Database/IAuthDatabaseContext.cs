@@ -5,6 +5,10 @@ namespace FWTL.Core.Database
 {
     public interface IAuthDatabaseContext : IDbContext
     {
-        DbSet<TelegramAccount> TelegramAccount { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<Job> Jobs { get; set; }
+
+        public DbSet<TelegramAccountJob> TelegramAccountJobs { get; set; }
     }
 }

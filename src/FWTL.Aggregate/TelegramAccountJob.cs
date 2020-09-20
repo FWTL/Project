@@ -8,7 +8,7 @@ namespace FWTL.Aggregate
 
         public Guid TelegramAccountId { get; set; }
 
-        public virtual TelegramAccount TelegramAccount { get; set; }
+        public virtual Account Account { get; set; }
 
         public virtual Job Job { get; set; }
     }

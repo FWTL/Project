@@ -56,13 +56,13 @@ namespace FWTL.Domain.Users
                 await _telegramClient.SystemService.RemoveSessionAsync(command.SessionName());
                 //_telegramClient.SystemService.UnlinkSessionFileAsync(sessionName); // doesn't work
 
-                var telegramAccount = await _databaseContext.TelegramAccount.Where(ta => ta.UserId == command.UserId && ta.AccountId == command.AccountId).FirstOrDefaultAsync();
+                var telegramAccount = await _databaseContext.Accounts.Where(ta => ta.UserId == command.UserId && ta.ExternalId == command.AccountId).FirstOrDefaultAsync();
                 if (telegramAccount.IsNull())
                 {
                     throw new AppValidationException(nameof(Command.AccountId), "Telegram account not found");
                 }
 
-                _databaseContext.TelegramAccount.Remove(telegramAccount);
+                _databaseContext.Accounts.Remove(telegramAccount);
                 await _databaseContext.SaveChangesAsync();
             }
         }

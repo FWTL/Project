@@ -18,11 +18,11 @@ namespace FWTL.Auth.Database
             _credentials = credentials;
         }
 
-        public DbSet<TelegramAccount> TelegramAccount { get; set; }
+        public DbSet<Account> Accounts { get; set; }
 
-        public DbSet<Job> Job { get; set; }
+        public DbSet<Job> Jobs { get; set; }
 
-        public DbSet<TelegramAccountJob> TelegramAccountJob { get; set; }
+        public DbSet<TelegramAccountJob> TelegramAccountJobs { get; set; }
 
         public void BeginTransaction()
         {

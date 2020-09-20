@@ -54,15 +54,15 @@ namespace FWTL.Domain.Users
                 await _telegramClient.SystemService.AddSessionAsync(command.SessionName());
                 await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
 
-                bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.TelegramAccount.AnyAsync(ta =>
-                    ta.AccountId == command.AccountId && ta.UserId == command.UserId);
+                bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.Accounts.AnyAsync(ta =>
+                    ta.ExternalId == command.AccountId && ta.UserId == command.UserId);
 
                 if (!doesAccountAlreadyExist)
                 {
-                    await _dbAuthDatabaseContext.TelegramAccount.AddAsync(new TelegramAccount()
+                    await _dbAuthDatabaseContext.Accounts.AddAsync(new Account()
                     {
                         Id = command.Id,
-                        AccountId = command.AccountId,
+                        ExternalId = command.AccountId,
                         UserId = command.UserId
                     });
                     await _dbAuthDatabaseContext.SaveChangesAsync();
