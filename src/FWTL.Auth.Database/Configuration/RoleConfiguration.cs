@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FWTL.Auth.Database.Configuration
 {
-    public class RoleConfiguration : IEntityTypeConfiguration<Role>
+    public class JobConfiguration : IEntityTypeConfiguration<Job>
     {
-        public void Configure(EntityTypeBuilder<Role> builder)
+        public void Configure(EntityTypeBuilder<Job> builder)
         {
-            builder.Property(x => x.Id).ValueGeneratedNever();
+            builder.Property(x => x.DialogId).IsRequired().HasMaxLength(50);
         }
     }
 }

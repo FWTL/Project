@@ -1,10 +1,11 @@
-﻿using FWTL.Auth.Database.Configuration;
+﻿using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
+using FWTL.Aggregate;
+using FWTL.Auth.Database.Configuration;
+using FWTL.Core.Database;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
-using FWTL.Aggregate;
-using FWTL.Core.Database;
 
 namespace FWTL.Auth.Database
 {
@@ -18,6 +19,10 @@ namespace FWTL.Auth.Database
         }
 
         public DbSet<TelegramAccount> TelegramAccount { get; set; }
+
+        public DbSet<Job> Job { get; set; }
+
+        public DbSet<TelegramAccountJob> TelegramAccountJob { get; set; }
 
         public void BeginTransaction()
         {
@@ -36,7 +41,7 @@ namespace FWTL.Auth.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_credentials.ConnectionString);
+            optionsBuilder.UseSqlServer(_credentials.ConnectionString, options => options.UseNodaTime());
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -44,6 +49,8 @@ namespace FWTL.Auth.Database
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new TelegramAccountConfiguration());
+            builder.ApplyConfiguration(new TelegramAccountJobConfiguration());
+            builder.ApplyConfiguration(new JobConfiguration());
             base.OnModelCreating(builder);
         }
 

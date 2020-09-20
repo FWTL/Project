@@ -8,8 +8,9 @@ namespace FWTL.Auth.Database.Configuration
     {
         public void Configure(EntityTypeBuilder<TelegramAccount> builder)
         {
-            builder.HasKey(vf => new { vf.UserId, vf.Id });
-            builder.Property(x => x.Id).IsRequired().HasMaxLength(50);
+            builder.HasKey(b => b.Id);
+            builder.Property(x => x.Id).ValueGeneratedNever();
+            builder.Property(b => b.AccountId).IsRequired().HasMaxLength(50);
         }
     }
 }
