@@ -23,6 +23,13 @@ namespace FWTL.Management.Controllers
             _currentUserService = currentUserService;
         }
 
+        [HttpPost]
+        [Authorize]
+        public Task Start()
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpDelete]
         [Authorize]
         public Task Cancel(Guid jobId)

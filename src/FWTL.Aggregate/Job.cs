@@ -12,6 +12,10 @@ namespace FWTL.Aggregate
 
         public long MaxHistoryId { get; set; }
 
+        public long MessagesToProcess { get; set; }
+
+        public long ProcessedMessages { get; set; }
+
         public JobStatus JobStatus { get; set; }
 
         public Instant CreatedAt { get; set; }
@@ -21,6 +25,6 @@ namespace FWTL.Aggregate
 
     public enum JobStatus
     {
-        Created = 1,
+        Started = 1,
     }
 }

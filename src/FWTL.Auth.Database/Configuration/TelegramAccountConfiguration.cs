@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FWTL.Auth.Database.Configuration
 {
-    public class TelegramAccountConfiguration : IEntityTypeConfiguration<TelegramAccount>
+    public class TelegramAccountConfiguration : IEntityTypeConfiguration<Account>
     {
-        public void Configure(EntityTypeBuilder<TelegramAccount> builder)
+        public void Configure(EntityTypeBuilder<Account> builder)
         {
             builder.HasKey(b => b.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
-            builder.Property(b => b.AccountId).IsRequired().HasMaxLength(50);
+            builder.Property(b => b.ExternalId).IsRequired().HasMaxLength(50);
         }
     }
 }

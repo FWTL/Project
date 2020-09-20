@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Aggregate;
+using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Users
 {
@@ -28,7 +30,9 @@ namespace FWTL.Domain.Users
 
         public class Result
         {
-            public string Number { get; set; }
+            public Guid Id { get; set; }
+
+            public string ExternalId { get; set; }
 
             public string FirstName { get; set; }
 
@@ -52,23 +56,22 @@ namespace FWTL.Domain.Users
 
             public async Task<IReadOnlyList<Result>> HandleAsync(Query query)
             {
-                var accounts = _dbAuthDatabaseContext.TelegramAccount
-                    .Where(ta => ta.UserId == query.UserId)
-                    .Select(ta => ta.AccountId).ToList();
+                var accounts = await _dbAuthDatabaseContext.Accounts.Where(ta => ta.UserId == query.UserId).ToListAsync();
 
                 var telegramAccounts = new List<Result>();
-                foreach (string account in accounts)
+                foreach (Account account in accounts)
                 {
-                    string sessionName = query.UserId.ToSession(account);
+                    string sessionName = query.UserId.ToSession(account.ExternalId);
                     var result = await _telegramClient.UserService.GetSelfAsync(sessionName);
 
                     if (result.IsNotNull())
                     {
                         telegramAccounts.Add(new Result()
                         {
+                            Id = account.Id,
                             FirstName = result.Firstname,
                             LastName = result.Lastname,
-                            Number = account,
+                            ExternalId = account.ExternalId,
                             UserName = result.Username,
                             IsLogged = true,
                         });
@@ -77,7 +80,8 @@ namespace FWTL.Domain.Users
                     {
                         telegramAccounts.Add(new Result()
                         {
-                            Number = account,
+                            Id = account.Id,
+                            ExternalId = account.ExternalId,
                             IsLogged = false,
                         });
                     }

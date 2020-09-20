@@ -6,6 +6,6 @@ namespace FWTL.Aggregate
 {
     public class User : IdentityUser<Guid>
     {
-        public virtual ICollection<TelegramAccount> TelegramAccounts { get; set; } = new List<TelegramAccount>();
+        public virtual ICollection<Account> TelegramAccounts { get; set; } = new List<Account>();
     }
 }

@@ -4,14 +4,16 @@ using FWTL.Auth.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FWTL.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthDatabaseContext))]
-    partial class AuthDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200920202231_Alter_Table_Job_Add_Columns_MessagesToProcess_ProcessedMessages")]
+    partial class Alter_Table_Job_Add_Columns_MessagesToProcess_ProcessedMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
