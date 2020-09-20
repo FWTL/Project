@@ -23,10 +23,9 @@ namespace FWTL.Management.Controllers
             _currentUserService = currentUserService;
         }
 
-
         [HttpDelete]
         [Authorize]
-        public Task Delete(Guid jobId)
+        public Task Cancel(Guid jobId)
         {
             throw new NotImplementedException();
         }

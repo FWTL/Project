@@ -1,18 +1,14 @@
-﻿using FluentValidation;
-using FWTL.Common.Extensions;
-using FWTL.Common.Helpers;
+﻿using FWTL.Aggregate;
 using FWTL.Core.Commands;
 using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
+using FWTL.Domain.Traits;
 using FWTL.TelegramClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FWTL.Aggregate;
-using FWTL.Domain.Traits;
-using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Users
 {
@@ -29,10 +25,13 @@ namespace FWTL.Domain.Users
             {
             }
 
-            public Command(ICurrentUserService currentUserService)
+            public Command(ICurrentUserService currentUserService, IGuidService guidService)
             {
+                Id = guidService.New;
                 UserId = currentUserService.CurrentUserId;
             }
+
+            public Guid Id { get; set; }
 
             public Guid UserId { get; set; }
         }
@@ -52,18 +51,18 @@ namespace FWTL.Domain.Users
 
             public async Task ExecuteAsync(Command command)
             {
-                
                 await _telegramClient.SystemService.AddSessionAsync(command.SessionName());
                 await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
 
                 bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.TelegramAccount.AnyAsync(ta =>
-                    ta.Id == command.AccountId && ta.UserId == command.UserId);
+                    ta.AccountId == command.AccountId && ta.UserId == command.UserId);
 
                 if (!doesAccountAlreadyExist)
                 {
                     await _dbAuthDatabaseContext.TelegramAccount.AddAsync(new TelegramAccount()
                     {
-                        Id = command.AccountId,
+                        Id = command.Id,
+                        AccountId = command.AccountId,
                         UserId = command.UserId
                     });
                     await _dbAuthDatabaseContext.SaveChangesAsync();

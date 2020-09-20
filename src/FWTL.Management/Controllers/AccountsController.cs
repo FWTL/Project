@@ -39,8 +39,8 @@ namespace FWTL.Management.Controllers
         [Authorize]
         public async Task AddTelegramAccount(string accountId)
         {
-            await _commandDispatcher.DispatchAsync<AddTelegramAccount.Request, AddTelegramAccount.Command>(
-                new AddTelegramAccount.Request() { AccountId = accountId });
+            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(
+                new AddAccount.Request() { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Code")]
@@ -84,7 +84,7 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpGet("{accountId}/Jobs")]
-        public async Task GetJobs(string accountId)
+        public Task GetJobs(string accountId)
         {
             throw new NotImplementedException();
         }

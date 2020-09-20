@@ -4,45 +4,22 @@ using FWTL.Auth.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FWTL.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthDatabaseContext))]
-    partial class AuthDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200920190032_Alter_TelegramAccount_Change_PK")]
+    partial class Alter_TelegramAccount_Change_PK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("FWTL.Aggregate.Job", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DialogId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<int>("JobStatus")
-                        .HasColumnType("int");
-
-                    b.Property<long>("MaxHistoryId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Job");
-                });
 
             modelBuilder.Entity("FWTL.Aggregate.Role", b =>
                 {
@@ -89,21 +66,6 @@ namespace FWTL.Auth.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("TelegramAccount");
-                });
-
-            modelBuilder.Entity("FWTL.Aggregate.TelegramAccountJob", b =>
-                {
-                    b.Property<Guid>("JobId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TelegramAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("JobId", "TelegramAccountId");
-
-                    b.HasIndex("TelegramAccountId");
-
-                    b.ToTable("TelegramAccountJob");
                 });
 
             modelBuilder.Entity("FWTL.Aggregate.User", b =>
@@ -277,21 +239,6 @@ namespace FWTL.Auth.Database.Migrations
                     b.HasOne("FWTL.Aggregate.User", "User")
                         .WithMany("TelegramAccounts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FWTL.Aggregate.TelegramAccountJob", b =>
-                {
-                    b.HasOne("FWTL.Aggregate.Job", "Job")
-                        .WithMany("TelegramAccountJobs")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FWTL.Aggregate.TelegramAccount", "TelegramAccount")
-                        .WithMany("TelegramAccountJobs")
-                        .HasForeignKey("TelegramAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
