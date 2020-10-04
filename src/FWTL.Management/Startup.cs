@@ -8,6 +8,8 @@ using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
+using Hangfire;
+using Hangfire.SqlServer;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +23,12 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
+using NodaTime.Serialization.SystemTextJson;
 using Serilog;
 using Serilog.Events;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using NodaTime.Serialization.SystemTextJson;
 
 namespace FWTL.Management
 {
@@ -128,7 +131,21 @@ namespace FWTL.Management
                     .RequireAuthenticatedUser().Build();
             });
 
-            IocConfig.RegisterDependencies(services, _hostingEnvironment);
+            var servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
+
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(servicesProvider.GetService<HangfireDatabaseCredentials>().ConnectionString, new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+            services.AddHangfireServer();
 
             services.AddMassTransit(x =>
             {
@@ -166,7 +183,7 @@ namespace FWTL.Management
                         return config;
                     });
 
-                    var host = cfg.Host(_configuration["RabbitMq:Url"], h =>
+                    cfg.Host(_configuration["RabbitMq:Url"], h =>
                     {
                         h.Username(_configuration["RabbitMq:Username"]);
                         h.Password(_configuration["RabbitMq:Password"]);
@@ -188,6 +205,8 @@ namespace FWTL.Management
                             ec.ConfigureConsumer(context, typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
                         }
                     });
+
+                    cfg.UseMessageScheduler(new Uri("queue:hangfire"));
                 }));
             });
 
@@ -250,6 +269,7 @@ namespace FWTL.Management
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
             });
 
             app.UseSwagger();

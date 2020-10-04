@@ -2,7 +2,7 @@
 
 namespace FWTL.Aggregate
 {
-    public class TelegramAccountJob
+    public class AccountJob
     {
         public Guid JobId { get; set; }
 

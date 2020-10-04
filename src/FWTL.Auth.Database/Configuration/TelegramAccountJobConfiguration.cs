@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FWTL.Auth.Database.Configuration
 {
-    public class TelegramAccountJobConfiguration : IEntityTypeConfiguration<TelegramAccountJob>
+    public class TelegramAccountJobConfiguration : IEntityTypeConfiguration<AccountJob>
     {
-        public void Configure(EntityTypeBuilder<TelegramAccountJob> builder)
+        public void Configure(EntityTypeBuilder<AccountJob> builder)
         {
             builder.HasKey(x => new { x.JobId, x.TelegramAccountId });
         }

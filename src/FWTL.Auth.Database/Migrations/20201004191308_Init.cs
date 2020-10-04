@@ -47,6 +47,23 @@ namespace FWTL.Auth.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Jobs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    DialogId = table.Column<string>(maxLength: 50, nullable: false),
+                    MaxHistoryId = table.Column<long>(nullable: false),
+                    MessagesToProcess = table.Column<long>(nullable: false),
+                    ProcessedMessages = table.Column<long>(nullable: false),
+                    JobStatus = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Jobs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -63,6 +80,25 @@ namespace FWTL.Auth.Database.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    ExternalId = table.Column<string>(maxLength: 50, nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Accounts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -153,22 +189,39 @@ namespace FWTL.Auth.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TelegramAccount",
+                name: "AccountJobs",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(nullable: false),
-                    Id = table.Column<string>(maxLength: 50, nullable: false)
+                    JobId = table.Column<Guid>(nullable: false),
+                    TelegramAccountId = table.Column<Guid>(nullable: false),
+                    AccountId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TelegramAccount", x => new { x.UserId, x.Id });
+                    table.PrimaryKey("PK_AccountJobs", x => new { x.JobId, x.TelegramAccountId });
                     table.ForeignKey(
-                        name: "FK_TelegramAccount_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_AccountJobs_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AccountJobs_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountJobs_AccountId",
+                table: "AccountJobs",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_UserId",
+                table: "Accounts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -213,6 +266,9 @@ namespace FWTL.Auth.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AccountJobs");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -228,7 +284,10 @@ namespace FWTL.Auth.Database.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "TelegramAccount");
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Jobs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

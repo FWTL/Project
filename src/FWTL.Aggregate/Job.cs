@@ -20,7 +20,7 @@ namespace FWTL.Aggregate
 
         public Instant CreatedAt { get; set; }
 
-        public virtual ICollection<TelegramAccountJob> TelegramAccountJobs { get; set; } = new List<TelegramAccountJob>();
+        public virtual ICollection<AccountJob> TelegramAccountJobs { get; set; } = new List<AccountJob>();
     }
 
     public enum JobStatus

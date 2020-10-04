@@ -4,6 +4,9 @@ using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Domain.Traits;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FWTL.Core.Events;
 
 namespace FWTL.Domain.Jobs
 {
@@ -27,6 +30,16 @@ namespace FWTL.Domain.Jobs
             }
 
             public Guid UserId { get; set; }
+        }
+
+        public class Handler : ICommandHandler<Command>
+        {
+            public IList<IEvent> Events { get; }
+
+            public Task ExecuteAsync(Command command)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class Validator : AppAbstractValidation<Command>

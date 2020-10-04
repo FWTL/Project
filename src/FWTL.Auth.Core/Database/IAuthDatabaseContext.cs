@@ -9,6 +9,6 @@ namespace FWTL.Core.Database
 
         public DbSet<Job> Jobs { get; set; }
 
-        public DbSet<TelegramAccountJob> TelegramAccountJobs { get; set; }
+        public DbSet<AccountJob> AccountJobs { get; set; }
     }
 }
