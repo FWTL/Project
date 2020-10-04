@@ -20,10 +20,10 @@ using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Polly;
 using Polly.Extensions.Http;
+using StackExchange.Redis;
 using System;
 using System.Net.Http;
 using System.Reflection;
-using StackExchange.Redis;
 
 namespace FWTL.Management
 {
@@ -31,6 +31,11 @@ namespace FWTL.Management
     {
         public static void OverrideWithLocalCredentials(IServiceCollection services)
         {
+            services.AddSingleton(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
+                return new RedisCredentials(new RedisLocalCredentialsBase(configuration));
+            });
         }
 
         public static void RegisterCredentials(IServiceCollection services)
@@ -44,11 +49,11 @@ namespace FWTL.Management
             services.AddSingleton(b =>
             {
                 var configuration = b.GetService<IConfiguration>();
-                return new RedisCredentials(new RedisLocalCredentialsBase(configuration));
+                return new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
             });
         }
 
-        public static void RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
+        public static ServiceProvider RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
             var domainAssembly = typeof(RegisterUser).GetTypeInfo().Assembly;
 
@@ -134,6 +139,8 @@ namespace FWTL.Management
             });
 
             services.AddScoped<ICacheService, CacheService>();
+
+            return services.BuildServiceProvider();
         }
 
         private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
