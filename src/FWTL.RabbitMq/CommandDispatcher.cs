@@ -7,6 +7,7 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using FWTL.Common.Services;
 
 namespace FWTL.RabbitMq
@@ -34,7 +35,7 @@ namespace FWTL.RabbitMq
         {
             await TraitValidationAsync<TCommand, ISessionNameTrait>(command);
 
-            var validator = _context.GetService<IValidator<TCommand>>();
+            IValidator<TCommand> validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
                 var validationResult = await validator.ValidateAsync(command);
@@ -44,9 +45,9 @@ namespace FWTL.RabbitMq
                 }
             }
 
-            var correlationId = _guidService.New;
+            Guid correlationId = _guidService.New;
 
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:commands"));
+            ISendEndpoint endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:commands"));
             await endpoint.Send(command, x => { x.CorrelationId = correlationId; });
             return correlationId;
         }
@@ -55,8 +56,8 @@ namespace FWTL.RabbitMq
         {
             if (command is TTraitValidator)
             {
-                var pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
-                var pagingValidatorResult = await pagingValidator.ValidateAsync(command);
+                IValidator<TTraitValidator> pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
+                ValidationResult pagingValidatorResult = await pagingValidator.ValidateAsync(command);
                 if (!pagingValidatorResult.IsValid)
                 {
                     throw new ValidationException(pagingValidatorResult.Errors);
@@ -68,7 +69,7 @@ namespace FWTL.RabbitMq
             where TCommand : class, ICommand
             where TRequest : class, IRequest
         {
-            var command = _requestToCommandMapper.Map<TRequest, TCommand>(request);
+            TCommand command = _requestToCommandMapper.Map<TRequest, TCommand>(request);
             return await DispatchAsync(command);
         }
 
@@ -76,7 +77,7 @@ namespace FWTL.RabbitMq
             where TCommand : class, ICommand
             where TRequest : class, IRequest
         {
-            var command = _requestToCommandMapper.Map(request, afterMap);
+            TCommand command = _requestToCommandMapper.Map(request, afterMap);
             return await DispatchAsync(command);
         }
     }
