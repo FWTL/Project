@@ -17,18 +17,4 @@ namespace FWTL.TelegramClient.Converters
             throw new NotImplementedException();
         }
     }
-
-    public class DateConverterFactory : JsonConverterFactory
-    {
-        public override bool CanConvert(Type typeToConvert)
-        {
-            return typeToConvert == typeof(Instant);
-        }
-
-        public override JsonConverter CreateConverter(Type typeToConvert,
-            JsonSerializerOptions options)
-        {
-            return new DateConverter();
-        }
-    }
 }

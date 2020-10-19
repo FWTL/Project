@@ -12,21 +12,13 @@ namespace FWTL.Management.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICurrentUserService _currentUserService;
 
-        public UsersController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher, ICurrentUserService currentUserService)
+        public UsersController(IQueryDispatcher queryDispatcher, ICurrentUserService currentUserService)
         {
-            _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
             _currentUserService = currentUserService;
-        }
-
-        [HttpPost]
-        public async Task Register(RegisterUser.Request request)
-        {
-            await _commandDispatcher.DispatchAsync<RegisterUser.Request, RegisterUser.Command>(request);
         }
 
         [HttpGet("Me")]

@@ -16,15 +16,18 @@ namespace FWTL.Aggregate
 
         public long ProcessedMessages { get; set; }
 
-        public JobStatus JobStatus { get; set; }
+        public JobStatuses JobStatus { get; set; }
 
         public Instant CreatedAt { get; set; }
 
-        public virtual ICollection<AccountJob> TelegramAccountJobs { get; set; } = new List<AccountJob>();
+        public virtual ICollection<AccountJob> AccountJobs { get; set; } = new List<AccountJob>();
     }
 
-    public enum JobStatus
+    public enum JobStatuses
     {
-        Started = 1,
+        Canceled = -2,
+        Failed = -1,
+        InProgress = 1,
+        Completed = 1,
     }
 }

@@ -5,19 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="MassTransit" Version="7.0.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.8" />
+    <PackageReference Include="Polly" Version="7.2.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FWTL.Aggregate\FWTL.Aggregate.csproj" />
     <ProjectReference Include="..\FWTL.Auth.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
-    <ProjectReference Include="..\FWTL.Domain\FWTL.Domain.csproj" />
-    <ProjectReference Include="..\FWTL.Service\FWTL.Domain.csproj" />
+    <ProjectReference Include="..\FWTL.Events\FWTL.Events.csproj" />
+    <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>
 
 </Project>
