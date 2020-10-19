@@ -1,8 +1,8 @@
 ﻿using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
+using FWTL.Domain.Accounts;
 using FWTL.Domain.Jobs;
-using FWTL.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -31,14 +31,14 @@ namespace FWTL.Management.Controllers
         [Authorize]
         public async Task<IReadOnlyList<GetAccounts.Result>> GetTelegramAccounts()
         {
-            return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>( new GetAccounts.Query(_currentUserService));
+            return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
         }
 
         [HttpPost("{accountId}")]
         [Authorize]
         public async Task AddTelegramAccount(string accountId)
         {
-            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>( new AddAccount.Request() { AccountId = accountId });
+            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Code")]

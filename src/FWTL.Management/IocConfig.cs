@@ -24,6 +24,7 @@ using StackExchange.Redis;
 using System;
 using System.Net.Http;
 using System.Reflection;
+using DatabaseContext = FWTL.Core.Database.DatabaseContext;
 
 namespace FWTL.Management
 {
@@ -55,7 +56,7 @@ namespace FWTL.Management
 
         public static ServiceProvider RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
-            var domainAssembly = typeof(RegisterUser).GetTypeInfo().Assembly;
+            var domainAssembly = typeof(GetMe).GetTypeInfo().Assembly;
 
             RegisterCredentials(services);
 
@@ -117,7 +118,7 @@ namespace FWTL.Management
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
 
-            services.AddScoped<IAuthDatabaseContext, AuthDatabaseContext>();
+            services.AddScoped<DatabaseContext, Auth.Database.DatabaseContext>();
 
             services.AddSingleton(b =>
             {

@@ -17,10 +17,4 @@ namespace FWTL.TelegramClient.Responses
 
         public Instant Date { get; set; }
     }
-
-    public class InputChannel
-    {
-        [JsonPropertyName("channel_id")]
-        public int ChannelId { get; set; }
-    }
 }

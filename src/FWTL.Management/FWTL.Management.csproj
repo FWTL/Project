@@ -33,7 +33,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FWTL.Auth.Database\FWTL.Auth.Database.csproj" />
+    <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core.Net\FWTL.Common.Net.csproj" />
+    <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.Database\FWTL.Database.csproj" />
+    <ProjectReference Include="..\FWTL.Domain\FWTL.Domain.csproj" />
     <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
   </ItemGroup>
 

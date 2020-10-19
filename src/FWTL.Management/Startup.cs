@@ -1,5 +1,4 @@
 using AutoMapper;
-using FWTL.Aggregate;
 using FWTL.Auth.Database;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
@@ -99,22 +98,11 @@ namespace FWTL.Management
             services.AddAutoMapper(
                 config =>
                 {
-                    config.AddProfile(new RequestToCommandProfile(typeof(RegisterUser)));
-                    config.AddProfile(new RequestToQueryProfile(typeof(RegisterUser)));
+                    config.AddProfile(new RequestToCommandProfile(typeof(GetMe)));
+                    config.AddProfile(new RequestToQueryProfile(typeof(GetMe)));
                 }, typeof(RequestToCommandProfile).Assembly);
 
-            services.AddDbContext<AuthDatabaseContext>();
-
-            services.AddIdentity<User, Role>(options =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = false;
-            })
-            .AddEntityFrameworkStores<AuthDatabaseContext>()
-            .AddDefaultTokenProviders();
+            services.AddDbContext<DatabaseContext>();
 
             services.AddAuthentication()
                 .AddJwtBearer(options =>
@@ -149,7 +137,7 @@ namespace FWTL.Management
 
             services.AddMassTransit(x =>
             {
-                var commands = typeof(RegisterUser).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
+                var commands = typeof(GetMe).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
                     .ToList();
 
                 foreach (var commandType in commands)
@@ -157,7 +145,7 @@ namespace FWTL.Management
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(commandType));
                 }
 
-                var queries = typeof(RegisterUser).Assembly.GetTypes()
+                var queries = typeof(GetMe).Assembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
                     .Where(t => typeof(IQueryHandler<,>).IsAssignableFrom(t.GetGenericTypeDefinition()))
@@ -251,7 +239,7 @@ namespace FWTL.Management
             });
         }
 
-        public void Configure(IApplicationBuilder app, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseSerilogRequestLogging();
 
@@ -282,7 +270,7 @@ namespace FWTL.Management
             Task startBusTask = Task.Run(async () => await ConfigureAsync(app));
             startBusTask.Wait();
 
-            Task seedDatabase = Task.Run(async () => await new SeedData(userManager, roleManager).UpdateAsync());
+            Task seedDatabase = Task.Run(async () => await new SeedData().UpdateAsync());
             seedDatabase.Wait();
         }
 

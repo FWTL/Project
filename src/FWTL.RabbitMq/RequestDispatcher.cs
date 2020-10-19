@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using FWTL.Domain.Traits;
 
 namespace FWTL.RabbitMq
 {
@@ -30,6 +31,8 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
+            await TraitValidationAsync<TCommand, ISessionNameTrait>(command);
+            
             var validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
@@ -53,6 +56,19 @@ namespace FWTL.RabbitMq
             }
 
             return response.Message.Id;
+        }
+
+        private async Task TraitValidationAsync<TCommand, TTraitValidator>(TCommand command) where TCommand : class, ICommand
+        {
+            if (command is TTraitValidator)
+            {
+                var pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
+                var pagingValidatorResult = await pagingValidator.ValidateAsync(command);
+                if (!pagingValidatorResult.IsValid)
+                {
+                    throw new ValidationException(pagingValidatorResult.Errors);
+                }
+            }
         }
 
         public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request)

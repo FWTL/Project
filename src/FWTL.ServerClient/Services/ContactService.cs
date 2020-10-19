@@ -27,5 +27,15 @@ namespace FWTL.TelegramClient.Services
 
             return HandleAsync<Info>($"/api/users/{sessionName}/getInfo", queryParams);
         }
+
+        public Task<Info> GetInfoAsync(string sessionName, string dialogId)
+        {
+            var queryParams = new Dictionary<string, string>()
+            {
+                {"id", dialogId}
+            };
+
+            return HandleAsync<Info>($"/api/users/{sessionName}/getInfo", queryParams);
+        }
     }
 }

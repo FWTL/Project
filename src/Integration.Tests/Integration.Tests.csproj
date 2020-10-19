@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth\FWTL.Auth.csproj" />
+    <ProjectReference Include="..\FWTL.Management\FWTL.Management.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using FWTL.Auth;
+﻿using FWTL.Management;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Integration.Tests
 {
