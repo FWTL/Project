@@ -8,7 +8,7 @@ namespace FWTL.Domain.Traits
     {
         public SessionNameTraitValidator()
         {
-            RuleFor(x => x.AccountId).Matches(RegexExpressions.ONLY_NUMBERS);
+            RuleFor(x => x.AccountId).Matches(RegexExpressions.OnlyNumbers);
         }
     }
 }

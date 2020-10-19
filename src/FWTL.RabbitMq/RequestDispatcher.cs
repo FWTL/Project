@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
+using FWTL.Common.Services;
 using FWTL.Domain.Traits;
 
 namespace FWTL.RabbitMq
@@ -17,12 +19,12 @@ namespace FWTL.RabbitMq
     {
         private readonly IClientFactory _clientFactory;
         private readonly IServiceProvider _context;
-        private readonly IRequestToCommandMapper _requestToCommandMapper;
+        private readonly RequestToCommandMapper _requestToCommandMapper;
 
         public RequestDispatcher(
             IServiceProvider context,
             IClientFactory clientFactory,
-            IRequestToCommandMapper requestToCommandMapper)
+            RequestToCommandMapper requestToCommandMapper)
         {
             _context = context;
             _clientFactory = clientFactory;
@@ -33,18 +35,19 @@ namespace FWTL.RabbitMq
         {
             await TraitValidationAsync<TCommand, ISessionNameTrait>(command);
             
-            var validator = _context.GetService<IValidator<TCommand>>();
+            IValidator<TCommand> validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {
-                var validationResult = await validator.ValidateAsync(command);
+                ValidationResult validationResult = await validator.ValidateAsync(command);
                 if (!validationResult.IsValid)
                 {
                     throw new ValidationException(validationResult.Errors);
                 }
             }
 
-            var client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
-            var response = await client.GetResponse<Response>(command);
+            IRequestClient<TCommand> client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
+            MassTransit.Response<Response> response = await client.GetResponse<Response>(command);
+
             if (response.Message.StatusCode == HttpStatusCode.BadRequest)
             {
                 throw new AppValidationException(response.Message.Errors);
@@ -62,8 +65,8 @@ namespace FWTL.RabbitMq
         {
             if (command is TTraitValidator)
             {
-                var pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
-                var pagingValidatorResult = await pagingValidator.ValidateAsync(command);
+                IValidator<TTraitValidator> pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
+                ValidationResult pagingValidatorResult = await pagingValidator.ValidateAsync(command);
                 if (!pagingValidatorResult.IsValid)
                 {
                     throw new ValidationException(pagingValidatorResult.Errors);

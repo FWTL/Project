@@ -11,7 +11,7 @@ namespace FWTL.Common.Extensions
     {
         public static IEnumerable<ValidationFailure> GetErrors<TResponse>(this ResponseWrapper<TResponse> @this)
         {
-            var name = typeof(TResponse).Name;
+            string name = typeof(TResponse).Name;
             return @this.Errors.Select(error => new ValidationFailure(name, error.Message));
         }
 

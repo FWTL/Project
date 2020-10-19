@@ -1,10 +1,9 @@
-﻿using System;
-using AutoMapper;
-using FWTL.Core.Services;
+﻿using AutoMapper;
+using System;
 
 namespace FWTL.Common.Services
 {
-    public class RequestToQueryMapper : IRequestToQueryMapper
+    public class RequestToQueryMapper
     {
         private readonly IMapper _mapper;
 
@@ -13,12 +12,12 @@ namespace FWTL.Common.Services
             _mapper = mapper;
         }
 
-        TQuery IRequestToQueryMapper.Map<TRequest, TQuery>(TRequest request)
+        public TQuery Map<TRequest, TQuery>(TRequest request)
         {
             return _mapper.Map<TRequest, TQuery>(request);
         }
 
-        TQuery IRequestToQueryMapper.Map<TRequest, TQuery>(TRequest request, Action<TQuery> afterMap)
+        public TQuery Map<TRequest, TQuery>(TRequest request, Action<TQuery> afterMap)
         {
             var query = _mapper.Map<TRequest, TQuery>(request);
             afterMap(query);
