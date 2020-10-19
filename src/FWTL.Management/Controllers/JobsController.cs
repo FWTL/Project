@@ -24,14 +24,14 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        
         public Task Start()
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete]
-        [Authorize]
+        
         public Task Cancel(Guid jobId)
         {
             throw new NotImplementedException();
