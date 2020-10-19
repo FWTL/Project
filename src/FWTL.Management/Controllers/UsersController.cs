@@ -22,7 +22,7 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpGet("Me")]
-        [Authorize]
+        
         public async Task<GetMe.Result> Me()
         {
             return await _queryDispatcher.DispatchAsync<GetMe.Query, GetMe.Result>(new GetMe.Query(_currentUserService));

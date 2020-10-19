@@ -16,7 +16,7 @@ namespace FWTL.Management.Controllers
             _timeZonesService = timeZonesService;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public IDictionary<string,string> Get()
         {
