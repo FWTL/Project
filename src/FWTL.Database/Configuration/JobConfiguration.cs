@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FWTL.Auth.Database.Configuration
+namespace FWTL.Database.Configuration
 {
     public class JobConfiguration : IEntityTypeConfiguration<Job>
     {

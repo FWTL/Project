@@ -7,6 +7,7 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using FWTL.Common.Services;
 
 namespace FWTL.RabbitMq
 {
@@ -14,14 +15,14 @@ namespace FWTL.RabbitMq
     {
         private readonly IServiceProvider _context;
         private readonly IGuidService _guidService;
-        private readonly IRequestToCommandMapper _requestToCommandMapper;
+        private readonly RequestToCommandMapper _requestToCommandMapper;
         private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public CommandDispatcher(
             IServiceProvider context,
             ISendEndpointProvider sendEndpointProvider,
             IGuidService guidService,
-            IRequestToCommandMapper requestToCommandMapper)
+            RequestToCommandMapper requestToCommandMapper)
         {
             _context = context;
             _sendEndpointProvider = sendEndpointProvider;

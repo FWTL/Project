@@ -1,12 +1,11 @@
-﻿using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
-using FWTL.Aggregate;
-using FWTL.Auth.Database.Configuration;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using FWTL.Core.Database;
+using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
+using FWTL.Aggregate;
+using FWTL.Database.Configuration;
+using Microsoft.EntityFrameworkCore;
 
-namespace FWTL.Auth.Database
+namespace FWTL.Database
 {
     public class DatabaseContext : DbContext, Core.Database.DatabaseContext
     {

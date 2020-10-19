@@ -1,10 +1,8 @@
 ﻿using FluentValidation;
-using FWTL.Auth.Database;
 using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
-using FWTL.Core.Database;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
@@ -24,6 +22,7 @@ using StackExchange.Redis;
 using System;
 using System.Net.Http;
 using System.Reflection;
+using FWTL.Database;
 using DatabaseContext = FWTL.Core.Database.DatabaseContext;
 
 namespace FWTL.Management
@@ -41,12 +40,6 @@ namespace FWTL.Management
 
         public static void RegisterCredentials(IServiceCollection services)
         {
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                return new AuthDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Auth"));
-            });
-
             services.AddSingleton(b =>
             {
                 var configuration = b.GetService<IConfiguration>();
@@ -105,8 +98,8 @@ namespace FWTL.Management
             services.AddSingleton<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
-            services.AddScoped<IRequestToCommandMapper, RequestToCommandMapper>();
-            services.AddScoped<IRequestToQueryMapper, RequestToQueryMapper>();
+            services.AddSingleton<RequestToCommandMapper>();
+            services.AddSingleton<RequestToQueryMapper>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
@@ -118,7 +111,7 @@ namespace FWTL.Management
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
 
-            services.AddScoped<DatabaseContext, Auth.Database.DatabaseContext>();
+            services.AddScoped<DatabaseContext, Database.DatabaseContext>();
 
             services.AddSingleton(b =>
             {

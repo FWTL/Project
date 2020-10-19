@@ -11,6 +11,7 @@ namespace FWTL.Common.Services
     public class CacheService : ICacheService
     {
         private readonly IDatabase _cache;
+
         private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -34,7 +35,7 @@ namespace FWTL.Common.Services
 
         public T Get<T>(string key, T value) where T : class
         {
-            var json = _cache.StringGet(key);
+            RedisValue json = _cache.StringGet(key);
             return string.IsNullOrWhiteSpace(json) ? null : JsonSerializer.Deserialize<T>(json);
         }
 
@@ -42,7 +43,7 @@ namespace FWTL.Common.Services
         {
             if (isForced)
             {
-                var result = await fallback();
+                T result = await fallback();
                 Set<T>(key, result, expire);
                 return result;
             }

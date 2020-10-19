@@ -1,5 +1,4 @@
 using AutoMapper;
-using FWTL.Auth.Database;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
@@ -28,6 +27,7 @@ using Serilog.Events;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FWTL.Database;
 
 namespace FWTL.Management
 {

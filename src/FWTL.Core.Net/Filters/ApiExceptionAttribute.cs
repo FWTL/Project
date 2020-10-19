@@ -59,14 +59,7 @@ namespace FWTL.Common.Net.Filters
                 context.Exception,
                 _source);
 
-            if (_hosting.IsDevelopment())
-            {
-                context.Result = new ContentResult { Content = context.Exception.ToString() };
-            }
-            else
-            {
-                context.Result = new ContentResult { Content = exceptionId.ToString() };
-            }
+            context.Result = _hosting.IsDevelopment() ? new ContentResult { Content = context.Exception.ToString() } : new ContentResult { Content = exceptionId.ToString() };
         }
     }
 }

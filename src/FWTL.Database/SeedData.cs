@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FWTL.Auth.Database
+namespace FWTL.Database
 {
     public class SeedData
     {

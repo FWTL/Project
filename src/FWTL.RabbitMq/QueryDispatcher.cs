@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using FWTL.Common.Extensions;
+using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
-using FWTL.Core.Services;
 using FWTL.Core.Validation;
 using FWTL.Domain.Traits;
 using MassTransit;
@@ -17,12 +17,12 @@ namespace FWTL.RabbitMq
     {
         private readonly IClientFactory _clientFactory;
         private readonly IServiceProvider _context;
-        private readonly IRequestToQueryMapper _requestToQueryMapper;
+        private readonly RequestToQueryMapper _requestToQueryMapper;
 
         public QueryDispatcher(
             IServiceProvider context,
             IClientFactory clientFactory,
-            IRequestToQueryMapper requestToQueryMapper)
+            RequestToQueryMapper requestToQueryMapper)
         {
             _context = context;
             _clientFactory = clientFactory;

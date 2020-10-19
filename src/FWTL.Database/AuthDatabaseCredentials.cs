@@ -1,6 +1,6 @@
 ﻿using FWTL.Core.Credentials;
 
-namespace FWTL.Auth.Database
+namespace FWTL.Database
 {
     public class AuthDatabaseCredentials
     {

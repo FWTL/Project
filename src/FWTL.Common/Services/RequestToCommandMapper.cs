@@ -1,11 +1,10 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using FWTL.Core.Commands;
-using FWTL.Core.Services;
+using System;
 
 namespace FWTL.Common.Services
 {
-    public class RequestToCommandMapper : IRequestToCommandMapper
+    public class RequestToCommandMapper
     {
         private readonly IMapper _mapper;
 
