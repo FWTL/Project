@@ -15,9 +15,6 @@ namespace FWTL.Common.Services
             _principal = httpContextAccessor.HttpContext.User;
         }
 
-        public Guid CurrentUserId
-        {
-            get { return Guid.Parse(_principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); }
-        }
+        public Guid CurrentUserId => Guid.Parse("fe511212-15ae-404a-b3df-bb7d300c1283");
     }
 }
