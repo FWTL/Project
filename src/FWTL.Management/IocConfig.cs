@@ -1,13 +1,18 @@
-﻿using FluentValidation;
+﻿using EventStore.Client;
+using FluentValidation;
 using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
 using FWTL.Common.Services;
+using FWTL.Common.Specification;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
+using FWTL.Database;
 using FWTL.Domain.Users;
+using FWTL.EventStore;
 using FWTL.RabbitMq;
 using FWTL.TelegramClient;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +27,6 @@ using StackExchange.Redis;
 using System;
 using System.Net.Http;
 using System.Reflection;
-using FWTL.Database;
 using DatabaseContext = FWTL.Core.Database.DatabaseContext;
 
 namespace FWTL.Management
@@ -43,7 +47,19 @@ namespace FWTL.Management
             services.AddSingleton(b =>
             {
                 var configuration = b.GetService<IConfiguration>();
+                return new AppDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "App"));
+            });
+
+            services.AddSingleton(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
                 return new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
+            });
+
+            services.AddSingleton(b =>
+            {
+                var configuration = b.GetService<IConfiguration>();
+                return new EventStoreCredentials(new EventStoreCredentialsBase(configuration));
             });
         }
 
@@ -78,6 +94,12 @@ namespace FWTL.Management
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationFor<,>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
                     .AddClasses(filter => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
@@ -98,8 +120,8 @@ namespace FWTL.Management
             services.AddSingleton<IGuidService, GuidService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
-            services.AddSingleton<RequestToCommandMapper>();
-            services.AddSingleton<RequestToQueryMapper>();
+            services.AddScoped<RequestToCommandMapper>();
+            services.AddScoped<RequestToQueryMapper>();
             services.AddSingleton<ITimeZonesService, TimeZonesService>();
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
@@ -111,7 +133,7 @@ namespace FWTL.Management
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
 
-            services.AddScoped<DatabaseContext, Database.DatabaseContext>();
+            services.AddScoped<DatabaseContext, Database.AppDatabaseContext>();
 
             services.AddSingleton(b =>
             {
@@ -133,6 +155,21 @@ namespace FWTL.Management
             });
 
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IAggregateStore, EventStoreAggregateStore>();
+
+            services.AddSingleton(b =>
+            {
+                var settings = new EventStoreClientSettings
+                {
+                    ConnectivitySettings = {
+                        Address = new Uri("http://localhost:2113")
+                    }
+                };
+
+                return new EventStoreClient(settings);
+            });
+
+            services.AddScoped<IEventFactory, EventFactory>();
 
             return services.BuildServiceProvider();
         }

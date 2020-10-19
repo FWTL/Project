@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>

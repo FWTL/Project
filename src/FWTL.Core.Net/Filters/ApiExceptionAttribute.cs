@@ -49,15 +49,15 @@ namespace FWTL.Common.Net.Filters
             context.HttpContext.Response.StatusCode = 500;
 
             var exceptionId = _guid.New;
-            _logger.LogError(
-                "ExceptionId: {exceptionId} {NewLine}" +
-                       "Url: {url} {NewLine}" +
-                       "Exception: {exception} {NewLine}" +
-                       "Source: {source}",
-                exceptionId,
-                context.HttpContext.Request.GetDisplayUrl(),
-                context.Exception,
-                _source);
+            //_logger.LogError(
+            //    "ExceptionId: {exceptionId} {NewLine}" +
+            //           "Url: {url} {NewLine}" +
+            //           "Exception: {exception} {NewLine}" +
+            //           "Source: {source}",
+            //    exceptionId,
+            //    context.HttpContext.Request.GetDisplayUrl(),
+            //    context.Exception,
+            //    _source);
 
             context.Result = _hosting.IsDevelopment() ? new ContentResult { Content = context.Exception.ToString() } : new ContentResult { Content = exceptionId.ToString() };
         }

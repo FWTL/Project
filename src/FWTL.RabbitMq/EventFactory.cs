@@ -1,30 +1,30 @@
-﻿using System;
+﻿using EventStore.Client;
 using FWTL.Core.Events;
-using FWTL.Core.Services;
 using MassTransit;
+using System.Collections.Generic;
 
 namespace FWTL.RabbitMq
 {
     public class EventFactory : IEventFactory
     {
         private readonly ConsumeContext _context;
-        private readonly IGuidService _guid;
 
-        public EventFactory(IGuidService guid, ConsumeContext context)
+        public EventFactory(ConsumeContext context)
         {
-            _guid = guid;
             _context = context;
         }
 
-        public EventComposite Make(IEvent @event)
+        public IEnumerable<EventComposite> Make(IEnumerable<EventComposite> @events)
         {
-            var metadata = new EventMetadata
+            foreach (var @event in @events)
             {
-                EventId = _guid.New,
-                CommandId = _context.CorrelationId ?? _context.RequestId ?? Guid.Empty,
-                EventType = @event.GetType().AssemblyQualifiedName
-            };
-            return new EventComposite(@event, metadata);
+                @event.Metadata.EventId = Uuid.NewUuid();
+                //@event.Metadata.CorrelationId = commandComposite.Metadata.CorrelationId;
+                //@event.Metadata.CommandId = commandComposite.Metadata.CommandId;
+                @event.Metadata.EventType = @event.Event.GetType().AssemblyQualifiedName;
+            }
+
+            return @events;
         }
     }
 }

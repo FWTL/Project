@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Database
 {
-    public class DatabaseContext : DbContext, Core.Database.DatabaseContext
+    public class AppDatabaseContext : DbContext, Core.Database.DatabaseContext
     {
-        private readonly AuthDatabaseCredentials _credentials;
+        private readonly AppDatabaseCredentials _credentials;
 
-        public DatabaseContext(AuthDatabaseCredentials credentials)
+        public AppDatabaseContext(AppDatabaseCredentials credentials)
         {
             _credentials = credentials;
         }

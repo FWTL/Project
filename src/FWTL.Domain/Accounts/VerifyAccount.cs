@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Helpers;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services;
@@ -37,18 +38,9 @@ namespace FWTL.Domain.Accounts
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly ITelegramClient _telegramClient;
-
-            public Handler(ITelegramClient telegramClient)
+            public Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                _telegramClient = telegramClient;
-            }
-
-            public IList<IEvent> Events => new List<IEvent>();
-
-            public async Task ExecuteAsync(Command command)
-            {
-                await _telegramClient.UserService.CompletePhoneLoginAsync(command.SessionName(), command.Code);
+                throw new NotImplementedException();
             }
         }
 

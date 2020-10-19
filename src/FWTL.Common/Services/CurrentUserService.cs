@@ -1,7 +1,6 @@
 ﻿using FWTL.Core.Services;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Linq;
 using System.Security.Claims;
 
 namespace FWTL.Common.Services

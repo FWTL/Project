@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using FluentValidation.Results;
+using FWTL.Common.Commands;
 using FWTL.Common.Services;
 
 namespace FWTL.RabbitMq
@@ -23,7 +24,8 @@ namespace FWTL.RabbitMq
             IServiceProvider context,
             ISendEndpointProvider sendEndpointProvider,
             IGuidService guidService,
-            RequestToCommandMapper requestToCommandMapper)
+            RequestToCommandMapper requestToCommandMapper,
+            CommandFactory commandFactory)
         {
             _context = context;
             _sendEndpointProvider = sendEndpointProvider;
@@ -33,8 +35,6 @@ namespace FWTL.RabbitMq
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
         {
-            await TraitValidationAsync<TCommand, ISessionNameTrait>(command);
-
             IValidator<TCommand> validator = _context.GetService<IValidator<TCommand>>();
             if (validator.IsNotNull())
             {

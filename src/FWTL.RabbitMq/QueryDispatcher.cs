@@ -9,6 +9,7 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FWTL.RabbitMq
@@ -47,9 +48,15 @@ namespace FWTL.RabbitMq
 
             var client = _clientFactory.CreateRequestClient<TQuery>(new Uri("queue:queries"), TimeSpan.FromMinutes(10));
             var response = await client.GetResponse<Common.Commands.Response<TResult>>(query);
-            if (response.Message.Errors.Any())
+
+            if (response.Message.StatusCode == HttpStatusCode.BadRequest)
             {
                 throw new AppValidationException(response.Message.Errors);
+            }
+
+            if (response.Message.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                throw new InvalidOperationException(response.Message.Id.ToString());
             }
 
             return response.Message.Result;

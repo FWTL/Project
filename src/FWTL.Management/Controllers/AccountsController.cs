@@ -34,11 +34,11 @@ namespace FWTL.Management.Controllers
             return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
         }
 
-        [HttpPost("{accountId}")]
+        [HttpPost("{externalAccountId}")]
         
-        public async Task AddTelegramAccount(string accountId)
+        public async Task AddTelegramAccount(string externalAccountId)
         {
-            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { AccountId = accountId });
+            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
         }
 
         [HttpPost("{accountId}/Code")]

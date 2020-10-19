@@ -76,6 +76,27 @@ services:
       - 27017:27017
     volumes:
       - FWTL-mongo-data:/data/db
+  eventStore:
+    image: eventstore/eventstore:latest
+    container_name : "FWTL-eventStore"
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_INT_TCP_PORT=1112
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_INT_HTTP_PORT=2112
+      - EVENTSTORE_EXT_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+    ports:
+      - "1112:1112"
+      - "1113:1113"
+      - "2112:2112"
+      - "2113:2113"
+    volumes :
+      - FWTL-eventStore-data:/var/lib/eventstore/data
+    networks :
+      - backend
 
 
 volumes:
@@ -83,6 +104,7 @@ volumes:
   FWTL-data:
   FWTL-sessions:
   FWTL-mongo-data:
+  FWTL-eventStore-data:
   
 networks:
   backend:

@@ -1,7 +1,10 @@
-﻿namespace FWTL.Core.Events
+﻿using System.Collections.Generic;
+using FWTL.Core.Commands;
+
+namespace FWTL.Core.Events
 {
     public interface IEventFactory
     {
-        EventComposite Make(IEvent @event);
+        IEnumerable<EventComposite> Make(IEnumerable<EventComposite> @event);
     }
 }
