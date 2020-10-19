@@ -39,25 +39,9 @@ namespace FWTL.Domain.Jobs
 
         public class Handler : IQueryHandler<Query, IReadOnlyList<Result>>
         {
-            private readonly DatabaseContext _dbContext;
-
-            public Handler(DatabaseContext dbContext)
+            public Task<IReadOnlyList<Result>> HandleAsync(Query query)
             {
-                _dbContext = dbContext;
-            }
-
-            public async Task<IReadOnlyList<Result>> HandleAsync(Query query)
-            {
-                List<Result> result = await _dbContext.Accounts
-                .Where(ta => ta.ExternalId == query.AccountId)
-                .Where(ta => ta.UserId == query.UserId)
-                .Include(ta => ta.AccountJobs)
-                .ThenInclude(taj => taj.Job).Select(j => new Result()
-                {
-                    Id = j.Id
-                }).ToListAsync();
-
-                return result;
+                throw new NotImplementedException();
             }
         }
     }

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FWTL.Aggregate;
-using FWTL.Common.Extensions;
-using FWTL.Core.Database;
-using FWTL.Core.Queries;
+﻿using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.TelegramClient;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FWTL.Domain.Accounts
 {
@@ -45,49 +39,9 @@ namespace FWTL.Domain.Accounts
 
         public class Handler : IQueryHandler<Query, IReadOnlyList<Result>>
         {
-            private readonly ITelegramClient _telegramClient;
-            private readonly DatabaseContext _dbAuthDatabaseContext;
-
-            public Handler(ITelegramClient telegramClient, DatabaseContext dbAuthDatabaseContext)
+            public Task<IReadOnlyList<Result>> HandleAsync(Query query)
             {
-                _telegramClient = telegramClient;
-                _dbAuthDatabaseContext = dbAuthDatabaseContext;
-            }
-
-            public async Task<IReadOnlyList<Result>> HandleAsync(Query query)
-            {
-                var accounts = await _dbAuthDatabaseContext.Accounts.Where(ta => ta.UserId == query.UserId).ToListAsync();
-
-                var telegramAccounts = new List<Result>();
-                foreach (Account account in accounts)
-                {
-                    string sessionName = query.UserId.ToSession(account.ExternalId);
-                    var result = await _telegramClient.UserService.GetSelfAsync(sessionName);
-
-                    if (result.IsNotNull())
-                    {
-                        telegramAccounts.Add(new Result()
-                        {
-                            Id = account.Id,
-                            FirstName = result.Firstname,
-                            LastName = result.Lastname,
-                            ExternalId = account.ExternalId,
-                            UserName = result.Username,
-                            IsLogged = true,
-                        });
-                    }
-                    else
-                    {
-                        telegramAccounts.Add(new Result()
-                        {
-                            Id = account.Id,
-                            ExternalId = account.ExternalId,
-                            IsLogged = false,
-                        });
-                    }
-                }
-
-                return telegramAccounts;
+                throw new NotImplementedException();
             }
         }
     }

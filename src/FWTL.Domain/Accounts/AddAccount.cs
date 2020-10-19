@@ -1,13 +1,7 @@
-﻿using FWTL.Aggregate;
+﻿using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
-using FWTL.Core.Database;
-using FWTL.Core.Events;
 using FWTL.Core.Services;
-using FWTL.Domain.Traits;
-using FWTL.TelegramClient;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FWTL.Domain.Accounts
@@ -16,57 +10,43 @@ namespace FWTL.Domain.Accounts
     {
         public class Request : IRequest
         {
-            public string AccountId { get; set; }
+            public string ExternalAccountId { get; set; }
         }
 
-        public class Command : Request, ICommand, ISessionNameTrait
+        public class Command : Request, ICommand
         {
             public Command()
             {
             }
 
-            public Command(ICurrentUserService currentUserService, IGuidService guidService)
+            public Command(ICurrentUserService currentUserService)
             {
-                Id = guidService.New;
                 UserId = currentUserService.CurrentUserId;
             }
-
-            public Guid Id { get; set; }
 
             public Guid UserId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly ITelegramClient _telegramClient;
-            private readonly DatabaseContext _dbAuthDatabaseContext;
+            private readonly IGuidService _guidService;
+            private readonly IAggregateStore _aggregateStore;
 
-            public IList<IEvent> Events => new List<IEvent>();
-
-            public Handler(ITelegramClient telegramClient, DatabaseContext dbAuthDatabaseContext)
+            public Handler(IGuidService guidService, IAggregateStore aggregateStore)
             {
-                _telegramClient = telegramClient;
-                _dbAuthDatabaseContext = dbAuthDatabaseContext;
+                _guidService = guidService;
+                _aggregateStore = aggregateStore;
             }
 
-            public async Task ExecuteAsync(Command command)
+            public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                bool doesAccountAlreadyExist = await _dbAuthDatabaseContext.Accounts.AnyAsync(ta =>
-                    ta.ExternalId == command.AccountId && ta.UserId == command.UserId);
+                 var user = _aggregateStore.GetNew<UserAggregate>();
+                //UserAggregate user = await _aggregateStore.GetByIdAsync<UserAggregate>(command.UserId);
+                user.AddAccount(_guidService.New, command);
 
-                if (!doesAccountAlreadyExist)
-                {
-                    await _dbAuthDatabaseContext.Accounts.AddAsync(new Account()
-                    {
-                        Id = command.Id,
-                        ExternalId = command.AccountId,
-                        UserId = command.UserId
-                    });
-                    await _dbAuthDatabaseContext.SaveChangesAsync();
-                }
-
-                await _telegramClient.SystemService.AddSessionAsync(command.SessionName());
-                await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
+                return user;
+                //await _telegramClient.SystemService.AddSessionAsync(command.SessionName());
+                //await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
             }
         }
     }

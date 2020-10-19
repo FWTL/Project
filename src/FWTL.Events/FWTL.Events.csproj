@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
   </ItemGroup>
 
 </Project>

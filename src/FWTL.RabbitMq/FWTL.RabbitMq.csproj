@@ -12,12 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Auth.Common\FWTL.Common.csproj" />
-    <ProjectReference Include="..\FWTL.Auth.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Domain\FWTL.Domain.csproj" />
-    <ProjectReference Include="..\FWTL.Service\FWTL.Domain.csproj" />
+    <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>
 
 </Project>

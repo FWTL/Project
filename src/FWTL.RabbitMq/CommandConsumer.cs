@@ -7,6 +7,7 @@ using MassTransit;
 using System;
 using System.Threading.Tasks;
 using FWTL.TelegramClient.Exceptions;
+using FWTL.Core.Aggregates;
 
 namespace FWTL.RabbitMq
 {
@@ -16,30 +17,38 @@ namespace FWTL.RabbitMq
         private readonly IExceptionHandler _exceptionHandler;
         private readonly ICommandHandler<TCommand> _handler;
         private readonly IEventFactory _eventFactory;
+        private readonly IAggregateStore _aggregateStore;
 
         public CommandConsumer(
             ICommandHandler<TCommand> handler,
             IEventFactory eventFactory,
             IEventDispatcher eventDispatcher,
-            IExceptionHandler exceptionHandler)
+            IExceptionHandler exceptionHandler,
+            IAggregateStore aggregateStore)
         {
             _handler = handler;
             _eventFactory = eventFactory;
             _eventDispatcher = eventDispatcher;
             _exceptionHandler = exceptionHandler;
+            _aggregateStore = aggregateStore;
         }
 
         public async Task Consume(ConsumeContext<TCommand> context)
         {
             try
             {
-                await _handler.ExecuteAsync(context.Message);
-                await context.RespondAsync(new Response(context.RequestId.Value));
+                IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
+                _eventFactory.Make(aggregateRoot.Events);
 
-                foreach (var @event in _handler.Events)
+                await aggregateRoot.CommitAsync(_aggregateStore);
+
+                foreach (var @event in aggregateRoot.Events)
                 {
                     await context.Publish(@event);
                 }
+
+                await context.RespondAsync(new Response(context.RequestId.Value));
+
             }
             catch (ValidationException ex)
             {

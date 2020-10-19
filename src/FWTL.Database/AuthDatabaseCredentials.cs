@@ -2,9 +2,9 @@
 
 namespace FWTL.Database
 {
-    public class AuthDatabaseCredentials
+    public class AppDatabaseCredentials
     {
-        public AuthDatabaseCredentials(IConnectionString credentials)
+        public AppDatabaseCredentials(IConnectionString credentials)
         {
             ConnectionString = credentials.ConnectionString;
         }

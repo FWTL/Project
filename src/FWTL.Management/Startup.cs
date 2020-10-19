@@ -102,7 +102,7 @@ namespace FWTL.Management
                     config.AddProfile(new RequestToQueryProfile(typeof(GetMe)));
                 }, typeof(RequestToCommandProfile).Assembly);
 
-            services.AddDbContext<DatabaseContext>();
+            services.AddDbContext<AppDatabaseContext>();
 
             services.AddAuthentication()
                 .AddJwtBearer(options =>
@@ -119,7 +119,7 @@ namespace FWTL.Management
                     .RequireAuthenticatedUser().Build();
             });
 
-            var servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
+            ServiceProvider servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

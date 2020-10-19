@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Database;
 using FWTL.Core.Events;
@@ -33,18 +34,9 @@ namespace FWTL.Domain.Accounts
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly ITelegramClient _telegramClient;
-
-            public IList<IEvent> Events => new List<IEvent>();
-
-            public Handler(ITelegramClient telegramClient, DatabaseContext dbAuthDatabaseContext)
+            public Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                _telegramClient = telegramClient;
-            }
-
-            public async Task ExecuteAsync(Command command)
-            {
-                await _telegramClient.UserService.PhoneLoginAsync(command.SessionName(), command.AccountId);
+                throw new NotImplementedException();
             }
         }
     }
