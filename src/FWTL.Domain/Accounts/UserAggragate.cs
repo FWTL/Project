@@ -8,13 +8,13 @@ using FWTL.Events;
 namespace FWTL.Domain.Accounts
 {
     public class UserAggregate : AggregateRoot<UserAggregate>,
-        IApply<AccountAdded>
+        IApply<AccountCreated>
     {
         public List<Account> Accounts { get; } = new List<Account>();
 
         public void AddAccount(Guid accountId, AddAccount.Command command)
         {
-            var locationCreated = new AccountAdded()
+            var locationCreated = new AccountCreated()
             {
                 AccountId = accountId,
                 ExternalAccountId = command.ExternalAccountId
@@ -23,7 +23,7 @@ namespace FWTL.Domain.Accounts
             AddEvent(locationCreated);
         }
 
-        public void Apply(AccountAdded @event)
+        public void Apply(AccountCreated @event)
         {
             Accounts.Add(new Account()
             {
