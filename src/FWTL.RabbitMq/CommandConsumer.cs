@@ -42,9 +42,9 @@ namespace FWTL.RabbitMq
 
                 await aggregateRoot.CommitAsync(_aggregateStore);
 
-                foreach (var @event in aggregateRoot.Events)
+                foreach (var composite in aggregateRoot.Events)
                 {
-                    await context.Publish(@event);
+                    await context.Publish(composite.Event, composite.Event.GetType());
                 }
 
                 await context.RespondAsync(new Response(context.RequestId.Value));

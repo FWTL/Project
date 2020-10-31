@@ -1,19 +1,26 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
+using FWTL.Database;
+using FWTL.Domain.Accounts;
+using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Users;
+using FWTL.EventHandlers;
 using FWTL.RabbitMq;
 using Hangfire;
 using Hangfire.SqlServer;
 using MassTransit;
+using MassTransit.Saga;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,10 +31,6 @@ using NodaTime.Serialization.JsonNet;
 using NodaTime.Serialization.SystemTextJson;
 using Serilog;
 using Serilog.Events;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FWTL.Database;
 
 namespace FWTL.Management
 {
@@ -135,14 +138,22 @@ namespace FWTL.Management
                 }));
             services.AddHangfireServer();
 
+            services.AddScoped<AddAccount.Handler>();
+            services.AddScoped<CreateSession.Handler>();
             services.AddMassTransit(x =>
             {
-                var commands = typeof(GetMe).Assembly.GetTypes().Where(t => typeof(ICommand).IsAssignableFrom(t))
+                x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>().InMemoryRepository();
+
+                var commands = typeof(GetMe).Assembly.GetTypes()
+                    .Where(t => t.IsNested && t.Name == "Handler")
+                    .Select(t => t.GetInterfaces().First())
+                    .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
                     .ToList();
 
                 foreach (var commandType in commands)
                 {
-                    x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(commandType));
+                    var typeArguments = commandType.GetGenericArguments();
+                    x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                 }
 
                 var queries = typeof(GetMe).Assembly.GetTypes()
@@ -181,8 +192,11 @@ namespace FWTL.Management
                     {
                         foreach (var commandType in commands)
                         {
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(commandType));
+                            var typeArguments = commandType.GetGenericArguments();
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                         }
+
+                        ec.ConfigureSaga<AccountSetupState>(context);
                     });
 
                     cfg.ReceiveEndpoint("queries", ec =>

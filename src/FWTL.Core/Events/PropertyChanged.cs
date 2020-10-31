@@ -30,5 +30,7 @@ namespace FWTL.Core.Events
         public string PropertyName { get; set; }
 
         public string TypeName { get; set; }
+
+        public Guid CorrelationId { get; }
     }
 }

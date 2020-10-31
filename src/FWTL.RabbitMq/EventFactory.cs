@@ -1,4 +1,5 @@
-﻿using EventStore.Client;
+﻿using System;
+using EventStore.Client;
 using FWTL.Core.Events;
 using MassTransit;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace FWTL.RabbitMq
             foreach (var @event in @events)
             {
                 @event.Metadata.EventId = Uuid.NewUuid();
+                //@event.Event.CorrelationId = Guid.NewGuid();
                 //@event.Metadata.CorrelationId = commandComposite.Metadata.CorrelationId;
                 //@event.Metadata.CommandId = commandComposite.Metadata.CommandId;
                 @event.Metadata.EventType = @event.Event.GetType().AssemblyQualifiedName;
