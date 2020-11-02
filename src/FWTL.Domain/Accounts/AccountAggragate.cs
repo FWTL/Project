@@ -1,6 +1,7 @@
 ﻿using System;
 using FWTL.Common.Aggregates;
 using FWTL.Core.Aggregates;
+using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Events;
 
 namespace FWTL.Domain.Accounts

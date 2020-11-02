@@ -39,6 +39,7 @@ namespace FWTL.Domain.Jobs
             public Guid UserId { get; set; }
 
             public Guid Id { get; set; }
+            public Guid CorrelationId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>

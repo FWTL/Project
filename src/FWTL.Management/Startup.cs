@@ -8,10 +8,10 @@ using FWTL.Common.Queries;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Database;
+using FWTL.Domain;
 using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Users;
-using FWTL.EventHandlers;
 using FWTL.RabbitMq;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -138,8 +138,9 @@ namespace FWTL.Management
                 }));
             services.AddHangfireServer();
 
-            services.AddScoped<AddAccount.Handler>();
-            services.AddScoped<CreateSession.Handler>();
+            services.AddScoped<SagaActivity<AccountSetupState,AddAccount.Command>>();
+            services.AddScoped<ISagaConsumer<AddAccount.Command>,SagaConsumer<AddAccount.Command>>();
+           
             services.AddMassTransit(x =>
             {
                 x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>().InMemoryRepository();

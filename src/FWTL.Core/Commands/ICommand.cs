@@ -1,6 +1,10 @@
-﻿namespace FWTL.Core.Commands
+﻿using System;
+using MassTransit;
+
+namespace FWTL.Core.Commands
 {
-    public interface ICommand
+    public interface ICommand 
     {
+        Guid CorrelationId { get; set; }
     }
 }

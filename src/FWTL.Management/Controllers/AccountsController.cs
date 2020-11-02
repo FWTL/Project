@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Domain.Accounts.AccountSetup;
 
 namespace FWTL.Management.Controllers
 {

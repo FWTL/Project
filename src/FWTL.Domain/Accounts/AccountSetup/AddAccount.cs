@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Automatonymous;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.EventHandlers;
-using GreenPipes;
 
-namespace FWTL.Domain.Accounts
+namespace FWTL.Domain.Accounts.AccountSetup
 {
     public class AddAccount
     {
@@ -27,10 +24,12 @@ namespace FWTL.Domain.Accounts
                 UserId = currentUserService.CurrentUserId;
             }
 
+            public Guid CorrelationId { get; set; }
+
             public Guid UserId { get; set; }
         }
 
-        public class Handler : Activity<AccountSetupState, Command>
+        public class Handler : ICommandHandler<Command>
         {
             private readonly IGuidService _guidService;
             private readonly IAggregateStore _aggregateStore;
@@ -41,26 +40,11 @@ namespace FWTL.Domain.Accounts
                 _aggregateStore = aggregateStore;
             }
 
-            public void Accept(StateMachineVisitor visitor)
-            {
-                throw new NotImplementedException();
-            }
-
-            public async Task Execute(BehaviorContext<AccountSetupState, Command> context, Behavior<AccountSetupState, Command> next)
+            public Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 var account = _aggregateStore.GetNew<AccountAggregate>();
-                account.Create(_guidService.New, context.Data);
-                await next.Execute(context);
-            }
-
-            public Task Faulted<TException>(BehaviorExceptionContext<AccountSetupState, Command, TException> context, Behavior<AccountSetupState, Command> next) where TException : Exception
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Probe(ProbeContext context)
-            {
-                throw new NotImplementedException();
+                account.Create(_guidService.New, command);
+                return Task.FromResult<IAggregateRoot>(account);
             }
         }
     }
