@@ -3,7 +3,6 @@ using FluentValidation;
 using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
 using FWTL.Common.Services;
-using FWTL.Common.Specification;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
@@ -27,6 +26,7 @@ using StackExchange.Redis;
 using System;
 using System.Net.Http;
 using System.Reflection;
+using FWTL.Core.Specification;
 using DatabaseContext = FWTL.Core.Database.DatabaseContext;
 
 namespace FWTL.Management

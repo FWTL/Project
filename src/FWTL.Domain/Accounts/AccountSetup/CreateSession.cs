@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Automatonymous;
 using FWTL.Core.Commands;
-using FWTL.EventHandlers;
 using GreenPipes;
 
 namespace FWTL.Domain.Accounts.AccountSetup
@@ -17,7 +16,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
             {
             }
 
-            public Guid UserId { get; set; }
+            public Guid AccountId { get; set; }
+            public Guid CorrelationId { get; set; }
         }
 
         public class Handler : Activity<AccountSetupState, Command>

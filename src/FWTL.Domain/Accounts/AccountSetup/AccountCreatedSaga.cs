@@ -1,14 +1,13 @@
 ﻿using System;
 using Automatonymous;
-using FWTL.Domain.Accounts;
-using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Events;
 
-namespace FWTL.EventHandlers
+namespace FWTL.Domain.Accounts.AccountSetup
 {
     public class AccountSetupState : SagaStateMachineInstance
     {
         public Guid CorrelationId { get; set; }
+        public Guid AccountId { get; set; }
         public int CurrentState { get; set; }
     }
 
@@ -24,22 +23,23 @@ namespace FWTL.EventHandlers
 
         public AccountSetupSaga()
         {
-            Event(() => AddAccountCommand, x => x.CorrelateById(context => context.Message.UserId));
-            Event(() => SessionCreatedEvent, x => x.CorrelateById(context => context.Message.UserId));
-
             InstanceState(x => x.CurrentState, Initialized, WithSession, WaitForCode, Ready);
 
             Initially(When(AddAccountCommand)
                 .Then(x => Console.WriteLine(x.Data.UserId))
-                .Activity(x => x.OfType<AddAccount.Handler>())
-                .Publish(x => new CreateSession.Command() { UserId = x.Data.UserId })
+                .Activity(x => x.OfType<SagaActivity<AccountSetupState,AddAccount.Command>>())
+                .Publish(x => new CreateSession.Command()
+                {
+                    CorrelationId = x.CorrelationId.Value,
+                    AccountId = x.Instance.AccountId
+                })
                 .TransitionTo(Initialized));
 
             During(Initialized, When(SessionCreatedEvent)
-                .Then(x => Console.WriteLine(x.Data.UserId))
+                .Then(x => Console.WriteLine(x.Data.AccountId))
                 //.Activity(x => x.OfType<AddAccount.Handler>())
-                .Send(x => new AddAccount.Command() { UserId = x.Data.UserId })
-                .TransitionTo(Initialized));
+                //.Send(x => new AddAccount.Command() { UserId = x.Data.AccountId })
+                .TransitionTo(WithSession));
 
             During(WithSession, When(CodeSentEvent).TransitionTo(WaitForCode));
             During(WaitForCode, When(CodeAcceptedEvent).TransitionTo(Ready));

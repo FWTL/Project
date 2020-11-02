@@ -2,7 +2,7 @@
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 
-namespace FWTL.Common.Specification
+namespace FWTL.Core.Specification
 {
     public interface ISpecificationFor<TAggregate, TEvent> where TEvent : IEvent where TAggregate : IAggregateRoot
     {

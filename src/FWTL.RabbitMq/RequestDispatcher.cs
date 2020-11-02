@@ -20,15 +20,18 @@ namespace FWTL.RabbitMq
         private readonly IClientFactory _clientFactory;
         private readonly IServiceProvider _context;
         private readonly RequestToCommandMapper _requestToCommandMapper;
+        private readonly IGuidService _guidService;
 
         public RequestDispatcher(
             IServiceProvider context,
             IClientFactory clientFactory,
-            RequestToCommandMapper requestToCommandMapper)
+            RequestToCommandMapper requestToCommandMapper,
+            IGuidService guidService)
         {
             _context = context;
             _clientFactory = clientFactory;
             _requestToCommandMapper = requestToCommandMapper;
+            _guidService = guidService;
         }
 
         public async Task<Guid> DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
@@ -44,6 +47,8 @@ namespace FWTL.RabbitMq
                     throw new ValidationException(validationResult.Errors);
                 }
             }
+
+            command.CorrelationId = _guidService.New;
 
             IRequestClient<TCommand> client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
             MassTransit.Response<Response> response = await client.GetResponse<Response>(command);

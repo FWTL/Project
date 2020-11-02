@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using FWTL.Aggregate;
 using FWTL.Core.Aggregates;
+using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Events;
 
 namespace FWTL.Domain.Accounts

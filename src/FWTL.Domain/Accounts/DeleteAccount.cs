@@ -34,6 +34,7 @@ namespace FWTL.Domain.Accounts
             }
 
             public Guid UserId { get; set; }
+            public Guid CorrelationId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>
