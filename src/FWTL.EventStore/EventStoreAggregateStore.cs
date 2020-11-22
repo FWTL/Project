@@ -1,4 +1,8 @@
-﻿using EventStore.Client;
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EventStore.Client;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 using FWTL.Core.Validation;
@@ -6,10 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StreamPosition = EventStore.Client.StreamPosition;
 
 namespace FWTL.EventStore
@@ -37,47 +37,23 @@ namespace FWTL.EventStore
             _context = context;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : IAggregateRoot, new()
+        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : class, IAggregateRoot, new()
         {
-            return await GetByIdAsync<TAggregate>(aggregateId, int.MaxValue);
-        }
-
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId, int version) where TAggregate : IAggregateRoot, new()
-        {
-            if (version <= 0)
+            var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
+            if (aggregate is null)
             {
-                throw new InvalidOperationException("Cannot get version <= 0");
+                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregate.Id} not found");
             }
 
-            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
-            TAggregate aggregate = new TAggregate();
-
-            var value = await _cache.StringGetAsync(streamName);
-            if (value.HasValue)
-            {
-                aggregate = JsonConvert.DeserializeObject<TAggregate>(value);
-            }
-
-            long sliceStart = aggregate.Version + 1;
-
-            var stream = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.FromInt64(sliceStart));
-
-            if (await stream.ReadState == ReadState.StreamNotFound)
-            {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggragate with id : {aggregate.Id} not found");
-            }
-
-            await foreach (var @event in stream)
-            {
-                (aggregate as dynamic).Apply(DeserializeEvent(@event.Event.Metadata, @event.Event.Data));
-                aggregate.Version++;
-            }
-
-            aggregate.Context = _context;
             return aggregate;
         }
 
-        public TAggregate GetNew<TAggregate>() where TAggregate : IAggregateRoot, new()
+        public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot, new()
+        {
+            return GetByIdOrDefaultAsync<TAggregate>(aggregate.Id, int.MaxValue);
+        }
+
+        public TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new()
         {
             var model = new TAggregate { Context = _context };
             return model;
@@ -101,6 +77,42 @@ namespace FWTL.EventStore
         {
             var eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType").Value;
             return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType)) as dynamic;
+        }
+
+        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
+            where TAggregate : class, IAggregateRoot, new()
+        {
+            if (version <= 0)
+            {
+                throw new InvalidOperationException("Cannot get version <= 0");
+            }
+
+            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
+            TAggregate aggregate = new TAggregate();
+
+            var value = await _cache.StringGetAsync(streamName);
+            if (value.HasValue)
+            {
+                aggregate = JsonConvert.DeserializeObject<TAggregate>(value);
+            }
+
+            long sliceStart = aggregate.Version + 1;
+
+            EventStoreClient.ReadStreamResult stream = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.FromInt64(sliceStart));
+
+            if (await stream.ReadState == ReadState.StreamNotFound)
+            {
+                return null;
+            }
+
+            await foreach (var @event in stream)
+            {
+                (aggregate as dynamic).Apply(DeserializeEvent(@event.Event.Metadata, @event.Event.Data));
+                aggregate.Version++;
+            }
+
+            aggregate.Context = _context;
+            return aggregate;
         }
 
         private EventData ToEventData(EventComposite @event)

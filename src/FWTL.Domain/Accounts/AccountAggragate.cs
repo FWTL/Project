@@ -24,9 +24,18 @@ namespace FWTL.Domain.Accounts
             Ready = 4
         }
 
+        public AccountAggregate()
+        {
+        }
+
+        public AccountAggregate(Guid ownerId, string externalAccountId)
+        {
+            OwnerId = ownerId;
+            ExternalAccountId = externalAccountId;
+        }
+
         public void Apply(AccountCreated @event)
         {
-            Id = @event.AccountId;
             ExternalAccountId = @event.ExternalAccountId;
             OwnerId = @event.OwnerId;
             State = AccountState.Initialized;

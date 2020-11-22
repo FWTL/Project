@@ -1,14 +1,14 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.Results;
 using FWTL.Common.Extensions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
+using FWTL.Core.Specification;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FWTL.Core.Specification;
 
 namespace FWTL.Common.Aggregates
 {
@@ -23,10 +23,10 @@ namespace FWTL.Common.Aggregates
         [JsonIgnore]
         public IEnumerable<EventComposite> Events => _events;
 
-        public abstract Func<TAggregate,string> UniquenessFn { get; }
+        public string Id => UniquenessFn(this as TAggregate);
 
-        private string _id;
-        public string Id { get { _id } }
+        [JsonIgnore]
+        public virtual Func<TAggregate, string> UniquenessFn { get; } = x => x.Id;
 
         public long Version { get; set; } = -1;
 

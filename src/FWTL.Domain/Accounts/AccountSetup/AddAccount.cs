@@ -40,11 +40,13 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 _aggregateStore = aggregateStore;
             }
 
-            public Task<IAggregateRoot> ExecuteAsync(Command command)
+            public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
+                var derp = await _aggregateStore.GetByIdOrDefaultAsync(new AccountAggregate(command.UserId,command.ExternalAccountId));
+
                 var account = _aggregateStore.GetNew<AccountAggregate>();
                 account.Create(_guidService.New, command);
-                return Task.FromResult<IAggregateRoot>(account);
+                return account;
             }
         }
     }

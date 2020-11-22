@@ -191,11 +191,11 @@ namespace FWTL.Management
 
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
-                        foreach (var commandType in commands)
-                        {
-                            var typeArguments = commandType.GetGenericArguments();
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                        }
+                        //foreach (var commandType in commands)
+                        //{
+                        //    var typeArguments = commandType.GetGenericArguments();
+                        //    ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                        //}
 
                         ec.ConfigureSaga<AccountSetupState>(context);
                     });

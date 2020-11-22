@@ -1,17 +1,10 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Threading.Tasks;
+using FluentValidation;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
-using FWTL.Core.Events;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;
-using FWTL.TelegramClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FWTL.Aggregate;
-using FWTL.Core.Database;
-using NodaTime;
-using FWTL.Core.Aggregates;
 
 namespace FWTL.Domain.Jobs
 {
