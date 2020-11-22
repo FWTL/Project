@@ -20,7 +20,7 @@ namespace FWTL.RabbitMq
             foreach (var @event in @events)
             {
                 @event.Metadata.EventId = Uuid.NewUuid();
-                //@event.Event.CorrelationId = Guid.NewGuid();
+                @event.Event.CorrelationId = _context.CorrelationId.Value;
                 //@event.Metadata.CorrelationId = commandComposite.Metadata.CorrelationId;
                 //@event.Metadata.CommandId = commandComposite.Metadata.CommandId;
                 @event.Metadata.EventType = @event.Event.GetType().AssemblyQualifiedName;

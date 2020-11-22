@@ -1,19 +1,17 @@
-﻿using FWTL.Core.Commands;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Accounts;
-using FWTL.Domain.Jobs;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FWTL.Domain.Accounts.AccountSetup;
+using FWTL.Domain.Jobs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Management.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    
     public class AccountsController : ControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
@@ -29,42 +27,36 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpGet]
-        
         public async Task<IReadOnlyList<GetAccounts.Result>> GetTelegramAccounts()
         {
             return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
         }
 
-        [HttpPost("{externalAccountId}")]
-        
+        [HttpPost]
         public async Task AddTelegramAccount(string externalAccountId)
         {
             await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
         }
 
         [HttpPost("{accountId}/Code")]
-        
         public async Task SendCode(string accountId)
         {
             await _commandDispatcher.DispatchAsync<SendCode.Request, SendCode.Command>(new SendCode.Request() { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Verify")]
-        
         public async Task VerifyTelegramAccount(string accountId, string code)
         {
             await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { AccountId = accountId, Code = code });
         }
 
         [HttpDelete("{accountId}")]
-        
         public async Task DeleteAccount(string accountId)
         {
             await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
         }
 
         [HttpGet("{accountId}/Dialogs")]
-        
         public async Task<IReadOnlyList<GetDialogs.Result>> GetDialogs(string accountId, int start, int limit, bool isForced)
         {
             return await _queryDispatcher.DispatchAsync<GetDialogs.Request, GetDialogs.Query, IReadOnlyList<GetDialogs.Result>>(

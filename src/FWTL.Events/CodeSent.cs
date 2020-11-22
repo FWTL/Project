@@ -5,6 +5,6 @@ namespace FWTL.Events
 {
     public class CodeSent : IEvent
     {
-        public Guid CorrelationId { get; }
+        public Guid CorrelationId { get; set; }
     }
 }

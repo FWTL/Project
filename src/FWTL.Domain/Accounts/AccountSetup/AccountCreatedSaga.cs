@@ -27,30 +27,23 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             Initially(When(AddAccountCommand)
                 .Then(x => Console.WriteLine(x.Data.UserId))
-                .Activity(x => x.OfType<SagaActivity<AccountSetupState,AddAccount.Command>>())
-                .Publish(x => new CreateSession.Command()
-                {
-                    CorrelationId = x.CorrelationId.Value,
-                    AccountId = x.Instance.AccountId
-                })
+                .Activity(x => x.OfType<SagaActivity<AccountSetupState, AddAccount.Command>>())
                 .TransitionTo(Initialized));
 
-            During(Initialized, When(SessionCreatedEvent)
-                .Then(x => Console.WriteLine(x.Data.AccountId))
-                //.Activity(x => x.OfType<AddAccount.Handler>())
-                //.Send(x => new AddAccount.Command() { UserId = x.Data.AccountId })
+            During(Initialized, When(AccountCreated).Publish(x => new CreateSession.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Data.AccountId }));
+            During(Initialized, When(CreateSession)
+                .Activity(x => x.OfType<SagaActivity<AccountSetupState, CreateSession.Command>>())
                 .TransitionTo(WithSession));
 
-            During(WithSession, When(CodeSentEvent).TransitionTo(WaitForCode));
-            During(WaitForCode, When(CodeAcceptedEvent).TransitionTo(Ready));
+            //.Activity(x => x.OfType<AddAccount.Handler>())
+            //.Send(x => new AddAccount.Command() { UserId = x.Data.AccountId })
+            //.TransitionTo(WithSession));
         }
 
         public Event<AddAccount.Command> AddAccountCommand { get; }
 
-        public Event<CreateSession.Command> SessionCreatedEvent { get; }
+        public Event<AccountCreated> AccountCreated { get; }
 
-        public Event<CodeSent> CodeSentEvent { get; }
-
-        public Event<CodeAccepted> CodeAcceptedEvent { get; }
+        public Event<CreateSession.Command> CreateSession { get; }
     }
 }

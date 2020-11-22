@@ -8,12 +8,10 @@ using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.TelegramClient.Exceptions;
-using GreenPipes;
 using MassTransit;
 
 namespace FWTL.RabbitMq
 {
-    
     public class SagaConsumer<TCommand> : ISagaConsumer<TCommand> where TCommand : class, ICommand
     {
         private readonly IEventDispatcher _eventDispatcher;

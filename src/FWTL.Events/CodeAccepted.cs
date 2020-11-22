@@ -7,6 +7,6 @@ namespace FWTL.Events
 {
     public class CodeAccepted : IEvent
     {
-        public Guid CorrelationId { get; }
+        public Guid CorrelationId { get; set; }
     }
 }
