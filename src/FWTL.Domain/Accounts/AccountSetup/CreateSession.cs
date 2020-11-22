@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
+using FWTL.TelegramClient;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
@@ -12,7 +15,27 @@ namespace FWTL.Domain.Accounts.AccountSetup
             }
 
             public Guid AccountId { get; set; }
+
             public Guid CorrelationId { get; set; }
+        }
+
+        public class Handler : ICommandHandler<Command>
+        {
+            private readonly ITelegramClient _telegramClient;
+            private readonly IAggregateStore _aggregateStore;
+
+            public Handler(ITelegramClient telegramClient, IAggregateStore aggregateStore)
+            {
+                _telegramClient = telegramClient;
+                _aggregateStore = aggregateStore;
+            }
+
+            public async Task<IAggregateRoot> ExecuteAsync(Command command)
+            {
+                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                await _telegramClient.SystemService.AddSessionAsync(account.ExternalAccountId);
+                return account;
+            }
         }
     }
 }

@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Aggregate\FWTL.Aggregate.csproj" />
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Events\FWTL.Events.csproj" />

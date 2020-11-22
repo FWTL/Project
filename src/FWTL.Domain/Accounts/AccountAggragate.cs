@@ -12,6 +12,8 @@ namespace FWTL.Domain.Accounts
     {
         public string ExternalAccountId { get; set; }
 
+        public Guid OwnerId { get; set; }
+
         public AccountState State { get; set; }
 
         public enum AccountState
@@ -26,6 +28,7 @@ namespace FWTL.Domain.Accounts
         {
             Id = @event.AccountId;
             ExternalAccountId = @event.ExternalAccountId;
+            OwnerId = @event.OwnerId;
             State = AccountState.Initialized;
         }
 
@@ -34,10 +37,13 @@ namespace FWTL.Domain.Accounts
             var accountAdded = new AccountCreated()
             {
                 AccountId = id,
-                ExternalAccountId = command.ExternalAccountId
+                ExternalAccountId = command.ExternalAccountId,
+                OwnerId = command.UserId,
             };
 
             AddEvent(accountAdded);
         }
+
+        public override Func<AccountAggregate, string> UniquenessFn { get; } = x => $"{x.OwnerId}:{x.ExternalAccountId}";
     }
 }

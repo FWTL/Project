@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
-using FWTL.Aggregate;
 using FWTL.Database.Configuration;
+using FWTL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Database
 {
-    public class AppDatabaseContext : DbContext, Core.Database.DatabaseContext
+    public class AppDatabaseContext : DbContext, IDatabaseContext
     {
         private readonly AppDatabaseCredentials _credentials;
 
@@ -17,10 +17,6 @@ namespace FWTL.Database
         }
 
         public DbSet<Account> Accounts { get; set; }
-
-        public DbSet<Job> Jobs { get; set; }
-
-        public DbSet<AccountJob> AccountJobs { get; set; }
 
         public void BeginTransaction()
         {
@@ -44,9 +40,7 @@ namespace FWTL.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new TelegramAccountConfiguration());
-            builder.ApplyConfiguration(new TelegramAccountJobConfiguration());
-            builder.ApplyConfiguration(new JobConfiguration());
+            builder.ApplyConfiguration(new AccountConfiguration());
             base.OnModelCreating(builder);
         }
 

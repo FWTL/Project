@@ -8,5 +8,6 @@ namespace FWTL.Events
         public Guid CorrelationId { get; set; }
         public Guid AccountId { get; set; }
         public string ExternalAccountId { get; set; }
+        public Guid OwnerId { get; set; }
     }
 }

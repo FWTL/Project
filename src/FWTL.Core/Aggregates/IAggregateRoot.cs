@@ -1,7 +1,7 @@
-﻿using FWTL.Core.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Core.Events;
 
 namespace FWTL.Core.Aggregates
 {
@@ -11,7 +11,7 @@ namespace FWTL.Core.Aggregates
 
         IEnumerable<EventComposite> Events { get; }
 
-        Guid Id { get; set; }
+        string Id { get; }
 
         long Version { get; set; }
 

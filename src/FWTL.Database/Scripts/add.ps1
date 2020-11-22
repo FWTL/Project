@@ -9,9 +9,9 @@ if(!($buildPath)){
 }
 else
 {
-    $buildPath = Join-Path $buildPath 'FWTL.Auth.Database'
+    $buildPath = Join-Path $buildPath 'FWTL.Database'
 }
 
 $Env:ASPNETCORE_ENVIRONMENT = $configuration
 Set-Location $buildPath
-dotnet ef migrations add $migration --startup-project ../FWTL.Auth --verbose --context AuthDatabaseContext
+dotnet ef migrations add $migration --startup-project ../FWTL.Management --verbose --context AppDatabaseContext

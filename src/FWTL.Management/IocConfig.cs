@@ -27,7 +27,6 @@ using System;
 using System.Net.Http;
 using System.Reflection;
 using FWTL.Core.Specification;
-using DatabaseContext = FWTL.Core.Database.DatabaseContext;
 
 namespace FWTL.Management
 {
@@ -133,7 +132,7 @@ namespace FWTL.Management
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
 
-            services.AddScoped<DatabaseContext, Database.AppDatabaseContext>();
+            services.AddScoped<IDatabaseContext, Database.AppDatabaseContext>();
 
             services.AddSingleton(b =>
             {

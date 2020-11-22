@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Aggregate\FWTL.Aggregate.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
   </ItemGroup>
 

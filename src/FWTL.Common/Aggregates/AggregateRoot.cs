@@ -23,7 +23,10 @@ namespace FWTL.Common.Aggregates
         [JsonIgnore]
         public IEnumerable<EventComposite> Events => _events;
 
-        public Guid Id { get; set; }
+        public abstract Func<TAggregate,string> UniquenessFn { get; }
+
+        private string _id;
+        public string Id { get { _id } }
 
         public long Version { get; set; } = -1;
 

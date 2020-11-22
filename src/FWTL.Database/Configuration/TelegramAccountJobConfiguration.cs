@@ -1,4 +1,4 @@
-﻿using FWTL.Aggregate;
+﻿using FWTL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
