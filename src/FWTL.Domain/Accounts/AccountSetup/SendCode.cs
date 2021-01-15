@@ -4,9 +4,9 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.TelegramClient;
 
-namespace FWTL.Domain.Accounts.AccountSetup
+namespace FWTL.Domain.Accounts
 {
-    public class CreateSession
+    public class SendCode
     {
         public class Command : ICommand
         {
@@ -15,7 +15,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
             }
 
             public string AccountId { get; set; }
-
             public Guid CorrelationId { get; set; }
         }
 
@@ -33,8 +32,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.CreateSession();
-                await _telegramClient.SystemService.AddSessionAsync(account.Id);
+                account.SendCode();
+                await _telegramClient.UserService.PhoneLoginAsync(account.Id, account.ExternalAccountId);
 
                 return account;
             }

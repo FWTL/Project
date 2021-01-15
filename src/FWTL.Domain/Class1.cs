@@ -6,11 +6,10 @@ using GreenPipes;
 
 namespace FWTL.Domain
 {
-  
     public class SagaActivity<TState, TCommand> : Activity<TState, TCommand> where TCommand : class, ICommand
     {
         private readonly ISagaConsumer<TCommand> _sagaConsumer;
-    
+
         public SagaActivity(ISagaConsumer<TCommand> sagaConsumer)
         {
             _sagaConsumer = sagaConsumer;

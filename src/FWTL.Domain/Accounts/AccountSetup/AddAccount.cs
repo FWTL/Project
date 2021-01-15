@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentValidation;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
+using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
@@ -31,22 +33,26 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly IGuidService _guidService;
             private readonly IAggregateStore _aggregateStore;
 
-            public Handler(IGuidService guidService, IAggregateStore aggregateStore)
+            public Handler(IAggregateStore aggregateStore)
             {
-                _guidService = guidService;
                 _aggregateStore = aggregateStore;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var derp = await _aggregateStore.GetByIdOrDefaultAsync(new AccountAggregate(command.UserId,command.ExternalAccountId));
-
                 var account = _aggregateStore.GetNew<AccountAggregate>();
-                account.Create(_guidService.New, command);
+                account.Create(command);
                 return account;
+            }
+        }
+
+        public class Validator : AppAbstractValidation<Command>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.ExternalAccountId).NotEmpty().Matches("^[0-9]");
             }
         }
     }

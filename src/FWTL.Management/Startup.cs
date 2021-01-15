@@ -16,7 +16,6 @@ using FWTL.RabbitMq;
 using Hangfire;
 using Hangfire.SqlServer;
 using MassTransit;
-using MassTransit.Saga;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -138,9 +137,15 @@ namespace FWTL.Management
                 }));
             services.AddHangfireServer();
 
-            services.AddScoped<SagaActivity<AccountSetupState,AddAccount.Command>>();
-            services.AddScoped<ISagaConsumer<AddAccount.Command>,SagaConsumer<AddAccount.Command>>();
-           
+            services.AddScoped<SagaActivity<AccountSetupState, AddAccount.Command>>();
+            services.AddScoped<ISagaConsumer<AddAccount.Command>, SagaConsumer<AddAccount.Command>>();
+
+            services.AddScoped<SagaActivity<AccountSetupState, CreateSession.Command>>();
+            services.AddScoped<ISagaConsumer<CreateSession.Command>, SagaConsumer<CreateSession.Command>>();
+
+            services.AddScoped<SagaActivity<AccountSetupState, SendCode.Command>>();
+            services.AddScoped<ISagaConsumer<SendCode.Command>, SagaConsumer<SendCode.Command>>();
+
             services.AddMassTransit(x =>
             {
                 x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>().InMemoryRepository();
