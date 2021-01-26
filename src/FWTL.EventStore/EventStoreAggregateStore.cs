@@ -16,10 +16,6 @@ namespace FWTL.EventStore
 {
     public class EventStoreAggregateStore : IAggregateStore
     {
-        private const int READ_PAGE_SIZE = 500;
-
-        private const long WRITE_PAGE_SIZE = 500;
-
         private readonly IDatabase _cache;
 
         private readonly IServiceProvider _context;
@@ -46,33 +42,6 @@ namespace FWTL.EventStore
             }
 
             return aggregate;
-        }
-
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot, new()
-        {
-            var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId, int.MaxValue);
-            if (aggregate is null)
-            {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregate.Id} not found");
-            }
-
-            return aggregate;
-        }
-
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(TAggregate aggregateId) where TAggregate : class, IAggregateRoot, new()
-        {
-            var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.Id, int.MaxValue);
-            if (aggregate is null)
-            {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregate.Id} not found");
-            }
-
-            return aggregate;
-        }
-
-        public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot, new()
-        {
-            return GetByIdOrDefaultAsync<TAggregate>(aggregate.Id, int.MaxValue);
         }
 
         public TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new()

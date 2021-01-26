@@ -14,7 +14,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             {
             }
 
-            public string AccountId { get; set; }
+            public Guid AccountId { get; set; }
 
             public Guid CorrelationId { get; set; }
         }
@@ -34,7 +34,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.CreateSession();
-                await _telegramClient.SystemService.AddSessionAsync(account.Id);
+                await _telegramClient.SystemService.AddSessionAsync(account.SessionName);
 
                 return account;
             }

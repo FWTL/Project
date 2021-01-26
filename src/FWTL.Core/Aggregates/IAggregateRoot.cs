@@ -11,7 +11,7 @@ namespace FWTL.Core.Aggregates
 
         IEnumerable<EventComposite> Events { get; }
 
-        string Id { get; }
+        Guid Id { get; }
 
         long Version { get; set; }
 

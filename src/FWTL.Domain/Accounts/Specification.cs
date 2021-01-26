@@ -21,11 +21,11 @@ namespace FWTL.Domain.Accounts
         {
             RuleFor(x => x).CustomAsync(async (aggregate, context, token) =>
             {
-                bool doesExist = await _aggregateStore.ExistsAsync<AccountAggregate>(aggregate.Id);
-                if (doesExist)
-                {
-                    context.AddFailure(nameof(AccountAggregate), "Account already exists");
-                }
+                //bool doesExist = await _aggregateStore.ExistsAsync<AccountAggregate>(aggregate.Id);
+                //if (doesExist)
+                //{
+                //    context.AddFailure(nameof(AccountAggregate), "Account already exists");
+                //}
             });
         }
 

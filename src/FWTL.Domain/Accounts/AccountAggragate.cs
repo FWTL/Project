@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using FWTL.Common.Aggregates;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
@@ -30,14 +31,9 @@ namespace FWTL.Domain.Accounts
         {
         }
 
-        public AccountAggregate(Guid ownerId, string externalAccountId)
-        {
-            OwnerId = ownerId;
-            ExternalAccountId = externalAccountId;
-        }
-
         public void Apply(AccountCreated @event)
         {
+            Id = @event.AccountId;
             ExternalAccountId = @event.ExternalAccountId;
             OwnerId = @event.OwnerId;
             State = AccountState.Initialized;
@@ -48,10 +44,11 @@ namespace FWTL.Domain.Accounts
             AddEvent(new CodeSent());
         }
 
-        public void Create(AddAccount.Command command)
+        public void Create(Guid accountId, AddAccount.Command command)
         {
             var accountAdded = new AccountCreated()
             {
+                AccountId = accountId,
                 ExternalAccountId = command.ExternalAccountId,
                 OwnerId = command.UserId,
             };
@@ -74,6 +71,6 @@ namespace FWTL.Domain.Accounts
             State = AccountState.WaitForCode;
         }
 
-        public override Func<AccountAggregate, string> UniquenessFn { get; } = x => $"{x.OwnerId}:{x.ExternalAccountId}";
+        public string SessionName => $"{OwnerId}/{Id}";
     }
 }

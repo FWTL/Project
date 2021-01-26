@@ -34,17 +34,19 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public class Handler : ICommandHandler<Command>
         {
             private readonly IAggregateStore _aggregateStore;
+            private readonly IGuidService _guidService;
 
-            public Handler(IAggregateStore aggregateStore)
+            public Handler(IAggregateStore aggregateStore, IGuidService guidService)
             {
                 _aggregateStore = aggregateStore;
+                _guidService = guidService;
             }
 
-            public async Task<IAggregateRoot> ExecuteAsync(Command command)
+            public Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 var account = _aggregateStore.GetNew<AccountAggregate>();
-                account.Create(command);
-                return account;
+                account.Create(_guidService.New,command);
+                return Task.FromResult<IAggregateRoot>(account);
             }
         }
 

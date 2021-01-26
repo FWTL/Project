@@ -23,12 +23,9 @@ namespace FWTL.Common.Aggregates
         [JsonIgnore]
         public IEnumerable<EventComposite> Events => _events;
 
-        public string Id => UniquenessFn(this as TAggregate);
-
-        [JsonIgnore]
-        public virtual Func<TAggregate, string> UniquenessFn { get; } = x => x.Id;
-
         public long Version { get; set; } = -1;
+
+        public Guid Id { get; set; }
 
         protected void AddEvent<TEvent>(TEvent @event) where TEvent : IEvent
         {

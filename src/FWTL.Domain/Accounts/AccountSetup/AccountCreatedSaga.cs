@@ -8,7 +8,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 {
     public class AccountSetupState : SagaStateMachineInstance
     {
-        public string AccountId { get; set; }
+        public Guid AccountId { get; set; }
         public Guid CorrelationId { get; set; }
         public int CurrentState { get; set; }
     }
@@ -32,7 +32,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .TransitionTo(Initialized));
 
             During(Initialized, When(AccountCreated)
-                .Then(x => x.Instance.AccountId = new AccountAggregate(x.Data.OwnerId, x.Data.ExternalAccountId).Id)
+                .Then(x => x.Instance.AccountId = x.Data.AccountId)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Instance.AccountId }));
             During(Initialized, When(CreateSession)
                 .Activity(x => x.OfType<SagaActivity<AccountSetupState, CreateSession.Command>>())
