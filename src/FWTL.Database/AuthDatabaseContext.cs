@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
-using FWTL.Database.Configuration;
 using FWTL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +39,6 @@ namespace FWTL.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new AccountConfiguration());
             base.OnModelCreating(builder);
         }
 
