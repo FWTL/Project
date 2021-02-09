@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FWTL.Database.Entities
+namespace FWTL.Database.Access.Entities
 {
     public class Account
     {

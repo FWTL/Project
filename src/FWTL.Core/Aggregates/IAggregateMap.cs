@@ -1,7 +1,9 @@
-﻿namespace FWTL.Core.Aggregates
+﻿using System.Threading.Tasks;
+
+namespace FWTL.Core.Aggregates
 {
-    public interface IAggregateMap<TAggregate> where TAggregate : IAggregateRoot
+    public interface IAggregateMap<in TAggregate> where TAggregate : IAggregateRoot
     {
-        void Save(TAggregate aggregate);
+        Task SaveAsync(TAggregate aggregate);
     }
 }

@@ -1,11 +1,11 @@
 ﻿using FWTL.Core.Database;
-using FWTL.Database.Entities;
+using FWTL.Database.Access.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace FWTL.Database
+namespace FWTL.Database.Access
 {
     public interface IDatabaseContext : IDbContext
     {
-        public DbSet<Account> Accounts { get; set; }
+        DbSet<Account> Accounts { get; set; }
     }
 }

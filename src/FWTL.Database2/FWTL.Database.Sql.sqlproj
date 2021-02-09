@@ -61,4 +61,7 @@
     <Folder Include="PreDeployment" />
     <Folder Include="PostDeployment" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="Migrations\Create.Table.Accounts.sql" />
+  </ItemGroup>
 </Project>

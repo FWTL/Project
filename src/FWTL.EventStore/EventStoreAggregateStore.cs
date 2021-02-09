@@ -61,7 +61,11 @@ namespace FWTL.EventStore
             aggregate.Version += aggregate.Events.Count();
             await _cache.StringSetAsync(streamName, JsonConvert.SerializeObject(aggregate), TimeSpan.FromDays(1));
 
-            _context.GetService<IAggregateMap<TAggregate>>()?.Save(aggregate);
+            var service = _context.GetService<IAggregateMap<TAggregate>>();
+            if (service != null)
+            {
+                await service.SaveAsync(aggregate);
+            }
         }
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)

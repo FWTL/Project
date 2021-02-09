@@ -7,9 +7,8 @@ using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
-using FWTL.Database;
+using FWTL.Database.Access;
 using FWTL.Domain;
-using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
@@ -289,9 +288,6 @@ namespace FWTL.Management
 
             Task startBusTask = Task.Run(async () => await ConfigureAsync(app));
             startBusTask.Wait();
-
-            Task seedDatabase = Task.Run(async () => await new SeedData().UpdateAsync());
-            seedDatabase.Wait();
         }
 
         public async Task ConfigureAsync(IApplicationBuilder app)

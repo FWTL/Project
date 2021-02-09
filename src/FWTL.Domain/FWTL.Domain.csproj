@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.Database.Access2\FWTL.Database.Access.csproj" />
     <ProjectReference Include="..\FWTL.Events\FWTL.Events.csproj" />
     <ProjectReference Include="..\FWTL.ServerClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>

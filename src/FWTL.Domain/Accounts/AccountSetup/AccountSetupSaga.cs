@@ -1,18 +1,8 @@
-﻿using System;
-using Automatonymous;
+﻿using Automatonymous;
 using FWTL.Events;
-using MassTransit;
-using MassTransit.Topology.Topologies;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class AccountSetupState : SagaStateMachineInstance
-    {
-        public Guid AccountId { get; set; }
-        public Guid CorrelationId { get; set; }
-        public int CurrentState { get; set; }
-    }
-
     public class AccountSetupSaga : MassTransitStateMachine<AccountSetupState>
     {
         public State Initialized { get; }
@@ -40,8 +30,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             During(WithSession, When(SessionCreated).Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Data.AccountId }));
             During(WithSession, When(SendCode)
-               .Activity(x => x.OfType<SagaActivity<AccountSetupState, SendCode.Command>>())
-               .TransitionTo(WithSession));
+                .Activity(x => x.OfType<SagaActivity<AccountSetupState, SendCode.Command>>())
+                .TransitionTo(WithSession));
 
             //.Activity(x => x.OfType<AddAccount.Handler>())
             //.Send(x => new AddAccount.Command() { UserId = x.Data.AccountId })

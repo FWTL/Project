@@ -4,7 +4,7 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.TelegramClient;
 
-namespace FWTL.Domain.Accounts
+namespace FWTL.Domain.Accounts.AccountSetup
 {
     public class SendCode
     {

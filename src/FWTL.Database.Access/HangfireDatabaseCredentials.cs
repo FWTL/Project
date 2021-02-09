@@ -1,10 +1,10 @@
 ﻿using FWTL.Core.Credentials;
 
-namespace FWTL.Database
+namespace FWTL.Database.Access
 {
-    public class AppDatabaseCredentials
+    public class HangfireDatabaseCredentials
     {
-        public AppDatabaseCredentials(IConnectionString credentials)
+        public HangfireDatabaseCredentials(IConnectionString credentials)
         {
             ConnectionString = credentials.ConnectionString;
         }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
-using FWTL.Database.Entities;
+using FWTL.Database.Access.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace FWTL.Database
+namespace FWTL.Database.Access
 {
     public class AppDatabaseContext : DbContext, IDatabaseContext
     {
