@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FWTL.Common.Net\FWTL.Common.Net.csproj" />
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core.Net\FWTL.Common.Net.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
