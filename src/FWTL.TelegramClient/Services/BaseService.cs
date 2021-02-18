@@ -33,24 +33,24 @@ namespace FWTL.TelegramClient.Services
 
         protected async Task<TResponse> HandleAsync<TResponse>(string url, IDictionary<string, string> query)
         {
-            url = QueryHelpers.AddQueryString(url, query);
-            var response = await _client.GetAsync(url);
+            //url = QueryHelpers.AddQueryString(url, query);
+            //var response = await _client.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
-            {
-                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
-            }
+            //if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
+            //{
+            //    throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
+            //}
 
-            ResponseWrapper<TResponse> result;
+            //ResponseWrapper<TResponse> result;
 
-            using (var responseStream = await response.Content.ReadAsStreamAsync())
-            {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
-            }
+            //using (var responseStream = await response.Content.ReadAsStreamAsync())
+            //{
+            //    result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
+            //}
 
-            HandleResponse(result);
+            //HandleResponse(result);
 
-            return result.Response;
+            return default(TResponse);
         }
 
         protected Task HandleAsync(string url)
@@ -60,21 +60,21 @@ namespace FWTL.TelegramClient.Services
 
         protected async Task HandleAsync(string url, IDictionary<string, string> query)
         {
-            url = QueryHelpers.AddQueryString(url, query);
-            var response = await _client.GetAsync(url);
+            //url = QueryHelpers.AddQueryString(url, query);
+            //var response = await _client.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
-            {
-                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
-            }
+            //if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
+            //{
+            //    throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
+            //}
 
-            ResponseWrapper result;
-            using (var responseStream = await response.Content.ReadAsStreamAsync())
-            {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
-            }
+            //ResponseWrapper result;
+            //using (var responseStream = await response.Content.ReadAsStreamAsync())
+            //{
+            //    result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
+            //}
 
-            HandleResponse(result);
+            //HandleResponse(result);
         }
 
         private void HandleResponse(ResponseWrapper result)

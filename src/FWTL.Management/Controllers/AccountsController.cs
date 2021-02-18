@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
@@ -33,9 +34,9 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpPost]
-        public async Task AddTelegramAccount(string externalAccountId)
+        public async Task<Guid> AddTelegramAccount(string externalAccountId)
         {
-            await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
+            return await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
         }
 
         [HttpPost("{accountId}/Verify")]

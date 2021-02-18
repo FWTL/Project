@@ -32,6 +32,12 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
+                if (command.AccountId == Guid.NewGuid())
+                {
+                    throw new Exception();
+                }
+
+
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.CreateSession();
                 await _telegramClient.SystemService.AddSessionAsync(account.Id.ToString());

@@ -6,7 +6,7 @@ using GreenPipes;
 
 namespace FWTL.Domain
 {
-    public class SagaActivity<TState, TCommand> : Activity<TState, TCommand> where TCommand : class, ICommand
+    public class SagaActivity<TState, TCommand> : Activity<TState, TCommand> where TCommand : class, ICommand where TState : ISagaState
     {
         private readonly ISagaConsumer<TCommand> _sagaConsumer;
 

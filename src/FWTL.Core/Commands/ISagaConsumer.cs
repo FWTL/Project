@@ -8,6 +8,6 @@ namespace FWTL.Core.Commands
 {
     public interface ISagaConsumer<in TCommand> where TCommand : class, ICommand
     {
-        public Task Consume<TState>(BehaviorContext<TState, TCommand> context);
+        public Task Consume<TState>(BehaviorContext<TState, TCommand> context) where TState : ISagaState;
     }
 }

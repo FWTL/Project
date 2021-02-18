@@ -26,20 +26,12 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 {
                     ResponseAddress = context.ResponseAddress.ToString(),
                     CorrelationId = context.CorrelationId.Value,
-                    RequestId = context.RequestId
+                    RequestId = context.RequestId.Value
                 });
             });
 
             Initially(When(AddAccountCommand)
                 .Activity(x => x.OfType<SagaActivity<AccountSetupState, AddAccount.Command>>())
-                .ThenAsync(async c =>
-                {
-                    //Send response back to orignial requestor once we are done with this step               
-                    ISendEndpoint responseEndpoint =
-                        await c.GetSendEndpoint(new Uri(c.Instance.ResponseAddress));
-
-                    await responseEndpoint.Send(new Response(Guid.NewGuid()), callback: sendContext => sendContext.RequestId = c.Instance.RequestId);
-                })
                 .TransitionTo(Initialized));
 
             During(Initialized, When(AccountCreated)

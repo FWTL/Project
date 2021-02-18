@@ -34,7 +34,7 @@ namespace FWTL.RabbitMq
             _aggregateStore = aggregateStore;
         }
 
-        public async Task Consume<TState>(BehaviorContext<TState, TCommand> context)
+        public async Task Consume<TState>(BehaviorContext<TState, TCommand> context) where TState : ISagaState
         {
             try
             {
@@ -50,17 +50,23 @@ namespace FWTL.RabbitMq
             }
             catch (ValidationException ex)
             {
-                await context.RespondAsync(new Response(ex));
+                await RespondAsync(context, new BadRequestResponse(ex));
             }
             catch (TelegramClientException ex)
             {
-                await context.RespondAsync(new Response(ex));
+                await RespondAsync(context, new BadRequestResponse(ex));
             }
             catch (Exception ex)
             {
                 var exceptionId = _exceptionHandler.Handle(ex, context.Data);
-                await context.RespondAsync(message: new Response(exceptionId, ex));
+                await RespondAsync(context, new ErrorResponse(exceptionId));
             }
+        }
+
+        private async Task RespondAsync<TState>(BehaviorContext<TState, TCommand> context, Response response) where TState : ISagaState
+        {
+            ISendEndpoint responseEndpoint = await context.GetSendEndpoint(new Uri(context.Instance.ResponseAddress));
+            await responseEndpoint.Send(response, sendContext => sendContext.RequestId = context.Instance.RequestId);
         }
     }
 }

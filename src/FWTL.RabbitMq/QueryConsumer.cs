@@ -29,16 +29,16 @@ namespace FWTL.RabbitMq
             }
             catch (ValidationException ex)
             {
-                await context.RespondAsync(new Response(ex));
+                await context.RespondAsync(new BadRequestResponse(ex));
             }
             catch (TelegramClientException ex)
             {
-                await context.RespondAsync(new Response(ex));
+                await context.RespondAsync(new BadRequestResponse(ex));
             }
             catch (Exception ex)
             {
                 var exceptionId = _exceptionHandler.Handle(ex, context.Message);
-                await context.RespondAsync(new Response(exceptionId,ex));
+                await context.RespondAsync(new ErrorResponse(exceptionId));
             }
         }
     }
