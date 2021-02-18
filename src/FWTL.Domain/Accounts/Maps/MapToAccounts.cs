@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Database.Access;
 using FWTL.Database.Access.Entities;
@@ -16,6 +17,11 @@ namespace FWTL.Domain.Accounts.Maps
 
         public async Task SaveAsync(AccountAggregate aggregate)
         {
+            if (await _databaseContext.Accounts.AnyAsync(account => account.Id == aggregate.Id))
+            {
+                return;
+            }
+
             await _databaseContext.Accounts.AddAsync(new Account()
             {
                 Id = aggregate.Id,

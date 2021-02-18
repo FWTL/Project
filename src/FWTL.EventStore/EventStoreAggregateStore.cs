@@ -56,22 +56,22 @@ namespace FWTL.EventStore
             var newEvents = aggregate.Events;
             var eventsToSave = newEvents.Select(ToEventData).ToList();
 
-            await _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave);
-
-            aggregate.Version += aggregate.Events.Count();
-            await _cache.StringSetAsync(streamName, JsonConvert.SerializeObject(aggregate), TimeSpan.FromDays(1));
-
             var service = _context.GetService<IAggregateMap<TAggregate>>();
             if (service != null)
             {
                 await service.SaveAsync(aggregate);
             }
+
+            await _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave);
+
+            aggregate.Version += aggregate.Events.Count();
+            await _cache.StringSetAsync(streamName, JsonConvert.SerializeObject(aggregate), TimeSpan.FromDays(1));
         }
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {
             var eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType").Value;
-            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType)) as dynamic;
+            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType));
         }
 
         public async Task<bool> ExistsAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot

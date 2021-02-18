@@ -34,7 +34,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.CreateSession();
-                await _telegramClient.SystemService.AddSessionAsync(account.SessionName);
+                await _telegramClient.SystemService.AddSessionAsync(account.Id.ToString());
 
                 return account;
             }

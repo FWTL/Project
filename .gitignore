@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /generators/js
 /.env.docker
+/src/FWTL.Database/FWTL.Database.Sql.refactorlog

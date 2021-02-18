@@ -13,15 +13,15 @@ namespace FWTL.Database.Migrator
         {
             if (Environment.UserInteractive)
             {
-                args = new string[2];
+                 args = new string[2];
 
                 string catalog = "FWTL.App";
                 string user = "sa";
                 string password = "!QAZ2wsx";
-                args[0] = $"Server=tcp:localhost,1433;Initial Catalog={catalog};Persist Security Info=False;User ID={user};Password={password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
+                args[0] = $"Server=localhost;Initial Catalog={catalog};Persist Security Info=False;User ID={user};Password={password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
                 string currentDictionary = Directory.GetCurrentDirectory();
                 string basePath = currentDictionary.Substring(0, currentDictionary.IndexOf("FWTL.Database.Migrator", StringComparison.Ordinal));
-                args[1] = Path.Combine(basePath, "FWTL.Database2");
+                args[1] = Path.Combine(basePath, "FWTL.Database");
             }
 
             if (args.Length != 2)

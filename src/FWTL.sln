@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.Database.Access", "FWT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWTL.TelegramClient", "FWTL.TelegramClient\FWTL.TelegramClient.csproj", "{C713E8FC-21A5-4134-B715-2B5BD2FC73EC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{30168C46-C16F-4F63-A44D-FAE16817B377}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CE8C975D-99CC-4318-925C-8CB131B08A22} = {0C802A08-F7D1-4632-86F7-DEEA7E6FF191}
+		{9C61A24B-AC8D-4395-8AC1-2145BDC3F9FB} = {30168C46-C16F-4F63-A44D-FAE16817B377}
+		{AA8CA822-6B35-42AB-82AC-9113DE8E4AA1} = {30168C46-C16F-4F63-A44D-FAE16817B377}
+		{9B866C52-98BD-46F7-B902-34FB25C114AB} = {30168C46-C16F-4F63-A44D-FAE16817B377}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A5B21B2-A3F3-412A-9686-D3BF49C242F1}

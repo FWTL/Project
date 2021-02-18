@@ -70,7 +70,5 @@ namespace FWTL.Domain.Accounts
         {
             State = AccountState.WaitForCode;
         }
-
-        public string SessionName => $"{OwnerId}/{Id}";
     }
 }

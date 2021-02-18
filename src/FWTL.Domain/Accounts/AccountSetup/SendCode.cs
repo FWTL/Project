@@ -33,7 +33,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.SendCode();
-                await _telegramClient.UserService.PhoneLoginAsync(account.SessionName, account.ExternalAccountId);
+                await _telegramClient.UserService.PhoneLoginAsync(account.Id.ToString(), account.ExternalAccountId);
 
                 return account;
             }

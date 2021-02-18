@@ -52,19 +52,6 @@ namespace FWTL.RabbitMq
             return correlationId;
         }
 
-        private async Task TraitValidationAsync<TCommand, TTraitValidator>(TCommand command) where TCommand : class, ICommand
-        {
-            if (command is TTraitValidator)
-            {
-                IValidator<TTraitValidator> pagingValidator = _context.GetService<IValidator<TTraitValidator>>();
-                ValidationResult pagingValidatorResult = await pagingValidator.ValidateAsync(command);
-                if (!pagingValidatorResult.IsValid)
-                {
-                    throw new ValidationException(pagingValidatorResult.Errors);
-                }
-            }
-        }
-
         public async Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request)
             where TCommand : class, ICommand
             where TRequest : class, IRequest

@@ -16,14 +16,14 @@ namespace FWTL.TelegramClient.Services
 
         public Task CompletePhoneLoginAsync(string sessionName, string code)
         {
-            return HandleAsync($"api/users/{sessionName}/completePhoneLogin?code={code}");
+            return HandleAsync($"api/acc/{sessionName}/completePhoneLogin?code={code}");
         }
 
         public async Task<User> GetSelfAsync(string sessionName)
         {
             try
             {
-                return await HandleAsync<User>($"api/users/{sessionName}/getSelf");
+                return await HandleAsync<User>($"api/acc/{sessionName}/getSelf");
             }
             catch (TelegramSessionNotFoundException)
             {
@@ -37,14 +37,14 @@ namespace FWTL.TelegramClient.Services
 
         public Task PhoneLoginAsync(string sessionName, string phoneNumber)
         {
-            return HandleAsync($"/api/users/{sessionName}/phoneLogin?phone={phoneNumber}");
+            return HandleAsync($"/api/acc/{sessionName}/phoneLogin?phone={phoneNumber}");
         }
 
         public async Task LogoutAsync(string sessionName)
         {
             try
             {
-                await HandleAsync($"/api/users/{sessionName}/logout");
+                await HandleAsync($"/api/acc/{sessionName}/logout");
             }
             catch (TelegramSessionNotFoundException) { }
         }
@@ -52,7 +52,7 @@ namespace FWTL.TelegramClient.Services
         public async Task<List<Dialog>> GetDialogsAsync(string sessionName)
         {
             //it seems Telegram returns dialogs from least frequently used.
-            var result = await HandleAsync<List<Dialog>>($"api/users/{sessionName}/getDialogs");
+            var result = await HandleAsync<List<Dialog>>($"api/acc/{sessionName}/getDialogs");
             result.Reverse();
             return result;
         }

@@ -18,14 +18,14 @@ namespace FWTL.TelegramClient.Services
 
         public Task AddSessionAsync(string sessionName)
         {
-            return HandleAsync($"/system/addSession?session=users/{sessionName}");
+            return HandleAsync($"/system/addSession?session=acc/{sessionName}");
         }
 
         public async Task RemoveSessionAsync(string sessionName)
         {
             try
             {
-                await HandleAsync($"/system/removeSession?session=users/{sessionName}");
+                await HandleAsync($"/system/removeSession?session=acc/{sessionName}");
             }
             catch (TelegramSessionNotFoundException)
             {

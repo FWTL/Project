@@ -5,11 +5,14 @@ using AutoMapper;
 using FWTL.Common.Commands;
 using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Database.Access;
 using FWTL.Domain;
+using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
+using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
 using FWTL.RabbitMq;
 using Hangfire;
@@ -135,6 +138,8 @@ namespace FWTL.Management
                     DisableGlobalLocks = true
                 }));
             services.AddHangfireServer();
+
+            services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
 
             services.AddScoped<SagaActivity<AccountSetupState, AddAccount.Command>>();
             services.AddScoped<ISagaConsumer<AddAccount.Command>, SagaConsumer<AddAccount.Command>>();

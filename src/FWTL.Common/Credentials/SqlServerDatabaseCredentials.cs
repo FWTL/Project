@@ -26,6 +26,6 @@ namespace FWTL.Common.Credentials
         }
 
         public string ConnectionString =>
-            $"Server=tcp:{_url},{_port};Initial Catalog={_catalog};Persist Security Info=False;User ID={_user};Password={_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
+            $"Server={_url};Initial Catalog={_catalog};Persist Security Info=False;User ID={_user};Password={_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
     }
 }

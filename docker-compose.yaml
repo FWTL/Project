@@ -1,6 +1,6 @@
 #docker-compose -p fwtl -f "docker-compose.yaml" up -d --build
 #docker-compose -p fwtl -f "docker-compose.yaml" -f "docker-compose.local.yaml" up -d --build
-#docker cp .env.docker FWTL-telegram-api-server:/app/.env.docker
+#docker cp .env.docker FWTL-telegram-api-server:.env.docker
 version: "3.4"
 
 services:
@@ -15,18 +15,18 @@ services:
       - FWTL-data:/data
     networks:
       - backend
-  sql:
-    image: mcr.microsoft.com/mssql/server:2017-latest
-    container_name: "FWTL-sql"
-    ports:
-      - "1433:1433"
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "!QAZ2wsx"
-    volumes:
-      - FWTL-sql-data:/var/opt/mssql
-    networks:
-      - backend
+  # sql:
+  #   image: mcr.microsoft.com/mssql/server:2017-latest
+  #   container_name: "FWTL-sql"
+  #   ports:
+  #     - "1433:1433"
+  #   environment:
+  #     ACCEPT_EULA: "Y"
+  #     SA_PASSWORD: "!QAZ2wsx"
+  #   volumes:
+  #     - FWTL-sql-data:/var/opt/mssql
+  #   networks:
+  #     - backend
   telegram-api-server:
     image: xtrime/telegram-api-server:latest
     container_name: FWTL-telegram-api-server
@@ -35,7 +35,7 @@ services:
       - "127.0.0.1:9503:9503"
     volumes:
       - "FWTL-sessions:/app/sessions"
-      - ./.env.docker:/app/.env.docker
+      - C:/Projects/FWTLAuth/.env.docker:/app/.env.docker
   rabbitmq:
     image: rabbitmq:3-management
     container_name: "FWTL-rabbitmq"

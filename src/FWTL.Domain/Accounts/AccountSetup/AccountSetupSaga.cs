@@ -1,5 +1,8 @@
-﻿using Automatonymous;
+﻿using System;
+using Automatonymous;
+using FWTL.Common.Commands;
 using FWTL.Events;
+using MassTransit;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
@@ -16,9 +19,27 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public AccountSetupSaga()
         {
             InstanceState(x => x.CurrentState, Initialized, WithSession, WaitForCode, Ready);
-           
+
+            Event(() => AddAccountCommand, x =>
+            {
+                x.SetSagaFactory(context => new AccountSetupState()
+                {
+                    ResponseAddress = context.ResponseAddress.ToString(),
+                    CorrelationId = context.CorrelationId.Value,
+                    RequestId = context.RequestId
+                });
+            });
+
             Initially(When(AddAccountCommand)
                 .Activity(x => x.OfType<SagaActivity<AccountSetupState, AddAccount.Command>>())
+                .ThenAsync(async c =>
+                {
+                    //Send response back to orignial requestor once we are done with this step               
+                    ISendEndpoint responseEndpoint =
+                        await c.GetSendEndpoint(new Uri(c.Instance.ResponseAddress));
+
+                    await responseEndpoint.Send(new Response(Guid.NewGuid()), callback: sendContext => sendContext.RequestId = c.Instance.RequestId);
+                })
                 .TransitionTo(Initialized));
 
             During(Initialized, When(AccountCreated)
@@ -28,7 +49,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .Activity(x => x.OfType<SagaActivity<AccountSetupState, CreateSession.Command>>())
                 .TransitionTo(WithSession));
 
-            During(WithSession, When(SessionCreated).Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Data.AccountId }));
+            During(WithSession, When(SessionCreated)
+                .Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Data.AccountId }));
             During(WithSession, When(SendCode)
                 .Activity(x => x.OfType<SagaActivity<AccountSetupState, SendCode.Command>>())
                 .TransitionTo(WithSession));

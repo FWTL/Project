@@ -60,8 +60,15 @@
     <Folder Include="Migrations" />
     <Folder Include="PreDeployment" />
     <Folder Include="PostDeployment" />
+    <Folder Include="Tables" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Migrations\Create.Table.Accounts.sql" />
+    <Build Include="Tables\Accounts.sql" />
+    <None Include="Migrations\Create.Table.Accounts.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="FWTL.Database.Sql.refactorlog" />
   </ItemGroup>
 </Project>
