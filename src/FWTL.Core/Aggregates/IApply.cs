@@ -2,7 +2,7 @@
 
 namespace FWTL.Core.Aggregates
 {
-    public interface IApply<TEvent> where TEvent : IEvent
+    public interface IApply<in TEvent> where TEvent : IEvent
     {
         void Apply(TEvent @event);
     }

@@ -19,8 +19,4 @@
     <ProjectReference Include="..\FWTL.TelegramClient\FWTL.TelegramClient.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FWTL\Core\Validation\" />
-  </ItemGroup>
-
 </Project>

@@ -1,15 +1,12 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Threading.Tasks;
+using FluentValidation;
 using FWTL.Common.Extensions;
+using FWTL.Common.Services;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using FluentValidation.Results;
-using FWTL.Common.Commands;
-using FWTL.Common.Services;
 
 namespace FWTL.RabbitMq
 {
@@ -24,8 +21,7 @@ namespace FWTL.RabbitMq
             IServiceProvider context,
             ISendEndpointProvider sendEndpointProvider,
             IGuidService guidService,
-            RequestToCommandMapper requestToCommandMapper,
-            CommandFactory commandFactory)
+            RequestToCommandMapper requestToCommandMapper)
         {
             _context = context;
             _sendEndpointProvider = sendEndpointProvider;

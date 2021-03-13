@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using FluentValidation;
 using FWTL.Common.Extensions;
 using FWTL.Common.Services;
 using FWTL.Core.Commands;
@@ -7,10 +10,6 @@ using FWTL.Core.Validation;
 using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace FWTL.RabbitMq
 {
@@ -33,7 +32,6 @@ namespace FWTL.RabbitMq
         public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : class, IQuery
         {
-            await TraitValidationAsync<TQuery, ISessionNameTrait>(query);
             await TraitValidationAsync<TQuery, IPagingTrait>(query);
 
             var validator = _context.GetService<IValidator<TQuery>>();

@@ -1,4 +1,7 @@
-﻿using EventStore.Client;
+﻿using System;
+using System.Net.Http;
+using System.Reflection;
+using EventStore.Client;
 using FluentValidation;
 using FWTL.Common.Credentials;
 using FWTL.Common.Helpers;
@@ -9,7 +12,8 @@ using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.Database;
+using FWTL.Core.Specification;
+using FWTL.Database.Access;
 using FWTL.Domain.Users;
 using FWTL.EventStore;
 using FWTL.RabbitMq;
@@ -23,11 +27,6 @@ using NodaTime;
 using Polly;
 using Polly.Extensions.Http;
 using StackExchange.Redis;
-using System;
-using System.Net.Http;
-using System.Reflection;
-using FWTL.Core.Specification;
-using FWTL.Database.Access;
 
 namespace FWTL.Management
 {
@@ -113,7 +112,6 @@ namespace FWTL.Management
             );
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
             services.AddScoped<IQueryDispatcher, QueryDispatcher>();

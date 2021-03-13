@@ -8,8 +8,7 @@ namespace FWTL.Domain.Traits
         public PagingTraitValidator()
         {
             RuleFor(x => x.Start).GreaterThanOrEqualTo(0);
-            RuleFor(x => x.Limit).GreaterThan(0);
-            RuleFor(x => x.Limit).LessThanOrEqualTo(50);
+            RuleFor(x => x.Limit).LessThanOrEqualTo(50).GreaterThan(0);
         }
     }
 }

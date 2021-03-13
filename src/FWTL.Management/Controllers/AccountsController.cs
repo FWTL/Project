@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,11 +24,7 @@ namespace FWTL.Management.Controllers
             _currentUserService = currentUserService;
         }
 
-        [HttpGet]
-        public async Task<IReadOnlyList<GetAccounts.Result>> GetTelegramAccounts()
-        {
-            return await _queryDispatcher.DispatchAsync<GetAccounts.Query, IReadOnlyList<GetAccounts.Result>>(new GetAccounts.Query(_currentUserService));
-        }
+
 
         [HttpPost]
         public async Task<Guid> AddTelegramAccount(string externalAccountId)
@@ -48,12 +42,6 @@ namespace FWTL.Management.Controllers
         public async Task VerifyTelegramAccount(Guid accountId, string code)
         {
             await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { AccountId = accountId, Code = code });
-        }
-
-        [HttpDelete("{accountId}")]
-        public async Task DeleteAccount(string accountId)
-        {
-            await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
         }
     }
 }
