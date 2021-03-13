@@ -61,14 +61,13 @@
     <Folder Include="PreDeployment" />
     <Folder Include="PostDeployment" />
     <Folder Include="Tables" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\Accounts.sql" />
-    <None Include="Migrations\Create.Table.Accounts.sql">
+    <None Include="Migrations\00001.Create.Table.Accounts.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="FWTL.Database.Sql.refactorlog" />
+    <Build Include="dbo\Tables\Accounts.sql" />
   </ItemGroup>
 </Project>

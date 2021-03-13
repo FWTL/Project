@@ -6,7 +6,6 @@ using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Domain.Jobs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Management.Controllers
@@ -55,38 +54,6 @@ namespace FWTL.Management.Controllers
         public async Task DeleteAccount(string accountId)
         {
             await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
-        }
-
-        [HttpGet("{accountId}/Dialogs")]
-        public async Task<IReadOnlyList<GetDialogs.Result>> GetDialogs(string accountId, int start, int limit, bool isForced)
-        {
-            return await _queryDispatcher.DispatchAsync<GetDialogs.Request, GetDialogs.Query, IReadOnlyList<GetDialogs.Result>>(
-            new GetDialogs.Request()
-            {
-                AccountId = accountId,
-                Start = start,
-                Limit = limit,
-                IsForced = isForced
-            });
-        }
-
-        [HttpGet("{accountId}/Jobs")]
-        public async Task<IReadOnlyList<GetJobsByAccount.Result>> GetJobsByAccount(string accountId)
-        {
-            return await _queryDispatcher.DispatchAsync<GetJobsByAccount.Request, GetJobsByAccount.Query, IReadOnlyList<GetJobsByAccount.Result>>(new GetJobsByAccount.Request()
-            {
-                AccountId = accountId
-            });
-        }
-
-        [HttpGet("{accountId}/Dialogs/{dialogId}/Jobs")]
-        public async Task<IReadOnlyList<GetJobsByDialog.Result>> GetJobsByDialog(string accountId, string dialogId)
-        {
-            return await _queryDispatcher.DispatchAsync<GetJobsByDialog.Request, GetJobsByDialog.Query, IReadOnlyList<GetJobsByDialog.Result>>(new GetJobsByDialog.Request()
-            {
-                AccountId = accountId,
-                DialogId = dialogId
-            });
         }
     }
 }

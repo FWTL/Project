@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FWTL.Common.Services
 {
-    public class CacheService : ICacheService
+    public class RedisCacheService : ICacheService
     {
         private readonly IDatabase _cache;
 
@@ -17,12 +17,12 @@ namespace FWTL.Common.Services
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        static CacheService()
+        static RedisCacheService()
         {
             SerializeOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         }
 
-        public CacheService(IDatabase cache)
+        public RedisCacheService(IDatabase cache)
         {
             _cache = cache;
         }

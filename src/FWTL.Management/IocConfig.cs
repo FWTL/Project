@@ -154,7 +154,7 @@ namespace FWTL.Management
                 return redis.GetServer(host: configuration["Redis:Url"], port: 6379);
             });
 
-            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<IAggregateStore, EventStoreAggregateStore>();
 
             services.AddSingleton(b =>

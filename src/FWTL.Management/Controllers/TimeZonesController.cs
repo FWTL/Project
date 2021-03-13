@@ -1,7 +1,6 @@
-﻿using FWTL.Core.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using FWTL.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace FWTL.Management.Controllers
 {
@@ -16,9 +15,9 @@ namespace FWTL.Management.Controllers
             _timeZonesService = timeZonesService;
         }
 
-        
+
         [HttpGet]
-        public IDictionary<string,string> Get()
+        public IDictionary<string, string> Get()
         {
             return _timeZonesService.GetAll();
         }

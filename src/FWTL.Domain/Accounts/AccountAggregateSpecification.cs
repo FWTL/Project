@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentValidation;
+using FWTL.Common.Helpers;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Specification;
 using FWTL.Core.Validation;
@@ -23,7 +24,7 @@ namespace FWTL.Domain.Accounts
 
         public void ValidateExternalAccountId()
         {
-            RuleFor(x => x.ExternalAccountId).NotEmpty().Matches("^[0-9]").MaximumLength(20);
+            RuleFor(x => x.ExternalAccountId).NotEmpty().Matches(RegexExpressions.OnlyNumbers).MaximumLength(20);
         }
 
         public void MustBeUnique()
