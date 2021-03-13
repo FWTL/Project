@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Net.Http;
 using System.Reflection;
-using EventStore.Client;
 using FluentValidation;
 using FWTL.Common.Cqrs;
 using FWTL.Common.Cqrs.Mappers;
-using FWTL.Common.Helpers;
 using FWTL.Common.Services;
 using FWTL.Common.Setup.Credentials;
-using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
-using FWTL.Core.Services.Telegram;
 using FWTL.Core.Specification;
 using FWTL.CurrentUser;
 using FWTL.Database.Access;
 using FWTL.Domain.Users;
 using FWTL.EventStore;
-using FWTL.MockTelegramClient;
 using FWTL.RabbitMq;
-using FWTL.Redis;
 using FWTL.TelegramClient;
 using FWTL.TimeZones;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +27,6 @@ using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Polly;
 using Polly.Extensions.Http;
-using StackExchange.Redis;
 
 namespace FWTL.Management
 {
@@ -123,58 +116,23 @@ namespace FWTL.Management
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
             services.AddScoped<IQueryDispatcher, QueryDispatcher>();
             services.AddSingleton<IGuidService, GuidService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddCurrentUserService();
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<RequestToQueryMapper>();
-            services.AddSingleton<ITimeZonesService, TimeZonesService>();
+
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
-            services.AddHttpClient<ITelegramClient, Client>((service, client) =>
-            {
-                var configuration = service.GetService<IConfiguration>();
-                client.BaseAddress = new Uri(configuration["Telegram:Url"]);
-            })
+            services.AddTelegramClient(new Uri("http://127.0.0.1:9503"))
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
 
-            services.AddScoped<ITelegramClient, MockClient>();
+            services.AddTimeZonesService();
 
             services.AddScoped<IDatabaseContext, AppDatabaseContext>();
 
-            services.AddSingleton(b =>
-            {
-                var credentials = b.GetService<RedisCredentials>();
-                return ConnectionMultiplexer.Connect(credentials.ConnectionString);
-            });
-
-            services.AddSingleton(b =>
-            {
-                var redis = b.GetService<ConnectionMultiplexer>();
-                return redis.GetDatabase();
-            });
-
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                var redis = b.GetService<ConnectionMultiplexer>();
-                return redis.GetServer(host: configuration["Redis:Url"], port: 6379);
-            });
-
-            services.AddScoped<ICacheService, RedisCacheService>();
-            services.AddScoped<IAggregateStore, EventStoreAggregateStore>();
-
-            services.AddSingleton(b =>
-            {
-                var settings = new EventStoreClientSettings
-                {
-                    ConnectivitySettings = {
-                        Address = new Uri("http://localhost:2113")
-                    }
-                };
-
-                return new EventStoreClient(settings);
-            });
+            
+            services.AddEventStore(new Uri("http://localhost:2113"));
 
             services.AddScoped<IEventFactory, EventFactory>();
 

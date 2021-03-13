@@ -14,6 +14,7 @@ using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
 using FWTL.Management.Filters;
 using FWTL.RabbitMq;
+using FWTL.TimeZones;
 using Hangfire;
 using Hangfire.SqlServer;
 using MassTransit;
@@ -139,6 +140,7 @@ namespace FWTL.Management
 
             services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
 
+            services.AddRedis("localhost,abortConnect=False,allowAdmin=true");
 
             services.AddMassTransit(x =>
             {
