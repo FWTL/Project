@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using EventStore.Client;
 using FWTL.Core.Events;
 using MassTransit;
-using System.Collections.Generic;
 
 namespace FWTL.RabbitMq
 {

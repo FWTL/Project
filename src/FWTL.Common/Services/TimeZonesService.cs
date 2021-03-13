@@ -1,7 +1,7 @@
-﻿using FWTL.Core.Services;
-using NodaTime.TimeZones;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using FWTL.Core.Services;
+using NodaTime.TimeZones;
 using TimeZoneNames;
 
 namespace FWTL.Common.Services

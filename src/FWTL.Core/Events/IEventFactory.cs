@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using FWTL.Core.Commands;
 
 namespace FWTL.Core.Events
 {

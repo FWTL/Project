@@ -1,10 +1,10 @@
-﻿using FWTL.Core.Services;
+﻿using System;
+using System.Text.Json;
+using System.Threading.Tasks;
+using FWTL.Core.Services;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
-using System;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace FWTL.Common.Services
 {

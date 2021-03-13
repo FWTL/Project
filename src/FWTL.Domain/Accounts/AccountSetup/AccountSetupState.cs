@@ -1,9 +1,6 @@
 ﻿using System;
 using Automatonymous;
-using FWTL.Core.Commands;
-using MassTransit;
 using MassTransit.Saga;
-using MassTransit.Topology.Topologies;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {

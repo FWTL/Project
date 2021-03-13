@@ -1,6 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using FWTL.Core.Commands;
-using System;
 
 namespace FWTL.Common.Services
 {

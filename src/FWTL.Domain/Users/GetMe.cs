@@ -1,7 +1,7 @@
-﻿using FWTL.Core.Queries;
-using FWTL.Core.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using FWTL.Core.Queries;
+using FWTL.Core.Services;
 
 namespace FWTL.Domain.Users
 {

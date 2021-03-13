@@ -1,12 +1,11 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using FluentValidation;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace FWTL.Common.Net.Filters
 {

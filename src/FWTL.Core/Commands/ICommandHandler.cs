@@ -1,5 +1,5 @@
-﻿using FWTL.Core.Aggregates;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FWTL.Core.Aggregates;
 
 namespace FWTL.Core.Commands
 {

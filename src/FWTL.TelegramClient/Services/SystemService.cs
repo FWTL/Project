@@ -1,7 +1,7 @@
-﻿using FWTL.TelegramClient.Exceptions;
-using FWTL.TelegramClient.Responses;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using FWTL.TelegramClient.Exceptions;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient.Services
 {
@@ -29,7 +29,6 @@ namespace FWTL.TelegramClient.Services
             }
             catch (TelegramSessionNotFoundException)
             {
-
             }
         }
 
@@ -41,7 +40,6 @@ namespace FWTL.TelegramClient.Services
             }
             catch (TelegramSessionNotFoundException)
             {
-               
             }
         }
     }

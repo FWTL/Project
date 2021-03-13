@@ -1,5 +1,5 @@
-﻿using FWTL.Core.Events;
-using System;
+﻿using System;
+using FWTL.Core.Events;
 
 namespace FWTL.Events
 {

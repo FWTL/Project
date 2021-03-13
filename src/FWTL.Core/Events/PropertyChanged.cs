@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FWTL.Core.Events
+﻿namespace FWTL.Core.Events
 {
     //public class PropertyChanged : IEvent
     //{

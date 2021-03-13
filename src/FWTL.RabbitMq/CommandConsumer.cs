@@ -1,13 +1,13 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Threading.Tasks;
+using FluentValidation;
 using FWTL.Common.Commands;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
-using MassTransit;
-using System;
-using System.Threading.Tasks;
 using FWTL.TelegramClient.Exceptions;
-using FWTL.Core.Aggregates;
+using MassTransit;
 
 namespace FWTL.RabbitMq
 {
@@ -48,7 +48,6 @@ namespace FWTL.RabbitMq
                 }
 
                 await context.RespondAsync(new Response(context.RequestId.Value));
-
             }
             catch (ValidationException ex)
             {

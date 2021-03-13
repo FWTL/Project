@@ -1,6 +1,6 @@
-﻿using FWTL.TelegramClient.Responses;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient.Services
 {

@@ -1,5 +1,4 @@
-﻿using FWTL.Common.Extensions;
-using FWTL.Core.Credentials;
+﻿using FWTL.Core.Credentials;
 using Microsoft.Extensions.Configuration;
 
 namespace FWTL.Common.Credentials

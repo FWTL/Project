@@ -1,5 +1,5 @@
-﻿using FWTL.TelegramClient.Types;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using FWTL.TelegramClient.Types;
 
 namespace FWTL.TelegramClient.Responses
 {

@@ -46,7 +46,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 var account = _aggregateStore.GetNew<AccountAggregate>();
-                account.Create(_guidService.New,command);
+                account.Create(_guidService.New, command);
                 return Task.FromResult<IAggregateRoot>(account);
             }
         }

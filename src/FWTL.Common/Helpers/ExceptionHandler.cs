@@ -1,8 +1,8 @@
-﻿using FWTL.Core.Helpers;
+﻿using System;
+using FWTL.Core.Helpers;
 using FWTL.Core.Services;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 
 namespace FWTL.Common.Helpers
 {

@@ -1,5 +1,5 @@
-﻿using FWTL.TelegramClient.Responses;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FWTL.TelegramClient.Responses;
 
 namespace FWTL.TelegramClient
 {

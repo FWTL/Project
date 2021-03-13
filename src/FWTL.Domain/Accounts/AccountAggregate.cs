@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using FWTL.Common.Aggregates;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
@@ -79,6 +78,7 @@ namespace FWTL.Domain.Accounts
                 AccountId = Id
             });
         }
+
         public void Verify()
         {
             AddEvent(new AccountVeryfied()
