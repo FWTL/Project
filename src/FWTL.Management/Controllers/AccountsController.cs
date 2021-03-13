@@ -39,8 +39,14 @@ namespace FWTL.Management.Controllers
             return await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
         }
 
+        [HttpPost("{accountId}/Reset")]
+        public async Task<Guid> ResetTelegramAccount(string externalAccountId)
+        {
+            return await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
+        }
+
         [HttpPost("{accountId}/Verify")]
-        public async Task VerifyTelegramAccount(string accountId, string code)
+        public async Task VerifyTelegramAccount(Guid accountId, string code)
         {
             await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { AccountId = accountId, Code = code });
         }

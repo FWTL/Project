@@ -1,6 +1,4 @@
-﻿using System;
-using Automatonymous;
-using FWTL.Common.Commands;
+﻿using Automatonymous;
 using FWTL.Events;
 using MassTransit;
 
@@ -18,48 +16,33 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public AccountSetupSaga()
         {
+            Event(() => AccountCreated, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => SessionCreated, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => CodeSent, x => x.CorrelateById(m => m.Message.AccountId));
+
             InstanceState(x => x.CurrentState, Initialized, WithSession, WaitForCode, Ready);
 
-            Event(() => AddAccountCommand, x =>
-            {
-                x.SetSagaFactory(context => new AccountSetupState()
-                {
-                    ResponseAddress = context.ResponseAddress.ToString(),
-                    CorrelationId = context.CorrelationId.Value,
-                    RequestId = context.RequestId.Value
-                });
-            });
+            Initially(When(AccountCreated)
+                .TransitionTo(Initialized)
+                .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-            Initially(When(AddAccountCommand)
-                .Activity(x => x.OfType<SagaActivity<AccountSetupState, AddAccount.Command>>())
-                .TransitionTo(Initialized));
+            During(Initialized, When(SessionCreated)
+                 .TransitionTo(WithSession)
+                 .Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Instance.CorrelationId }));
 
-            During(Initialized, When(AccountCreated)
-                .Then(x => x.Instance.AccountId = x.Data.AccountId)
-                .Publish(x => new CreateSession.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Instance.AccountId }));
-            During(Initialized, When(CreateSession)
-                .Activity(x => x.OfType<SagaActivity<AccountSetupState, CreateSession.Command>>())
-                .TransitionTo(WithSession));
+            During(WithSession, When(CodeSent)
+                .TransitionTo(WaitForCode));
 
-            During(WithSession, When(SessionCreated)
-                .Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Data.AccountId }));
-            During(WithSession, When(SendCode)
-                .Activity(x => x.OfType<SagaActivity<AccountSetupState, SendCode.Command>>())
-                .TransitionTo(WithSession));
-
-            //.Activity(x => x.OfType<AddAccount.Handler>())
-            //.Send(x => new AddAccount.Command() { UserId = x.Data.AccountId })
-            //.TransitionTo(WithSession));
+            During(WaitForCode, When(AccountVeryfied)
+                .TransitionTo(Ready).Finalize());
         }
-
-        public Event<AddAccount.Command> AddAccountCommand { get; }
 
         public Event<AccountCreated> AccountCreated { get; }
 
-        public Event<CreateSession.Command> CreateSession { get; }
-
         public Event<SessionCreated> SessionCreated { get; }
 
-        public Event<SendCode.Command> SendCode { get; }
+        public Event<CodeSent> CodeSent { get; }
+
+        public Event<AccountVeryfied> AccountVeryfied { get; }
     }
 }

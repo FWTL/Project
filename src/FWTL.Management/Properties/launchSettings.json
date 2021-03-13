@@ -1,12 +1,4 @@
 ﻿{
-  "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
-    "iisExpress": {
-      "applicationUrl": "http://localhost:62527",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "FWTL.Management": {
       "commandName": "Project",
@@ -14,7 +6,8 @@
       "applicationUrl": "http://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "swagger"
     }
   }
 }

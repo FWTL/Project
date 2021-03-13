@@ -6,15 +6,21 @@ using FWTL.TelegramClient;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class CreateSession
+    public class VerifyAccount
     {
-        public class Command : ICommand
+        public class Request : IRequest
+        {
+            public Guid AccountId { get; set; }
+
+            public string Code { get; set; }
+        }
+
+        public class Command : Request, ICommand
         {
             public Command()
             {
             }
 
-            public Guid AccountId { get; set; }
 
             public Guid CorrelationId { get; set; }
         }
@@ -33,8 +39,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.CreateSession();
-                await _telegramClient.SystemService.AddSessionAsync(account.Id.ToString());
+                account.Verify();
+                await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
 
                 return account;
             }

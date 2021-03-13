@@ -11,13 +11,12 @@ namespace FWTL.Domain.Accounts
         AggregateRoot<AccountAggregate>,
         IApply<AccountCreated>,
         IApply<SessionCreated>,
-        IApply<CodeSent>
+        IApply<CodeSent>,
+        IApply<AccountVeryfied>
     {
-        public string ExternalAccountId { get; set; }
-
-        public Guid OwnerId { get; set; }
-
-        public AccountState State { get; set; }
+        public AccountAggregate()
+        {
+        }
 
         public enum AccountState
         {
@@ -27,9 +26,11 @@ namespace FWTL.Domain.Accounts
             Ready = 4
         }
 
-        public AccountAggregate()
-        {
-        }
+        public string ExternalAccountId { get; set; }
+
+        public Guid OwnerId { get; set; }
+
+        public AccountState State { get; set; }
 
         public void Apply(AccountCreated @event)
         {
@@ -39,9 +40,19 @@ namespace FWTL.Domain.Accounts
             State = AccountState.Initialized;
         }
 
-        public void SendCode()
+        public void Apply(SessionCreated @event)
         {
-            AddEvent(new CodeSent());
+            State = AccountState.WithSession;
+        }
+
+        public void Apply(CodeSent @event)
+        {
+            State = AccountState.WaitForCode;
+        }
+
+        public void Apply(AccountVeryfied @event)
+        {
+            State = AccountState.Ready;
         }
 
         public void Create(Guid accountId, AddAccount.Command command)
@@ -61,14 +72,19 @@ namespace FWTL.Domain.Accounts
             AddEvent(new SessionCreated() { AccountId = Id });
         }
 
-        public void Apply(SessionCreated @event)
+        public void SendCode()
         {
-            State = AccountState.WithSession;
+            AddEvent(new CodeSent()
+            {
+                AccountId = Id
+            });
         }
-
-        public void Apply(CodeSent @event)
+        public void Verify()
         {
-            State = AccountState.WaitForCode;
+            AddEvent(new AccountVeryfied()
+            {
+                AccountId = Id
+            });
         }
     }
 }

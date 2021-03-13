@@ -54,7 +54,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
         {
             public Validator()
             {
-                RuleFor(x => x.ExternalAccountId).NotEmpty().Matches("^[0-9]");
+                RuleFor(x => x.ExternalAccountId).NotEmpty().Matches("^[0-9]").MaximumLength(20);
             }
         }
     }

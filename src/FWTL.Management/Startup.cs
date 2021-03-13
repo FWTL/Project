@@ -3,13 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Common.Commands;
+using FWTL.Common.Credentials;
 using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Database.Access;
-using FWTL.Domain;
 using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.Maps;
@@ -141,18 +141,25 @@ namespace FWTL.Management
 
             services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
 
-            services.AddScoped<SagaActivity<AccountSetupState, AddAccount.Command>>();
-            services.AddScoped<ISagaConsumer<AddAccount.Command>, SagaConsumer<AddAccount.Command>>();
+            //services.AddScoped<SagaActivity<AccountSetupState, AddAccount.Command>>();
+            //services.AddScoped<ISagaConsumer<AddAccount.Command>, SagaConsumer<AddAccount.Command>>();
 
-            services.AddScoped<SagaActivity<AccountSetupState, CreateSession.Command>>();
-            services.AddScoped<ISagaConsumer<CreateSession.Command>, SagaConsumer<CreateSession.Command>>();
+            //services.AddScoped<SagaActivity<AccountSetupState, CreateSession.Command>>();
+            //services.AddScoped<ISagaConsumer<CreateSession.Command>, SagaConsumer<CreateSession.Command>>();
 
-            services.AddScoped<SagaActivity<AccountSetupState, SendCode.Command>>();
-            services.AddScoped<ISagaConsumer<SendCode.Command>, SagaConsumer<SendCode.Command>>();
+            //services.AddScoped<SagaActivity<AccountSetupState, SendCode.Command>>();
+            //services.AddScoped<ISagaConsumer<SendCode.Command>, SagaConsumer<SendCode.Command>>();
+
+            //services.AddScoped<SagaActivity<AccountSetupState, VerifyAccount.Command>>();
+            //services.AddScoped<ISagaConsumer<VerifyAccount.Command>, SagaConsumer<VerifyAccount.Command>>();
 
             services.AddMassTransit(x =>
             {
-                x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>().InMemoryRepository();
+                var redisCredentials = servicesProvider.GetService<RedisCredentials>();
+                x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>()
+                .RedisRepository(redisCredentials.ConnectionString);
+
+
 
                 var commands = typeof(GetMe).Assembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
@@ -200,12 +207,11 @@ namespace FWTL.Management
 
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
-                        //foreach (var commandType in commands)
-                        //{
-                        //    var typeArguments = commandType.GetGenericArguments();
-                        //    ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                        //}
-
+                        foreach (var commandType in commands)
+                        {
+                            var typeArguments = commandType.GetGenericArguments();
+                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                        }
                         ec.ConfigureSaga<AccountSetupState>(context);
                     });
 

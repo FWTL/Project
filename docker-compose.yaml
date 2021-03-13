@@ -31,11 +31,24 @@ services:
     image: xtrime/telegram-api-server:latest
     container_name: FWTL-telegram-api-server
     restart: unless-stopped
+    environment:
+      WAIT_HOSTS: mysql:3306
     ports:
       - "127.0.0.1:9503:9503"
     volumes:
-      - "FWTL-sessions:/app/sessions"
-      - C:/Projects/FWTLAuth/.env.docker:/app/.env.docker
+      - C:/Projects/FWTLAuth/.env.docker:/app/sessions/.env.docker
+    #working_dir: /app-host-link
+    depends_on:
+      - mysql
+  mysql:
+    image: mariadb:10.5
+    container_name: FWTL-mysql
+    ports:
+      - "127.0.0.1:9507:3306"
+    volumes:
+      - FWTL-mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
   rabbitmq:
     image: rabbitmq:3-management
     container_name: "FWTL-rabbitmq"
@@ -67,15 +80,15 @@ services:
       - "8005:8001"
     networks:
       - backend
-  mongo:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    ports:
-      - 27017:27017
-    volumes:
-      - FWTL-mongo-data:/data/db
+  # mongo:
+  #   image: mongo:latest
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: rootpassword
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - FWTL-mongo-data:/data/db
   eventStore:
     image: eventstore/eventstore:latest
     container_name : "FWTL-eventStore"
@@ -98,13 +111,13 @@ services:
     networks :
       - backend
 
-
 volumes:
   FWTL-sql-data:
   FWTL-data:
   FWTL-sessions:
   FWTL-mongo-data:
   FWTL-eventStore-data:
+  FWTL-mysql:
   
 networks:
   backend:

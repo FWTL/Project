@@ -21,6 +21,11 @@ namespace FWTL.Domain.Accounts
             _dbContext = dbContext;
         }
 
+        public void ValidateExternalAccountId()
+        {
+            RuleFor(x => x.ExternalAccountId).NotEmpty().Matches("^[0-9]").MaximumLength(20);
+        }
+
         public void MustBeUnique()
         {
             RuleFor(x => x).CustomAsync(async (aggregate, context, token) =>
@@ -39,6 +44,7 @@ namespace FWTL.Domain.Accounts
 
         public IValidator<AccountAggregate> Apply(AccountCreated @event)
         {
+            ValidateExternalAccountId();
             MustBeUnique();
             return this;
         }

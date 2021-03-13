@@ -13,7 +13,7 @@ namespace FWTL.Database.Migrator
         {
             if (Environment.UserInteractive)
             {
-                 args = new string[2];
+                args = new string[2];
 
                 string catalog = "FWTL.App";
                 string user = "sa";
