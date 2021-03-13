@@ -20,6 +20,7 @@ using FWTL.CurrentUser;
 using FWTL.Database.Access;
 using FWTL.Domain.Users;
 using FWTL.EventStore;
+using FWTL.MockTelegramClient;
 using FWTL.RabbitMq;
 using FWTL.Redis;
 using FWTL.TelegramClient;
@@ -136,6 +137,8 @@ namespace FWTL.Management
             })
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(TimeoutPolicy(30));
+
+            services.AddScoped<ITelegramClient, MockClient>();
 
             services.AddScoped<IDatabaseContext, AppDatabaseContext>();
 

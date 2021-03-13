@@ -146,8 +146,6 @@ namespace FWTL.Management
                 x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>()
                 .RedisRepository(redisCredentials.ConnectionString);
 
-
-
                 var commands = typeof(GetMe).Assembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())

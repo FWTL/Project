@@ -7,9 +7,9 @@ using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using StreamPosition = EventStore.Client.StreamPosition;
 
 namespace FWTL.EventStore
@@ -64,13 +64,13 @@ namespace FWTL.EventStore
             await _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave);
 
             aggregate.Version += aggregate.Events.Count();
-            await _cache.StringSetAsync(streamName, JsonConvert.SerializeObject(aggregate), TimeSpan.FromDays(1));
+            await _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1));
         }
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {
             var eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType").Value;
-            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType));
+            return JsonSerializer.Deserialize(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType));
         }
 
         public async Task<bool> ExistsAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot
@@ -95,7 +95,7 @@ namespace FWTL.EventStore
             var value = await _cache.StringGetAsync(streamName);
             if (value.HasValue)
             {
-                aggregate = JsonConvert.DeserializeObject<TAggregate>(value);
+                aggregate = JsonSerializer.Deserialize<TAggregate>(value);
             }
 
             long sliceStart = aggregate.Version + 1;
@@ -119,8 +119,8 @@ namespace FWTL.EventStore
 
         private EventData ToEventData(EventComposite @event)
         {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event.Event));
-            var metadata = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event.Metadata));
+            var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event.Event));
+            var metadata = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event.Metadata));
 
             return new EventData(@event.Metadata.EventId, @event.Metadata.EventType, data, metadata);
         }

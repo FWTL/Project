@@ -38,6 +38,7 @@
     <ProjectReference Include="..\FWTL.CurrentUser\FWTL.CurrentUser.csproj" />
     <ProjectReference Include="..\FWTL.Domain\FWTL.Domain.csproj" />
     <ProjectReference Include="..\FWTL.EventStore\FWTL.EventStore.csproj" />
+    <ProjectReference Include="..\FWTL.MockTelegramClient\FWTL.MockTelegramClient.csproj" />
     <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
     <ProjectReference Include="..\FWTL.Redis\FWTL.Redis.csproj" />
     <ProjectReference Include="..\FWTL.TimeZones\FWTL.TimeZones.csproj" />

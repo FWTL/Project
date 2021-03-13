@@ -13,7 +13,6 @@ namespace FWTL.RabbitMq
 {
     public class CommandConsumer<TCommand> : IConsumer<TCommand> where TCommand : class, ICommand
     {
-        private readonly IEventDispatcher _eventDispatcher;
         private readonly IExceptionHandler _exceptionHandler;
         private readonly ICommandHandler<TCommand> _handler;
         private readonly IEventFactory _eventFactory;
@@ -22,13 +21,11 @@ namespace FWTL.RabbitMq
         public CommandConsumer(
             ICommandHandler<TCommand> handler,
             IEventFactory eventFactory,
-            IEventDispatcher eventDispatcher,
             IExceptionHandler exceptionHandler,
             IAggregateStore aggregateStore)
         {
             _handler = handler;
             _eventFactory = eventFactory;
-            _eventDispatcher = eventDispatcher;
             _exceptionHandler = exceptionHandler;
             _aggregateStore = aggregateStore;
         }
@@ -47,7 +44,7 @@ namespace FWTL.RabbitMq
                     await context.Publish(composite.Event, composite.Event.GetType());
                 }
 
-                await context.RespondAsync(new Response(context.RequestId.Value));
+                await context.RespondAsync(new Response(aggregateRoot.Id));
             }
             catch (ValidationException ex)
             {
