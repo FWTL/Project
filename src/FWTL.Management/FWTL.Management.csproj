@@ -16,11 +16,8 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.4" />
     <PackageReference Include="MassTransit.Redis" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.8" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
     <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageReference Include="Scrutor" Version="3.2.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
@@ -33,12 +30,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Common.Net\FWTL.Common.Net.csproj" />
+    <ProjectReference Include="..\FWTL.Common.Cqrs\FWTL.Common.Cqrs.csproj" />
+    <ProjectReference Include="..\FWTL.Common.Services\FWTL.Common.Services.csproj" />
+    <ProjectReference Include="..\FWTL.Common.Setup\FWTL.Common.Setup.csproj" />
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
+    <ProjectReference Include="..\FWTL.CurrentUser\FWTL.CurrentUser.csproj" />
     <ProjectReference Include="..\FWTL.Domain\FWTL.Domain.csproj" />
     <ProjectReference Include="..\FWTL.EventStore\FWTL.EventStore.csproj" />
     <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
+    <ProjectReference Include="..\FWTL.Redis\FWTL.Redis.csproj" />
+    <ProjectReference Include="..\FWTL.TimeZones\FWTL.TimeZones.csproj" />
   </ItemGroup>
 
 </Project>

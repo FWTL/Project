@@ -6,7 +6,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
 
-namespace FWTL.Common.Services
+namespace FWTL.Redis
 {
     public class RedisCacheService : ICacheService
     {

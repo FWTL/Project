@@ -2,7 +2,7 @@
 using AutoMapper;
 using FWTL.Core.Commands;
 
-namespace FWTL.Common.Services
+namespace FWTL.Common.Mappers
 {
     public class RequestToCommandMapper
     {

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FWTL.Common.Net.Filters
+namespace FWTL.Management.Filters
 {
-    public sealed class ApiExceptionAttribute : ExceptionFilterAttribute
+    public sealed class ApiExceptionAttribute : IExceptionFilter
     {
         private readonly IGuidService _guid;
         private readonly IWebHostEnvironment _hosting;
@@ -25,7 +25,7 @@ namespace FWTL.Common.Net.Filters
             _source = source;
         }
 
-        public override void OnException(ExceptionContext context)
+        public  void OnException(ExceptionContext context)
         {
             if (context.Exception.InnerException is ValidationException exceptionInner)
             {

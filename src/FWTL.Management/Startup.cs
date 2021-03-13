@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FWTL.Common.Commands;
 using FWTL.Common.Credentials;
-using FWTL.Common.Net.Filters;
 using FWTL.Common.Queries;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
@@ -14,6 +13,7 @@ using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
+using FWTL.Management.Filters;
 using FWTL.RabbitMq;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -26,7 +26,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Serialization.SystemTextJson;
@@ -83,9 +82,9 @@ namespace FWTL.Management
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
 
-            var defaultSettings = new JsonSerializerSettings()
-                .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-            JsonConvert.DefaultSettings = () => defaultSettings;
+            //var defaultSettings = new JsonSerializerSettings()
+            //    .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            //JsonConvert.DefaultSettings = () => defaultSettings;
 
             const string format =
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
@@ -141,17 +140,6 @@ namespace FWTL.Management
 
             services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
 
-            //services.AddScoped<SagaActivity<AccountSetupState, AddAccount.Command>>();
-            //services.AddScoped<ISagaConsumer<AddAccount.Command>, SagaConsumer<AddAccount.Command>>();
-
-            //services.AddScoped<SagaActivity<AccountSetupState, CreateSession.Command>>();
-            //services.AddScoped<ISagaConsumer<CreateSession.Command>, SagaConsumer<CreateSession.Command>>();
-
-            //services.AddScoped<SagaActivity<AccountSetupState, SendCode.Command>>();
-            //services.AddScoped<ISagaConsumer<SendCode.Command>, SagaConsumer<SendCode.Command>>();
-
-            //services.AddScoped<SagaActivity<AccountSetupState, VerifyAccount.Command>>();
-            //services.AddScoped<ISagaConsumer<VerifyAccount.Command>, SagaConsumer<VerifyAccount.Command>>();
 
             services.AddMassTransit(x =>
             {

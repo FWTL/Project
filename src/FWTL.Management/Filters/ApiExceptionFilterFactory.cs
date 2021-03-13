@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FWTL.Common.Net.Filters
+namespace FWTL.Management.Filters
 {
     public class ApiExceptionFilterFactory : IFilterFactory
     {

@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EventStore.Client.Grpc.Streams" Version="20.6.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

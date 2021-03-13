@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Text.Json;
 using FWTL.Core.Helpers;
 using FWTL.Core.Services;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace FWTL.Common.Helpers
 {
@@ -20,7 +20,7 @@ namespace FWTL.Common.Helpers
         public Guid Handle<T>(Exception exception, T body)
         {
             var exceptionId = _guidService.New;
-            string json = JsonConvert.SerializeObject(body);
+            string json = JsonSerializer.Serialize(body);
             string source = body.GetType().FullName;
 
             _logger.LogError(

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Extensions;
-using FWTL.Common.Services;
+using FWTL.Common.Mappers;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
 using MassTransit;

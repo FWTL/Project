@@ -1,7 +1,7 @@
 ﻿using System;
 using AutoMapper;
 
-namespace FWTL.Common.Services
+namespace FWTL.Common.Mappers
 {
     public class RequestToQueryMapper
     {

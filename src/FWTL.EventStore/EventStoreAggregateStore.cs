@@ -25,8 +25,7 @@ namespace FWTL.EventStore
         public EventStoreAggregateStore(
             EventStoreClient eventStoreClient,
             IDatabase cache,
-            IServiceProvider context,
-            IEventFactory eventFactory)
+            IServiceProvider context)
         {
             _eventStoreClient = eventStoreClient;
             _cache = cache;

@@ -5,7 +5,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using FWTL.Common.Commands;
 using FWTL.Common.Extensions;
-using FWTL.Common.Services;
+using FWTL.Common.Mappers;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
 using FWTL.Core.Validation;

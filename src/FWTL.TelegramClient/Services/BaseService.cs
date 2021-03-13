@@ -69,7 +69,7 @@ namespace FWTL.TelegramClient.Services
             }
 
             ResponseWrapper result;
-            using (var responseStream = await response.Content.ReadAsStreamAsync())
+            await using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
                 result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
             }
@@ -91,22 +91,5 @@ namespace FWTL.TelegramClient.Services
 
             throw new TelegramClientException(result.Errors);
         }
-
-        //public static string ToPascalCase(this string source)
-        //{
-        //    var list = source.ToList();
-        //    list[0] = char.ToUpper(list[0]);
-        //    for (int i = 1; i < list.Count; i++)
-        //    {
-        //        if (list[i] == '.')
-        //        {
-        //            list[i + 1] = char.ToUpper(list[i + 1]);
-        //            list.RemoveAt(i);
-        //            i++;
-        //        }
-        //    }
-
-        //    return string.Concat(list);
-        //}
     }
 }

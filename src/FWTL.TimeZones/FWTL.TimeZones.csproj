@@ -5,13 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="NodaTime" Version="3.0.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="TimeZoneNames" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
   </ItemGroup>
 

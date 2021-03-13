@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
@@ -8,7 +9,6 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 using FWTL.Core.Specification;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace FWTL.Common.Aggregates
 {
