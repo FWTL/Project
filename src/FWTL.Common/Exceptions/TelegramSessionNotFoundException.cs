@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FWTL.TelegramClient.Exceptions
+namespace FWTL.Common.Exceptions
 {
     public class TelegramSessionNotFoundException : Exception
     {

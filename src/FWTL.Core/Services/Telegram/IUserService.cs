@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using FWTL.TelegramClient.Responses;
+using FWTL.Core.Services.Dto;
 
-namespace FWTL.TelegramClient
+namespace FWTL.Core.Services.Telegram
 {
     public interface IUserService
     {

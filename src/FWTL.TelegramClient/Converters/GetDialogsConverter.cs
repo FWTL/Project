@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using FWTL.TelegramClient.Responses;
+using FWTL.Core.Services.Dto;
 
 namespace FWTL.TelegramClient.Converters
 {

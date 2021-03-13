@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentValidation;
+using FWTL.Common.Cqrs.Mappers;
 using FWTL.Common.Extensions;
-using FWTL.Common.Mappers;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
 using MassTransit;

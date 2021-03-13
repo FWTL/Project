@@ -1,4 +1,4 @@
-﻿namespace FWTL.TelegramClient
+﻿namespace FWTL.Core.Services.Telegram
 {
     public interface ITelegramClient
     {

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FWTL.TelegramClient.Responses;
+using FWTL.Core.Services.Dto;
+using FWTL.Core.Services.Telegram;
 
 namespace FWTL.TelegramClient.Services
 {

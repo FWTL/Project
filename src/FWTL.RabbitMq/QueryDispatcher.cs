@@ -2,11 +2,11 @@
 using System.Net;
 using System.Threading.Tasks;
 using FluentValidation;
+using FWTL.Common.Cqrs.Mappers;
+using FWTL.Common.Exceptions;
 using FWTL.Common.Extensions;
-using FWTL.Common.Mappers;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
-using FWTL.Core.Validation;
 using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +45,7 @@ namespace FWTL.RabbitMq
             }
 
             var client = _clientFactory.CreateRequestClient<TQuery>(new Uri("queue:queries"), TimeSpan.FromMinutes(10));
-            var response = await client.GetResponse<Common.Commands.Response<TResult>>(query);
+            var response = await client.GetResponse<Common.Cqrs.Responses.Response<TResult>>(query);
 
             if (response.Message.StatusCode == HttpStatusCode.BadRequest)
             {

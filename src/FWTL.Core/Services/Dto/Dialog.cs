@@ -1,4 +1,4 @@
-﻿namespace FWTL.TelegramClient.Responses
+﻿namespace FWTL.Core.Services.Dto
 {
     public class Dialog
     {

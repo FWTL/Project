@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using FluentValidation.Results;
 
-namespace FWTL.Common.Commands
+namespace FWTL.Common.Cqrs.Responses
 {
     public class Response
     {

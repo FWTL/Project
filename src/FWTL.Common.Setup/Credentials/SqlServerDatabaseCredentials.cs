@@ -1,7 +1,7 @@
 ﻿using FWTL.Core.Credentials;
 using Microsoft.Extensions.Configuration;
 
-namespace FWTL.Common.Credentials
+namespace FWTL.Common.Setup.Credentials
 {
     public sealed class SqlServerDatabaseCredentials : IConnectionString
     {

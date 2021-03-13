@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using FWTL.TelegramClient.Types;
+using FWTL.Core.Services.Types;
 
-namespace FWTL.TelegramClient.Responses
+namespace FWTL.Core.Services.Dto
 {
     public class UserProfilePhoto : IUserProfilePhoto
     {

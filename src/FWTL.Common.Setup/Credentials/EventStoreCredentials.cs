@@ -1,6 +1,6 @@
 ﻿using FWTL.Core.Credentials;
 
-namespace FWTL.Common.Credentials
+namespace FWTL.Common.Setup.Credentials
 {
     public class EventStoreCredentials : IConnectionString
     {

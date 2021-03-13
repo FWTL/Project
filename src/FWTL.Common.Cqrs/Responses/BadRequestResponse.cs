@@ -2,9 +2,9 @@
 using System.Net;
 using FluentValidation;
 using FluentValidation.Results;
-using FWTL.TelegramClient.Exceptions;
+using FWTL.Common.Exceptions;
 
-namespace FWTL.Common.Commands
+namespace FWTL.Common.Cqrs.Responses
 {
     public class BadRequestResponse : Response
     {

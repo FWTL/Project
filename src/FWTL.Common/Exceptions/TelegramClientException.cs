@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using FWTL.TelegramClient.Responses;
+using FWTL.Core.Services.Dto;
 
-namespace FWTL.TelegramClient.Exceptions
+namespace FWTL.Common.Exceptions
 {
     public class TelegramClientException : Exception
     {

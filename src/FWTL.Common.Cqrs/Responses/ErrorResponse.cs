@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace FWTL.Common.Commands
+namespace FWTL.Common.Cqrs.Responses
 {
     public class ErrorResponse : Response
     {

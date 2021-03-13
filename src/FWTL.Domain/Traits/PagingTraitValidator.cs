@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using FWTL.Core.Validation;
+using FWTL.Common.Validation;
 
 namespace FWTL.Domain.Traits
 {

@@ -4,7 +4,7 @@ using FWTL.Core.Services;
 using NodaTime.TimeZones;
 using TimeZoneNames;
 
-namespace FWTL.Common.Services
+namespace FWTL.TimeZones
 {
     public class TimeZonesService : ITimeZonesService
     {

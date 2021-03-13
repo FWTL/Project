@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FWTL.TelegramClient.Responses
+namespace FWTL.Core.Services.Dto
 {
     public class GetSessionListResponse
     {

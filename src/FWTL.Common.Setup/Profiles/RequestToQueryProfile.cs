@@ -5,7 +5,7 @@ using AutoMapper;
 using FWTL.Common.Extensions;
 using FWTL.Core.Queries;
 
-namespace FWTL.Common.Queries
+namespace FWTL.Common.Setup.Profiles
 {
     public class RequestToQueryProfile : Profile
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace FWTL.TelegramClient.Responses
+namespace FWTL.Core.Services.Dto
 {
     public class InputChannel
     {

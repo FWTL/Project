@@ -3,7 +3,7 @@ using System.Security.Claims;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace FWTL.Common.Services
+namespace FWTL.CurrentUser
 {
     public class CurrentUserService : ICurrentUserService
     {

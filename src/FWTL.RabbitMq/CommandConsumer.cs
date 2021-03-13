@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentValidation;
-using FWTL.Common.Commands;
+using FWTL.Common.Cqrs.Responses;
+using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
-using FWTL.TelegramClient.Exceptions;
 using MassTransit;
 
 namespace FWTL.RabbitMq

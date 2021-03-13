@@ -3,7 +3,7 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace FWTL.Core.Validation
+namespace FWTL.Common.Exceptions
 {
     public class AppValidationException : ValidationException
     {

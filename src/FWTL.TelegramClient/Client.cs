@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using FWTL.Core.Services.Telegram;
 using FWTL.TelegramClient.Services;
 
 namespace FWTL.TelegramClient

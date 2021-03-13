@@ -4,7 +4,7 @@ using FWTL.Core.Helpers;
 using FWTL.Core.Services;
 using Microsoft.Extensions.Logging;
 
-namespace FWTL.Common.Helpers
+namespace FWTL.Common.Cqrs
 {
     public class ExceptionHandler : IExceptionHandler
     {

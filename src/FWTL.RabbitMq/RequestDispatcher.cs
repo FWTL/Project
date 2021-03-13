@@ -3,12 +3,12 @@ using System.Net;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using FWTL.Common.Commands;
+using FWTL.Common.Cqrs.Mappers;
+using FWTL.Common.Cqrs.Responses;
+using FWTL.Common.Exceptions;
 using FWTL.Common.Extensions;
-using FWTL.Common.Mappers;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 

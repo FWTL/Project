@@ -5,7 +5,7 @@ using AutoMapper;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 
-namespace FWTL.Common.Commands
+namespace FWTL.Common.Setup.Profiles
 {
     public class RequestToCommandProfile : Profile
     {

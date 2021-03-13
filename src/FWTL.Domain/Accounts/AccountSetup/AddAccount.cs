@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using FluentValidation;
 using FWTL.Common.Helpers;
+using FWTL.Common.Validation;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.Core.Validation;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {

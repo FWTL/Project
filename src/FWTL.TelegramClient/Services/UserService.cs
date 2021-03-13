@@ -2,8 +2,9 @@
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FWTL.TelegramClient.Exceptions;
-using FWTL.TelegramClient.Responses;
+using FWTL.Common.Exceptions;
+using FWTL.Core.Services.Dto;
+using FWTL.Core.Services.Telegram;
 
 namespace FWTL.TelegramClient.Services
 {

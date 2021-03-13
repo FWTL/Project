@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using NodaTime;
 
-namespace FWTL.TelegramClient.Responses
+namespace FWTL.Core.Services.Dto
 {
     public class Chat
     {

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using FluentValidation;
 using FWTL.Common.Helpers;
+using FWTL.Common.Validation;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Specification;
-using FWTL.Core.Validation;
 using FWTL.Database.Access;
 using FWTL.Events;
 using Microsoft.EntityFrameworkCore;
