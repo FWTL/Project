@@ -1,4 +1,5 @@
 ﻿using FWTL.Common.Extensions;
+using FWTL.Common.Setup.Extensions;
 using FWTL.Core.Credentials;
 using Microsoft.Extensions.Configuration;
 
@@ -8,10 +9,10 @@ namespace FWTL.Common.Setup.Credentials
     {
         public EventStoreCredentialsBase(IConfiguration configuration)
         {
-            User = configuration["EventStore:User"];
-            Password = configuration["EventStore:Password"];
-            Ip = configuration["EventStore:Ip"];
-            Port = configuration["EventStore:Port"].To<int>();
+            User = configuration.GetNotNullOrEmpty("EventStore:User");
+            Password = configuration.GetNotNullOrEmpty("EventStore:Password");
+            Ip = configuration.GetNotNullOrEmpty("EventStore:Ip");
+            Port = configuration.GetNotNullOrEmpty("EventStore:Port").To<int>();
         }
 
         public string Ip { get; }

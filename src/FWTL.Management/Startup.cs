@@ -2,30 +2,29 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using FWTL.Common.Setup.Credentials;
+using FWTL.Common.Setup.Extensions;
 using FWTL.Common.Setup.Profiles;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
+using FWTL.CurrentUser;
 using FWTL.Database.Access;
 using FWTL.Domain.Accounts;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
+using FWTL.Management.Configuration;
 using FWTL.Management.Filters;
 using FWTL.RabbitMq;
 using FWTL.TimeZones;
 using Hangfire;
 using Hangfire.SqlServer;
 using MassTransit;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Serialization.SystemTextJson;
@@ -41,6 +40,7 @@ namespace FWTL.Management
         private readonly IConfigurationRoot _configuration;
 
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SolutionConfiguration _solutionConfiguration;
 
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
@@ -59,6 +59,7 @@ namespace FWTL.Management
             }
 
             _hostingEnvironment = hostingEnvironment;
+            _solutionConfiguration = new SolutionConfiguration(_configuration);
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -95,7 +96,7 @@ namespace FWTL.Management
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .WriteTo.Console(outputTemplate: format)
                 .Enrich.FromLogContext()
-                    .WriteTo.Seq(_configuration["Seq:Url"])
+                    .WriteTo.Seq(_configuration.GetNotNullOrEmpty("Seq:Url"))
                 .CreateLogger();
 
             services.AddAutoMapper(
@@ -107,20 +108,6 @@ namespace FWTL.Management
 
             services.AddDbContext<AppDatabaseContext>();
 
-            services.AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "http://localhost:5000";
-                    options.Audience = "api";
-                    options.RequireHttpsMetadata = false;
-                });
-
-            services.AddAuthorization(x =>
-            {
-                x.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(new[] { JwtBearerDefaults.AuthenticationScheme })
-                    .RequireAuthenticatedUser().Build();
-            });
 
             ServiceProvider servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
@@ -144,9 +131,8 @@ namespace FWTL.Management
 
             services.AddMassTransit(x =>
             {
-                var redisCredentials = servicesProvider.GetService<RedisCredentials>();
                 x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>()
-                .RedisRepository(redisCredentials.ConnectionString);
+                .RedisRepository(_solutionConfiguration.RedisCredentials.ConnectionString);
 
                 var commands = typeof(GetMe).Assembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
@@ -186,10 +172,10 @@ namespace FWTL.Management
                         return config;
                     });
 
-                    cfg.Host(_configuration["RabbitMq:Url"], h =>
+                    cfg.Host(_configuration.GetNotNullOrEmpty("RabbitMq:Url"), h =>
                     {
-                        h.Username(_configuration["RabbitMq:Username"]);
-                        h.Password(_configuration["RabbitMq:Password"]);
+                        h.Username(_configuration.GetNotNullOrEmpty("RabbitMq:Username"));
+                        h.Password(_configuration.GetNotNullOrEmpty("RabbitMq:Password"));
                     });
 
                     cfg.ReceiveEndpoint("commands", ec =>
@@ -215,45 +201,7 @@ namespace FWTL.Management
                 }));
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo() { Title = "FWTL.Api", Version = "v1" });
-                c.CustomSchemaIds(x =>
-                {
-                    var fragments = x.FullName.Split("+");
-                    var dotFragments = fragments[0].Split(".");
-                    if (fragments.Length <= 2)
-                    {
-                        return dotFragments.Last();
-                    }
-
-                    var leftPart = dotFragments.Last();
-                    var rightPart = string.Join(".", fragments.Where((f, index) => index > 1));
-                    return leftPart + "." + rightPart;
-                });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Name = "Bearer",
-                    BearerFormat = "JWT",
-                    Scheme = "bearer",
-                    Description = "Specify the authorization token.",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference()
-                            {
-                                Id = "Bearer",
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        },
-                        new string[] { }
-                    }
-                });
-            });
+            services.AddSwagger();
         }
 
         public void Configure(IApplicationBuilder app)

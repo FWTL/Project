@@ -5,7 +5,6 @@ using FluentValidation;
 using FWTL.Common.Cqrs;
 using FWTL.Common.Cqrs.Mappers;
 using FWTL.Common.Services;
-using FWTL.Common.Setup.Credentials;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
@@ -21,9 +20,7 @@ using FWTL.TelegramClient;
 using FWTL.TimeZones;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Polly;
 using Polly.Extensions.Http;
@@ -32,46 +29,10 @@ namespace FWTL.Management
 {
     public static class IocConfig
     {
-        public static void OverrideWithLocalCredentials(IServiceCollection services)
-        {
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                return new RedisCredentials(new RedisLocalCredentialsBase(configuration));
-            });
-        }
-
-        public static void RegisterCredentials(IServiceCollection services)
-        {
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                return new AppDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "App"));
-            });
-
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                return new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
-            });
-
-            services.AddSingleton(b =>
-            {
-                var configuration = b.GetService<IConfiguration>();
-                return new EventStoreCredentials(new EventStoreCredentialsBase(configuration));
-            });
-        }
-
         public static ServiceProvider RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
             var domainAssembly = typeof(GetMe).GetTypeInfo().Assembly;
 
-            RegisterCredentials(services);
-
-            if (env.IsDevelopment())
-            {
-                OverrideWithLocalCredentials(services);
-            }
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
@@ -131,7 +92,7 @@ namespace FWTL.Management
 
             services.AddScoped<IDatabaseContext, AppDatabaseContext>();
 
-            
+
             services.AddEventStore(new Uri("http://localhost:2113"));
 
             services.AddScoped<IEventFactory, EventFactory>();

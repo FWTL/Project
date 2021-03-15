@@ -1,4 +1,6 @@
-﻿using FWTL.Core.Credentials;
+﻿using FWTL.Common.Extensions;
+using FWTL.Common.Setup.Extensions;
+using FWTL.Core.Credentials;
 using Microsoft.Extensions.Configuration;
 
 namespace FWTL.Common.Setup.Credentials
@@ -17,11 +19,11 @@ namespace FWTL.Common.Setup.Credentials
 
         public SqlServerDatabaseCredentials(IConfiguration configuration, string prefix)
         {
-            _url = configuration[$"{prefix}:Url"];
-            _port = configuration.GetValue<int>($"{prefix}:Port");
-            _catalog = configuration[$"{prefix}:Catalog"];
-            _user = configuration[$"{prefix}:User"];
-            _password = configuration[$"{prefix}:Password"];
+            _url = configuration.GetNotNullOrEmpty($"{prefix}:Url");
+            _port = configuration.GetNotNullOrEmpty($"{prefix}:Port").To<int>();
+            _catalog = configuration.GetNotNullOrEmpty($"{prefix}:Catalog");
+            _user = configuration.GetNotNullOrEmpty($"{prefix}:User");
+            _password = configuration.GetNotNullOrEmpty($"{prefix}:Password");
         }
 
         public string ConnectionString =>
