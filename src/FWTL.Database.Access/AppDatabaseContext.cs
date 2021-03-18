@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
 using FWTL.Database.Access.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +7,8 @@ namespace FWTL.Database.Access
 {
     public class AppDatabaseContext : DbContext, IDatabaseContext
     {
-        private readonly AppDatabaseCredentials _credentials;
-
-        public AppDatabaseContext(AppDatabaseCredentials credentials)
+        public AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : base(options)
         {
-            _credentials = credentials;
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -30,11 +26,6 @@ namespace FWTL.Database.Access
         public async Task SaveChangesAsync()
         {
             await base.SaveChangesAsync();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_credentials.ConnectionString, options => options.UseNodaTime());
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

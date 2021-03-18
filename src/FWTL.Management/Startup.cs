@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using FWTL.Common.Setup.Extensions;
 using FWTL.Common.Setup.Profiles;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
@@ -29,7 +28,6 @@ using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Serialization.SystemTextJson;
 using Serilog;
-using Serilog.Events;
 
 namespace FWTL.Management
 {
@@ -69,35 +67,13 @@ namespace FWTL.Management
                 o.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
             });
 
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("localhost").AllowAnyHeader().AllowAnyMethod();
-                    });
-            });
-
             services.AddControllers(configuration =>
             {
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
 
-            //var defaultSettings = new JsonSerializerSettings()
-            //    .ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-            //JsonConvert.DefaultSettings = () => defaultSettings;
 
-            const string format =
-                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .WriteTo.Console(outputTemplate: format)
-                .Enrich.FromLogContext()
-                    .WriteTo.Seq(_configuration.GetNotNullOrEmpty("Seq:Url"))
-                .CreateLogger();
+            Log.Logger = services.AddSerilog().AddSeq(_solutionConfiguration.SeqUrl).CreateLogger();
 
             services.AddAutoMapper(
                 config =>
@@ -106,7 +82,7 @@ namespace FWTL.Management
                     config.AddProfile(new RequestToQueryProfile(typeof(GetMe)));
                 }, typeof(RequestToCommandProfile).Assembly);
 
-            services.AddDbContext<AppDatabaseContext>();
+            services.AddDatabase<AppDatabaseContext>(_solutionConfiguration.AppDatabaseCredentials.ConnectionString);
 
 
             ServiceProvider servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
@@ -115,7 +91,7 @@ namespace FWTL.Management
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(servicesProvider.GetService<HangfireDatabaseCredentials>().ConnectionString, new SqlServerStorageOptions
+                .UseSqlServerStorage(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString, new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
@@ -127,7 +103,7 @@ namespace FWTL.Management
 
             services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
 
-            services.AddRedis("localhost,abortConnect=False,allowAdmin=true");
+            services.AddRedis(_solutionConfiguration.RedisCredentials.ConnectionString);
 
             services.AddMassTransit(x =>
             {
@@ -172,10 +148,10 @@ namespace FWTL.Management
                         return config;
                     });
 
-                    cfg.Host(_configuration.GetNotNullOrEmpty("RabbitMq:Url"), h =>
+                    cfg.Host(_solutionConfiguration.RabbitMqCredentials.Url, h =>
                     {
-                        h.Username(_configuration.GetNotNullOrEmpty("RabbitMq:Username"));
-                        h.Password(_configuration.GetNotNullOrEmpty("RabbitMq:Password"));
+                        h.Username(_solutionConfiguration.RabbitMqCredentials.UserName);
+                        h.Password(_solutionConfiguration.RabbitMqCredentials.Password);
                     });
 
                     cfg.ReceiveEndpoint("commands", ec =>
@@ -208,16 +184,9 @@ namespace FWTL.Management
         {
             app.UseSerilogRequestLogging();
 
-            app.UseCors(policy =>
-            {
-                policy = policy.AllowAnyOrigin();
-                policy = policy.AllowAnyMethod();
-                policy = policy.AllowAnyHeader();
-            });
 
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,4 +1,5 @@
 ﻿using FWTL.Common.Setup.Credentials;
+using FWTL.Common.Setup.Extensions;
 using FWTL.Database.Access;
 using Microsoft.Extensions.Configuration;
 
@@ -12,7 +13,10 @@ namespace FWTL.Management.Configuration
             HangfireDatabaseCredentials = new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
             EventStoreCredentials = new EventStoreCredentials(new EventStoreCredentialsBase(configuration));
             RedisCredentials = new RedisCredentials(new RedisLocalCredentialsBase(configuration));
+            RabbitMqCredentials = new RabbitMqCredentials(configuration);
+            SeqUrl = configuration.GetNotNullOrEmpty("Seq:Url");
         }
+        public RabbitMqCredentials RabbitMqCredentials { get; }
 
         public AppDatabaseCredentials AppDatabaseCredentials { get; }
 
@@ -21,5 +25,7 @@ namespace FWTL.Management.Configuration
         public EventStoreCredentials EventStoreCredentials { get; }
 
         public RedisCredentials RedisCredentials { get; }
+
+        public string SeqUrl { get; }
     }
 }
