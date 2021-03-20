@@ -7,7 +7,6 @@ using FWTL.Common.Exceptions;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;
 using FWTL.Core.Queries;
-using FWTL.Domain.Traits;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,7 +31,7 @@ namespace FWTL.RabbitMq
         public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : class, IQuery
         {
-            await TraitValidationAsync<TQuery, IPagingTrait>(query);
+            //await TraitValidationAsync<TQuery, IPagingTrait>(query);
 
             var validator = _context.GetService<IValidator<TQuery>>();
             if (validator.IsNotNull())

@@ -1,9 +1,8 @@
 ﻿using FWTL.Core.Services;
-using FWTL.Redis;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace FWTL.TimeZones
+namespace FWTL.Redis
 {
     public static class ServiceCollectionExtensions
     {

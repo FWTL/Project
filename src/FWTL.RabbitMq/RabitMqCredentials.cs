@@ -1,7 +1,7 @@
 ﻿using FWTL.Common.Setup.Extensions;
 using Microsoft.Extensions.Configuration;
 
-namespace FWTL.Common.Setup.Credentials
+namespace FWTL.RabbitMq
 {
     public class RabbitMqCredentials
     {

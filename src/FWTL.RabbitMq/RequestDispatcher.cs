@@ -48,7 +48,7 @@ namespace FWTL.RabbitMq
             command.CorrelationId = _guidService.New;
 
             IRequestClient<TCommand> client = _clientFactory.CreateRequestClient<TCommand>(new Uri("queue:commands"), TimeSpan.FromMinutes(10));
-            MassTransit.Response<Response> response = await client.GetResponse<Response>(command);
+            MassTransit.Response<FWTL.Common.Cqrs.Responses.Response> response = await client.GetResponse<FWTL.Common.Cqrs.Responses.Response>(command);
 
             if (response.Message.StatusCode == HttpStatusCode.BadRequest)
             {

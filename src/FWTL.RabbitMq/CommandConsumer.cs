@@ -44,7 +44,7 @@ namespace FWTL.RabbitMq
                     await context.Publish(composite.Event, composite.Event.GetType());
                 }
 
-                await context.RespondAsync(new Response(aggregateRoot.Id));
+                await context.RespondAsync(new Common.Cqrs.Responses.Response(aggregateRoot.Id));
             }
             catch (ValidationException ex)
             {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using FluentValidation;
 using FWTL.Common.Helpers;
-using FWTL.Common.Validation;
+using FWTL.Common.Validators;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Specification;
 using FWTL.Database.Access;

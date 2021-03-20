@@ -1,23 +1,26 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using FWTL.Common.Policies;
+using FWTL.Common.Services;
 using FWTL.Common.Setup.Profiles;
 using FWTL.Core.Aggregates;
-using FWTL.Core.Commands;
-using FWTL.Core.Queries;
+using FWTL.Core.Services;
 using FWTL.CurrentUser;
 using FWTL.Database.Access;
 using FWTL.Domain.Accounts;
-using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
+using FWTL.EventStore;
 using FWTL.Management.Configuration;
 using FWTL.Management.Filters;
 using FWTL.RabbitMq;
+using FWTL.Redis;
+using FWTL.Serilog;
+using FWTL.Swagger;
+using FWTL.TelegramClient;
 using FWTL.TimeZones;
 using Hangfire;
-using Hangfire.SqlServer;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -72,8 +75,7 @@ namespace FWTL.Management
                 configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
             });
 
-
-            Log.Logger = services.AddSerilog().AddSeq(_solutionConfiguration.SeqUrl).CreateLogger();
+            Log.Logger = Log.Logger.AddSerilog().AddSeq(_solutionConfiguration.SeqUrl).CreateLogger();
 
             services.AddAutoMapper(
                 config =>
@@ -84,100 +86,30 @@ namespace FWTL.Management
 
             services.AddDatabase<AppDatabaseContext>(_solutionConfiguration.AppDatabaseCredentials.ConnectionString);
 
+            services.AddTelegramClient(new Uri("http://127.0.0.1:9503"))
+                .AddPolicyHandler(Policies.Retry(3))
+                .AddPolicyHandler(Policies.Timeout(30));
+
+            services.AddTimeZonesService();
+
+            services.AddEventStore(new Uri("http://localhost:2113"));
 
             ServiceProvider servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString, new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
-            services.AddHangfireServer();
-
-            services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
+            services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
 
             services.AddRedis(_solutionConfiguration.RedisCredentials.ConnectionString);
 
-            services.AddMassTransit(x =>
-            {
-                x.AddSagaStateMachine<AccountSetupSaga, AccountSetupState>()
-                .RedisRepository(_solutionConfiguration.RedisCredentials.ConnectionString);
+            services.AddRabbitMq<GetMe>(_solutionConfiguration.RabbitMqCredentials, _solutionConfiguration.RedisCredentials);
 
-                var commands = typeof(GetMe).Assembly.GetTypes()
-                    .Where(t => t.IsNested && t.Name == "Handler")
-                    .Select(t => t.GetInterfaces().First())
-                    .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
-                    .ToList();
+            services.AddSwagger("FWTL.API");
 
-                foreach (var commandType in commands)
-                {
-                    var typeArguments = commandType.GetGenericArguments();
-                    x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                }
+            services.AddCurrentUserService();
 
-                var queries = typeof(GetMe).Assembly.GetTypes()
-                    .Where(t => t.IsNested && t.Name == "Handler")
-                    .Select(t => t.GetInterfaces().First())
-                    .Where(t => typeof(IQueryHandler<,>).IsAssignableFrom(t.GetGenericTypeDefinition()))
-                    .ToList();
+            services.AddSingleton<IClock>(b => SystemClock.Instance);
+            services.AddSingleton<IGuidService, GuidService>();
 
-                foreach (var queryType in queries)
-                {
-                    var typeArguments = queryType.GetGenericArguments();
-                    x.AddConsumer(typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
-                }
-
-                x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
-                {
-                    cfg.ConfigureJsonSerializer(config =>
-                    {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
-
-                    cfg.ConfigureJsonDeserializer(config =>
-                    {
-                        config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                        return config;
-                    });
-
-                    cfg.Host(_solutionConfiguration.RabbitMqCredentials.Url, h =>
-                    {
-                        h.Username(_solutionConfiguration.RabbitMqCredentials.UserName);
-                        h.Password(_solutionConfiguration.RabbitMqCredentials.Password);
-                    });
-
-                    cfg.ReceiveEndpoint("commands", ec =>
-                    {
-                        foreach (var commandType in commands)
-                        {
-                            var typeArguments = commandType.GetGenericArguments();
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                        }
-                        ec.ConfigureSaga<AccountSetupState>(context);
-                    });
-
-                    cfg.ReceiveEndpoint("queries", ec =>
-                    {
-                        foreach (var queryType in queries)
-                        {
-                            var typeArguments = queryType.GetGenericArguments();
-                            ec.ConfigureConsumer(context, typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
-                        }
-                    });
-
-                    cfg.UseMessageScheduler(new Uri("queue:hangfire"));
-                }));
-            });
-
-            services.AddSwagger();
+            services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
         }
 
         public void Configure(IApplicationBuilder app)

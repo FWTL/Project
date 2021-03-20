@@ -1,6 +1,7 @@
 ﻿using FWTL.Common.Setup.Credentials;
 using FWTL.Common.Setup.Extensions;
 using FWTL.Database.Access;
+using FWTL.RabbitMq;
 using Microsoft.Extensions.Configuration;
 
 namespace FWTL.Management.Configuration
