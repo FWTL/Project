@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Services.Telegram;
+using FWTL.Core.Services.Telegram.Dto;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FWTL.TelegramClient

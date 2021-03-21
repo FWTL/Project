@@ -3,7 +3,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FWTL.CurrentUser
+namespace FWTL.Hangfire
 {
     public static class ServiceCollectionExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace FWTL.Core.Services.Dto
+namespace FWTL.Core.Services.Telegram.Dto
 {
     public class Info
     {

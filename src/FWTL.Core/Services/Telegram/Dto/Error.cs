@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FWTL.Core.Services.Dto
+namespace FWTL.Core.Services.Telegram.Dto
 {
     public class Error
     {

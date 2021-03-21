@@ -7,6 +7,7 @@ using FWTL.CurrentUser;
 using FWTL.Database.Access;
 using FWTL.Domain.Users;
 using FWTL.EventStore;
+using FWTL.Hangfire;
 using FWTL.Management.Configuration;
 using FWTL.Management.Filters;
 using FWTL.RabbitMq;

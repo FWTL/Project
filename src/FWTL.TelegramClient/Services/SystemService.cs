@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using FWTL.Core.Services.Dto;
 using FWTL.Core.Services.Telegram;
+using FWTL.Core.Services.Telegram.Dto;
 
 namespace FWTL.TelegramClient.Services
 {

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using FWTL.Core.Services.Dto;
 
-namespace FWTL.TelegramClient
+namespace FWTL.Core.Services.Telegram.Dto
 {
     public class ResponseWrapper<TResponse> : ResponseWrapper
     {

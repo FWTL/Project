@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FWTL.Common.Exceptions;
-using FWTL.Core.Services.Dto;
+using FWTL.Core.Services.Telegram.Dto;
 using FWTL.TelegramClient.Converters;
 using Microsoft.AspNetCore.WebUtilities;
 

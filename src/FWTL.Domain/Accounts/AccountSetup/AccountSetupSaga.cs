@@ -36,8 +36,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
             During(WaitForCode, When(AccountVerified)
                 .TransitionTo(Ready).Finalize());
 
-            During(Initialized, When(SetupFailed)
-                .Schedule(Timout, x => x.Publish())
+            //During(Initialized, When(SetupFailed)
+            //    .Schedule(Timout, x => x.Publish())
         }
 
         public Event<AccountCreated> AccountCreated { get; }

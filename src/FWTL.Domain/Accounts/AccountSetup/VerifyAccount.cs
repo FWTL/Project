@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
+using FWTL.Core.Services.Telegram.Dto;
 using FWTL.TelegramClient;
 
 namespace FWTL.Domain.Accounts.AccountSetup

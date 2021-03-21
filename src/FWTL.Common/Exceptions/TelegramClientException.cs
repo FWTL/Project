@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FWTL.Core.Services.Dto;
+using FWTL.Core.Services.Telegram.Dto;
 
 namespace FWTL.Common.Exceptions
 {

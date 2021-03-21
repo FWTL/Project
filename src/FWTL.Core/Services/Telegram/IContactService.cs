@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using FWTL.Core.Services.Dto;
-using FWTL.TelegramClient;
+using FWTL.Core.Services.Telegram.Dto;
 
 namespace FWTL.Core.Services.Telegram
 {

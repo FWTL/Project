@@ -1,7 +1,6 @@
-﻿using FWTL.Common.Cqrs.Mappers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace FWTL.Database.Access
+namespace FWTL.Common.Cqrs
 {
     public static class ServiceCollectionExtensions
     {
