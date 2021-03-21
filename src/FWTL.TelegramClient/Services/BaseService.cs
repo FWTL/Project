@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FWTL.Common.Exceptions;
+using FWTL.Core.Services.Dto;
 using FWTL.TelegramClient.Converters;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -26,70 +27,56 @@ namespace FWTL.TelegramClient.Services
             _client = client;
         }
 
-        protected Task<TResponse> HandleAsync<TResponse>(string url)
+        protected Task<ResponseWrapper<TResponse>> HandleAsync<TResponse>(string url)
         {
             return HandleAsync<TResponse>(url, new Dictionary<string, string>());
         }
 
-        protected async Task<TResponse> HandleAsync<TResponse>(string url, IDictionary<string, string> query)
+        protected async Task<ResponseWrapper<TResponse>> HandleAsync<TResponse>(string url, IDictionary<string, string> query)
         {
             url = QueryHelpers.AddQueryString(url, query);
             var response = await _client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
             {
-                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
+                return new ResponseWrapper<TResponse>()
+                {
+                    IsSuccess = false,
+                    Errors = new[]
+                    {
+                        new Error() {Message = response.StatusCode + " " + await response.Content.ReadAsStringAsync()}
+                    }
+                };
             }
 
-            ResponseWrapper<TResponse> result;
-
-            using (var responseStream = await response.Content.ReadAsStreamAsync())
-            {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
-            }
-
-            HandleResponse(result);
-
-            return result.Response;
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<ResponseWrapper<TResponse>>(responseStream, SerializeOptions);
         }
 
-        protected Task HandleAsync(string url)
+        protected Task<ResponseWrapper> HandleAsync(string url)
         {
             return HandleAsync(url, new Dictionary<string, string>());
         }
 
-        protected async Task HandleAsync(string url, IDictionary<string, string> query)
+        protected async Task<ResponseWrapper> HandleAsync(string url, IDictionary<string, string> query)
         {
             url = QueryHelpers.AddQueryString(url, query);
             var response = await _client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.BadRequest)
             {
-                throw new InvalidOperationException(response.StatusCode + " " + await response.Content.ReadAsStringAsync());
+                return new ResponseWrapper()
+                {
+                    IsSuccess = false,
+                    Errors = new[]
+                        {new Error() {Message = response.StatusCode + " " + await response.Content.ReadAsStringAsync()}}
+                };
             }
 
-            ResponseWrapper result;
-            await using (var responseStream = await response.Content.ReadAsStreamAsync())
-            {
-                result = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
-            }
-
-            HandleResponse(result);
+            await using Stream responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
         }
 
-        private void HandleResponse(ResponseWrapper result)
-        {
-            if (result.IsSuccess)
-            {
-                return;
-            }
-
-            if (result.Errors.All(e => e.Message.Contains("No sessions available") || e.Message.Contains("Session not found")))
-            {
-                throw new TelegramSessionNotFoundException();
-            }
-
-            throw new TelegramClientException(result.Errors);
-        }
+        
     }
 }

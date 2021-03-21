@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
-using FWTL.Common.Exceptions;
 using FWTL.Core.Services.Dto;
 using FWTL.Core.Services.Telegram;
 
@@ -14,47 +12,29 @@ namespace FWTL.TelegramClient.Services
         {
         }
 
-        public Task CompletePhoneLoginAsync(string sessionName, string code)
+        public Task<ResponseWrapper> CompletePhoneLoginAsync(string sessionName, string code)
         {
             return HandleAsync($"api/acc/{sessionName}/completePhoneLogin?code={code}");
         }
 
-        public async Task<User> GetSelfAsync(string sessionName)
+        public Task<ResponseWrapper<List<Dialog>>> GetDialogsAsync(string sessionName)
         {
-            try
-            {
-                return await HandleAsync<User>($"api/acc/{sessionName}/getSelf");
-            }
-            catch (TelegramSessionNotFoundException)
-            {
-                return null;
-            }
-            catch (JsonException) //This occurs when user has session, but it is not authenticated yet. Response returns success but in response body equals to false instead of an object O.o'
-            {
-                return null;
-            }
+            throw new System.NotImplementedException();
         }
 
-        public Task PhoneLoginAsync(string sessionName, string phoneNumber)
+        public Task<ResponseWrapper<User>> GetSelfAsync(string sessionName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<ResponseWrapper> LogoutAsync(string sessionName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<ResponseWrapper> PhoneLoginAsync(string sessionName, string phoneNumber)
         {
             return HandleAsync($"/api/acc/{sessionName}/phoneLogin?phone={phoneNumber}");
-        }
-
-        public async Task LogoutAsync(string sessionName)
-        {
-            try
-            {
-                await HandleAsync($"/api/acc/{sessionName}/logout");
-            }
-            catch (TelegramSessionNotFoundException) { }
-        }
-
-        public async Task<List<Dialog>> GetDialogsAsync(string sessionName)
-        {
-            //it seems Telegram returns dialogs from least frequently used.
-            var result = await HandleAsync<List<Dialog>>($"api/acc/{sessionName}/getDialogs");
-            result.Reverse();
-            return result;
         }
     }
 }

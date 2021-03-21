@@ -24,8 +24,6 @@ namespace FWTL.Management.Controllers
             _currentUserService = currentUserService;
         }
 
-
-
         [HttpPost]
         public async Task<Guid> AddTelegramAccount(string externalAccountId)
         {

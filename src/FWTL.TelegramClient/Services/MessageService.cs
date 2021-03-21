@@ -11,9 +11,9 @@ namespace FWTL.TelegramClient.Services
         {
         }
 
-        public Task<MessagesChats> GetAllChatsAsync(string sessionName)
+        public Task<ResponseWrapper<MessagesChats>> GetAllChatsAsync(string sessionName)
         {
-            return HandleAsync<MessagesChats>($"/api/users/{sessionName}/messages.getAllChats");
+            throw new System.NotImplementedException();
         }
     }
 }

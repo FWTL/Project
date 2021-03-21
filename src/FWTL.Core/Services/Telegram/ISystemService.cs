@@ -1,16 +1,17 @@
 ﻿using System.Threading.Tasks;
 using FWTL.Core.Services.Dto;
+using FWTL.TelegramClient;
 
 namespace FWTL.Core.Services.Telegram
 {
     public interface ISystemService
     {
-        Task<GetSessionListResponse> GetSessionListAsync();
+        Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync();
 
-        Task AddSessionAsync(string sessionName);
+        Task<ResponseWrapper> AddSessionAsync(string sessionName);
 
-        Task RemoveSessionAsync(string sessionName);
+        Task<ResponseWrapper> RemoveSessionAsync(string sessionName);
 
-        Task UnlinkSessionFileAsync(string sessionName);
+        Task<ResponseWrapper> UnlinkSessionFileAsync(string sessionName);
     }
 }

@@ -16,6 +16,7 @@ namespace FWTL.Management.Configuration
             RedisCredentials = new RedisCredentials(new RedisLocalCredentialsBase(configuration));
             RabbitMqCredentials = new RabbitMqCredentials(configuration);
             SeqUrl = configuration.GetNotNullOrEmpty("Seq:Url");
+            TelegramUrl = configuration.GetNotNullOrEmpty("Telegram:Url");
         }
         public RabbitMqCredentials RabbitMqCredentials { get; }
 
@@ -28,5 +29,6 @@ namespace FWTL.Management.Configuration
         public RedisCredentials RedisCredentials { get; }
 
         public string SeqUrl { get; }
+        public string TelegramUrl { get; }
     }
 }

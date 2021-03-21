@@ -33,8 +33,11 @@ namespace FWTL.Domain.Accounts.AccountSetup
             During(WithSession, When(CodeSent)
                 .TransitionTo(WaitForCode));
 
-            During(WaitForCode, When(AccountVeryfied)
+            During(WaitForCode, When(AccountVerified)
                 .TransitionTo(Ready).Finalize());
+
+            During(Initialized, When(SetupFailed)
+                .Schedule(Timout, x => x.Publish())
         }
 
         public Event<AccountCreated> AccountCreated { get; }
@@ -43,6 +46,10 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public Event<CodeSent> CodeSent { get; }
 
-        public Event<AccountVeryfied> AccountVeryfied { get; }
+        public Event<AccountVeryfied> AccountVerified { get; }
+
+        public Event<SetupFailed> SetupFailed { get; }
+
+        public Schedule<AccountSetupState> Timout { get; }
     }
 }

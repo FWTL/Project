@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
@@ -40,9 +41,15 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.Verify();
-                await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
+                ResponseWrapper response = await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
 
+                if (response.IsSuccess)
+                {
+                    account.Verify();
+                    return account;
+                }
+
+                account.FailSetup(response.Errors.Select(e => e.Message));
                 return account;
             }
         }

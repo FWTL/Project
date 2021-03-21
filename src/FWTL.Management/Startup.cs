@@ -1,15 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using FWTL.Common.Policies;
 using FWTL.Common.Services;
-using FWTL.Common.Setup.Profiles;
-using FWTL.Core.Aggregates;
 using FWTL.Core.Services;
 using FWTL.CurrentUser;
 using FWTL.Database.Access;
-using FWTL.Domain.Accounts;
-using FWTL.Domain.Accounts.Maps;
 using FWTL.Domain.Users;
 using FWTL.EventStore;
 using FWTL.Management.Configuration;
@@ -72,17 +67,10 @@ namespace FWTL.Management
 
             services.AddControllers(configuration =>
             {
-                configuration.Filters.Add(new ApiExceptionFilterFactory(_hostingEnvironment.EnvironmentName));
+                configuration.Filters.Add<ApiExceptionAttribute>();
             });
 
             Log.Logger = Log.Logger.AddSerilog().AddSeq(_solutionConfiguration.SeqUrl).CreateLogger();
-
-            services.AddAutoMapper(
-                config =>
-                {
-                    config.AddProfile(new RequestToCommandProfile(typeof(GetMe)));
-                    config.AddProfile(new RequestToQueryProfile(typeof(GetMe)));
-                }, typeof(RequestToCommandProfile).Assembly);
 
             services.AddDatabase<AppDatabaseContext>(_solutionConfiguration.AppDatabaseCredentials.ConnectionString);
 
@@ -93,8 +81,6 @@ namespace FWTL.Management
             services.AddTimeZonesService();
 
             services.AddEventStore(new Uri("http://localhost:2113"));
-
-            ServiceProvider servicesProvider = IocConfig.RegisterDependencies(services, _hostingEnvironment);
 
             services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
 
@@ -108,17 +94,13 @@ namespace FWTL.Management
 
             services.AddSingleton<IClock>(b => SystemClock.Instance);
             services.AddSingleton<IGuidService, GuidService>();
-
-            services.AddScoped<IAggregateMap<AccountAggregate>, MapToAccounts>();
         }
 
         public void Configure(IApplicationBuilder app)
         {
             app.UseSerilogRequestLogging();
 
-
             app.UseRouting();
-
 
             app.UseEndpoints(endpoints =>
             {

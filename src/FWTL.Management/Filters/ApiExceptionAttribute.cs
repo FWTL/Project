@@ -2,6 +2,7 @@
 using FluentValidation;
 using FWTL.Core.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
@@ -15,17 +16,15 @@ namespace FWTL.Management.Filters
         private readonly IWebHostEnvironment _hosting;
 
         private readonly ILogger _logger;
-        private readonly string _source;
 
-        public ApiExceptionAttribute(ILogger logger, IWebHostEnvironment hosting, IGuidService guid, string source)
+        public ApiExceptionAttribute(ILogger logger, IWebHostEnvironment hosting, IGuidService guid)
         {
             _logger = logger;
             _hosting = hosting;
             _guid = guid;
-            _source = source;
         }
 
-        public  void OnException(ExceptionContext context)
+        public void OnException(ExceptionContext context)
         {
             if (context.Exception.InnerException is ValidationException exceptionInner)
             {
@@ -48,15 +47,17 @@ namespace FWTL.Management.Filters
             context.HttpContext.Response.StatusCode = 500;
 
             var exceptionId = _guid.New;
-            //_logger.LogError(
-            //    "ExceptionId: {exceptionId} {NewLine}" +
-            //           "Url: {url} {NewLine}" +
-            //           "Exception: {exception} {NewLine}" +
-            //           "Source: {source}",
-            //    exceptionId,
-            //    context.HttpContext.Request.GetDisplayUrl(),
-            //    context.Exception,
-            //    _source);
+            _logger.LogError(
+                "ExceptionId: {exceptionId} {NewLine}" +
+                       "Url: {url} {NewLine}" +
+                       "Exception: {exception} {NewLine}" +
+                       "Source: {source}" +
+                       "Application : {applicationName}",
+                exceptionId,
+                context.HttpContext.Request.GetDisplayUrl(),
+                context.Exception,
+                _hosting.EnvironmentName,
+                _hosting.ApplicationName);
 
             context.Result = _hosting.IsDevelopment() ? new ContentResult { Content = context.Exception.ToString() } : new ContentResult { Content = exceptionId.ToString() };
         }

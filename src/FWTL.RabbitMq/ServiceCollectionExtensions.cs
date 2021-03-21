@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using AutoMapper;
 using FluentValidation;
 using FWTL.Common.Cqrs;
+using FWTL.Common.Cqrs.Mappers;
 using FWTL.Common.Setup.Credentials;
+using FWTL.Common.Setup.Profiles;
+using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
@@ -20,6 +24,13 @@ namespace FWTL.RabbitMq
     {
         public static void AddRabbitMq<TLookupType>(this IServiceCollection services, RabbitMqCredentials credentials, RedisCredentials redisCredentials)
         {
+            services.AddAutoMapper(
+            config =>
+            {
+                config.AddProfile(new RequestToCommandProfile(typeof(TLookupType)));
+                config.AddProfile(new RequestToQueryProfile(typeof(TLookupType)));
+            }, typeof(TLookupType).Assembly);
+
             var domainAssembly = typeof(TLookupType).GetTypeInfo().Assembly;
 
             services.Scan(scan =>
@@ -60,10 +71,28 @@ namespace FWTL.RabbitMq
                     .WithScopedLifetime()
             );
 
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
+                    .AsSelf()
+                    .WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IAggregateMap<>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
+
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
             services.AddScoped<IQueryDispatcher, QueryDispatcher>();
+
+            services.AddScoped<RequestToCommandMapper>();
+            services.AddScoped<RequestToQueryMapper>();
+
+
 
             services.AddMassTransit(x =>
             {

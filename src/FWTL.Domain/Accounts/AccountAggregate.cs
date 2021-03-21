@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FWTL.Common.Aggregates;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
@@ -11,7 +13,8 @@ namespace FWTL.Domain.Accounts
         IApply<AccountCreated>,
         IApply<SessionCreated>,
         IApply<CodeSent>,
-        IApply<AccountVeryfied>
+        IApply<AccountVeryfied>,
+        IApply<SetupFailed>
     {
         public AccountAggregate()
         {
@@ -19,6 +22,7 @@ namespace FWTL.Domain.Accounts
 
         public enum AccountState
         {
+            Failed = -1,
             Initialized = 1,
             WithSession = 2,
             WaitForCode = 3,
@@ -30,6 +34,8 @@ namespace FWTL.Domain.Accounts
         public Guid OwnerId { get; set; }
 
         public AccountState State { get; set; }
+
+        public List<string> Errors { get; set; } = new List<string>();
 
         public void Apply(AccountCreated @event)
         {
@@ -54,6 +60,12 @@ namespace FWTL.Domain.Accounts
             State = AccountState.Ready;
         }
 
+        public void Apply(SetupFailed @event)
+        {
+            State = AccountState.Failed;
+            Errors = @event.Errors;
+        }
+
         public void Create(Guid accountId, AddAccount.Command command)
         {
             var accountAdded = new AccountCreated()
@@ -64,6 +76,15 @@ namespace FWTL.Domain.Accounts
             };
 
             AddEvent(accountAdded);
+        }
+
+        public void FailSetup(IEnumerable<string> errors)
+        {
+            AddEvent(new SetupFailed()
+            {
+                AccountId = Id,
+                Errors = errors.ToList()
+            });
         }
 
         public void CreateSession()

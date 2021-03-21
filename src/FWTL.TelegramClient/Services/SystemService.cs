@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using FWTL.Common.Exceptions;
 using FWTL.Core.Services.Dto;
 using FWTL.Core.Services.Telegram;
 
@@ -12,36 +11,24 @@ namespace FWTL.TelegramClient.Services
         {
         }
 
-        public Task<GetSessionListResponse> GetSessionListAsync()
-        {
-            return HandleAsync<GetSessionListResponse>("/system/getSessionList");
-        }
-
-        public Task AddSessionAsync(string sessionName)
+        public Task<ResponseWrapper> AddSessionAsync(string sessionName)
         {
             return HandleAsync($"/system/addSession?session=acc/{sessionName}");
         }
 
-        public async Task RemoveSessionAsync(string sessionName)
+        public Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync()
         {
-            try
-            {
-                await HandleAsync($"/system/removeSession?session=acc/{sessionName}");
-            }
-            catch (TelegramSessionNotFoundException)
-            {
-            }
+            return HandleAsync<GetSessionListResponse>("/system/getSessionList");
         }
 
-        public async Task UnlinkSessionFileAsync(string sessionName)
+        public Task<ResponseWrapper> RemoveSessionAsync(string sessionName)
         {
-            try
-            {
-                await HandleAsync($"/system/unlinkSessionFile?session=users/{sessionName}");
-            }
-            catch (TelegramSessionNotFoundException)
-            {
-            }
+            return HandleAsync($"/system/removeSession?session=acc/{sessionName}");
+        }
+
+        public Task<ResponseWrapper> UnlinkSessionFileAsync(string sessionName)
+        {
+            return HandleAsync($"/system/unlinkSessionFile?session=acc/{sessionName}");
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
-using FWTL.TelegramClient;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
@@ -34,9 +34,14 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.CreateSession();
-                await _telegramClient.SystemService.AddSessionAsync(account.Id.ToString());
+                var response = await _telegramClient.SystemService.AddSessionAsync(account.Id.ToString());
+                if (response.IsSuccess)
+                {
+                    account.CreateSession();
+                    return account;
+                }
 
+                account.FailSetup(response.Errors.Select(e => e.Message));
                 return account;
             }
         }
