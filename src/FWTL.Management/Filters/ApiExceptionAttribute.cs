@@ -17,7 +17,7 @@ namespace FWTL.Management.Filters
 
         private readonly ILogger _logger;
 
-        public ApiExceptionAttribute(ILogger logger, IWebHostEnvironment hosting, IGuidService guid)
+        public ApiExceptionAttribute(ILogger<ApiExceptionAttribute> logger, IWebHostEnvironment hosting, IGuidService guid)
         {
             _logger = logger;
             _hosting = hosting;

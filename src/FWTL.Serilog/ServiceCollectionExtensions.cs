@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using System;
+using Serilog;
 using Serilog.Events;
 
 namespace FWTL.Serilog
@@ -18,9 +19,9 @@ namespace FWTL.Serilog
                 .Enrich.FromLogContext();
         }
 
-        public static LoggerConfiguration AddSeq(this LoggerConfiguration loggerConfiguration, string seqUrl)
+        public static LoggerConfiguration AddSeq(this LoggerConfiguration loggerConfiguration, Uri seqUrl)
         {
-            return loggerConfiguration.WriteTo.Seq(seqUrl);
+            return loggerConfiguration.WriteTo.Seq(seqUrl.AbsoluteUri);
         }
     }
 }

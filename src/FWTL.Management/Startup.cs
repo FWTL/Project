@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using FWTL.Common.Policies;
 using FWTL.Common.Services;
@@ -75,13 +74,13 @@ namespace FWTL.Management
 
             services.AddDatabase<AppDatabaseContext>(_solutionConfiguration.AppDatabaseCredentials.ConnectionString);
 
-            services.AddTelegramClient(new Uri("http://127.0.0.1:9503"))
+            services.AddTelegramClient(_solutionConfiguration.TelegramUrl)
                 .AddPolicyHandler(Policies.Retry(3))
                 .AddPolicyHandler(Policies.Timeout(30));
 
             services.AddTimeZonesService();
 
-            services.AddEventStore(new Uri("http://localhost:2113"));
+            services.AddEventStore(_solutionConfiguration.EventStoreUrl);
 
             services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
 

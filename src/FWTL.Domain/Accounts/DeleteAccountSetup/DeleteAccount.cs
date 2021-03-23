@@ -13,7 +13,7 @@ namespace FWTL.Domain.Accounts.DeleteAccountSetup
             public Guid AccountId { get; set; }
         }
 
-        public class Command : ICommand
+        public class Command : Request, ICommand
         {
             public Command()
             {
@@ -32,17 +32,17 @@ namespace FWTL.Domain.Accounts.DeleteAccountSetup
         public class Handler : ICommandHandler<Command>
         {
             private readonly IAggregateStore _aggregateStore;
-            private readonly IGuidService _guidService;
 
-            public Handler(IAggregateStore aggregateStore, IGuidService guidService)
+            public Handler(IAggregateStore aggregateStore)
             {
                 _aggregateStore = aggregateStore;
-                _guidService = guidService;
             }
 
-            public Task<IAggregateRoot> ExecuteAsync(Command command)
+            public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                throw new NotImplementedException();
+                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                account.Delete
+                return account;
             }
         }
     }

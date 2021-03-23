@@ -26,6 +26,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .TransitionTo(Initialized)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
+
             During(Initialized, When(SessionCreated)
                  .TransitionTo(WithSession)
                  .Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Instance.CorrelationId }));

@@ -1,4 +1,5 @@
-﻿using FWTL.Common.Setup.Credentials;
+﻿using System;
+using FWTL.Common.Setup.Credentials;
 using FWTL.Common.Setup.Extensions;
 using FWTL.Database.Access;
 using FWTL.RabbitMq;
@@ -15,9 +16,11 @@ namespace FWTL.Management.Configuration
             EventStoreCredentials = new EventStoreCredentials(new EventStoreCredentialsBase(configuration));
             RedisCredentials = new RedisCredentials(new RedisLocalCredentialsBase(configuration));
             RabbitMqCredentials = new RabbitMqCredentials(configuration);
-            SeqUrl = configuration.GetNotNullOrEmpty("Seq:Url");
-            TelegramUrl = configuration.GetNotNullOrEmpty("Telegram:Url");
+            SeqUrl = new Uri(configuration.GetNotNullOrEmpty("Seq:Url"));
+            TelegramUrl = new Uri(configuration.GetNotNullOrEmpty("Telegram:Url"));
+            EventStoreUrl = new Uri(configuration.GetNotNullOrEmpty("EventStore:Url"));
         }
+
         public RabbitMqCredentials RabbitMqCredentials { get; }
 
         public AppDatabaseCredentials AppDatabaseCredentials { get; }
@@ -28,7 +31,10 @@ namespace FWTL.Management.Configuration
 
         public RedisCredentials RedisCredentials { get; }
 
-        public string SeqUrl { get; }
-        public string TelegramUrl { get; }
+        public Uri SeqUrl { get; }
+
+        public Uri TelegramUrl { get; }
+
+        public Uri EventStoreUrl { get; }
     }
 }
