@@ -23,7 +23,7 @@ namespace FWTL.Common.Aggregates
         [JsonIgnore]
         public IEnumerable<EventComposite> Events => _events;
 
-        public long Version { get; set; } = -1;
+        public long Version { get; set; }
 
         public Guid Id { get; set; }
 
@@ -48,6 +48,10 @@ namespace FWTL.Common.Aggregates
 
         public virtual async Task CommitAsync(IAggregateStore aggregateStore)
         {
+            if (Version == -1)
+            {
+                await aggregateStore.DeleteAsync(this as TAggregate);
+            }
             await aggregateStore.SaveAsync(this as TAggregate);
         }
     }

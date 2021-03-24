@@ -14,7 +14,8 @@ namespace FWTL.Domain.Accounts
         IApply<SessionCreated>,
         IApply<CodeSent>,
         IApply<AccountVeryfied>,
-        IApply<SetupFailed>
+        IApply<SetupFailed>,
+        IApply<AccountDeleted>
     {
         public AccountAggregate()
         {
@@ -48,6 +49,17 @@ namespace FWTL.Domain.Accounts
         public void Apply(SessionCreated @event)
         {
             State = AccountState.WithSession;
+        }
+
+        public void Delete(Guid deletedBy)
+        {
+            var accountDeleted = new AccountDeleted()
+            {
+                DeletedBy = deletedBy,
+                AccountId = Id
+            };
+
+            AddEvent(accountDeleted);
         }
 
         public void Apply(CodeSent @event)
@@ -106,6 +118,11 @@ namespace FWTL.Domain.Accounts
             {
                 AccountId = Id
             });
+        }
+
+        public void Apply(AccountDeleted @event)
+        {
+            Version = -1;
         }
     }
 }

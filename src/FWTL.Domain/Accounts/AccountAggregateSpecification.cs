@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FluentValidation;
 using FWTL.Common.Helpers;
 using FWTL.Common.Validators;
@@ -11,7 +12,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FWTL.Domain.Accounts
 {
     public class AccountAggregateSpecification : AppAbstractValidation<AccountAggregate>,
-        ISpecificationFor<AccountAggregate, AccountCreated>
+        ISpecificationFor<AccountAggregate, AccountCreated>,
+        ISpecificationFor<AccountAggregate, AccountDeleted>
     {
         private readonly IAggregateStore _aggregateStore;
         private readonly IDatabaseContext _dbContext;
@@ -43,10 +45,21 @@ namespace FWTL.Domain.Accounts
             });
         }
 
+        public void MustBeOwner(Guid ownerId)
+        {
+            RuleFor(x => x.OwnerId).Equal(ownerId);
+        }
+
         public IValidator<AccountAggregate> Apply(AccountCreated @event)
         {
             ValidateExternalAccountId();
             MustBeUnique();
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(AccountDeleted @event)
+        {
+            MustBeOwner(@event.DeletedBy);
             return this;
         }
     }

@@ -40,8 +40,8 @@ namespace FWTL.Domain.Accounts.DeleteAccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.Delete
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                account.Delete(command.UserId);
                 return account;
             }
         }

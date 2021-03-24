@@ -13,7 +13,6 @@ namespace FWTL.Management.Configuration
         {
             AppDatabaseCredentials = new AppDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "App"));
             HangfireDatabaseCredentials = new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
-            EventStoreCredentials = new EventStoreCredentials(new EventStoreCredentialsBase(configuration));
             RedisCredentials = new RedisCredentials(new RedisLocalCredentialsBase(configuration));
             RabbitMqCredentials = new RabbitMqCredentials(configuration);
             SeqUrl = new Uri(configuration.GetNotNullOrEmpty("Seq:Url"));
@@ -26,8 +25,6 @@ namespace FWTL.Management.Configuration
         public AppDatabaseCredentials AppDatabaseCredentials { get; }
 
         public HangfireDatabaseCredentials HangfireDatabaseCredentials { get; }
-
-        public EventStoreCredentials EventStoreCredentials { get; }
 
         public RedisCredentials RedisCredentials { get; }
 

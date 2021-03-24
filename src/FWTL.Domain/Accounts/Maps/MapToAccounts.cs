@@ -28,6 +28,7 @@ namespace FWTL.Domain.Accounts.Maps
                 ExternalAccountId = aggregate.ExternalAccountId,
                 OwnerId = aggregate.OwnerId
             });
+            await _databaseContext.SaveChangesAsync();
         }
 
         public Task UpdateAsync(AccountAggregate aggregate)
@@ -41,23 +42,6 @@ namespace FWTL.Domain.Accounts.Maps
             {
                 Id = aggregate.Id
             });
-            await _databaseContext.SaveChangesAsync();
-        }
-
-        public async Task SaveAsync(AccountAggregate aggregate)
-        {
-            if (await _databaseContext.Accounts.AnyAsync(account => account.Id == aggregate.Id))
-            {
-                return;
-            }
-
-            await _databaseContext.Accounts.AddAsync(new Account()
-            {
-                Id = aggregate.Id,
-                ExternalAccountId = aggregate.ExternalAccountId,
-                OwnerId = aggregate.OwnerId
-            });
-
             await _databaseContext.SaveChangesAsync();
         }
     }

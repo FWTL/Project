@@ -4,6 +4,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Accounts.AccountSetup;
+using FWTL.Domain.Accounts.DeleteAccountSetup;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Management.Controllers
@@ -40,6 +41,12 @@ namespace FWTL.Management.Controllers
         public async Task VerifyTelegramAccount(Guid accountId, string code)
         {
             await _commandDispatcher.DispatchAsync<VerifyAccount.Request, VerifyAccount.Command>(new VerifyAccount.Request() { AccountId = accountId, Code = code });
+        }
+
+        [HttpDelete]
+        public async Task DeleteTelegramAccount(Guid accountId)
+        {
+            await _commandDispatcher.DispatchAsync<DeleteAccount.Request, DeleteAccount.Command>(new DeleteAccount.Request() { AccountId = accountId });
         }
     }
 }

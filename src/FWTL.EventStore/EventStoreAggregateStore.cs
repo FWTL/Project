@@ -37,7 +37,7 @@ namespace FWTL.EventStore
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
             {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregate.Id} not found");
+                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
             }
 
             return aggregate;
@@ -58,14 +58,36 @@ namespace FWTL.EventStore
             var service = _context.GetService<IAggregateMap<TAggregate>>();
             if (service != null)
             {
-                await service.SaveAsync(aggregate);
+                if (aggregate.Version == 0)
+                {
+                    await service.CreateAsync(aggregate);
+                }
+                else
+                {
+                    await service.UpdateAsync(aggregate);
+                }
             }
 
             await _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave);
 
-            aggregate.Version += aggregate.Events.Count();
+            aggregate.Version += aggregate.Events.Count() - 1;
             await _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1));
         }
+
+        public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
+        {
+            var streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
+            await _cache.KeyDeleteAsync(streamName);
+
+            var service = _context.GetService<IAggregateMap<TAggregate>>();
+            if (service != null)
+            {
+                await service.DeleteAsync(aggregate);
+            }
+
+            await _eventStoreClient.SoftDeleteAsync(streamName, StreamRevision.None);
+        }
+
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {

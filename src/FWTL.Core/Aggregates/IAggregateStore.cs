@@ -10,5 +10,7 @@ namespace FWTL.Core.Aggregates
         TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new();
 
         Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot;
+
+        Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot;
     }
 }
