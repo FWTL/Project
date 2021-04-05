@@ -30,14 +30,12 @@ namespace FWTL.Domain.Accounts
             Ready = 4
         }
 
+        public List<string> Errors { get; set; } = new List<string>();
         public string ExternalAccountId { get; set; }
 
         public Guid OwnerId { get; set; }
 
         public AccountState State { get; set; }
-
-        public List<string> Errors { get; set; } = new List<string>();
-
         public void Apply(AccountCreated @event)
         {
             Id = @event.AccountId;
@@ -49,17 +47,6 @@ namespace FWTL.Domain.Accounts
         public void Apply(SessionCreated @event)
         {
             State = AccountState.WithSession;
-        }
-
-        public void Delete(Guid deletedBy)
-        {
-            var accountDeleted = new AccountDeleted()
-            {
-                DeletedBy = deletedBy,
-                AccountId = Id
-            };
-
-            AddEvent(accountDeleted);
         }
 
         public void Apply(CodeSent @event)
@@ -78,6 +65,11 @@ namespace FWTL.Domain.Accounts
             Errors = @event.Errors;
         }
 
+        public void Apply(AccountDeleted @event)
+        {
+            //Delete();
+        }
+
         public void Create(Guid accountId, AddAccount.Command command)
         {
             var accountAdded = new AccountCreated()
@@ -90,6 +82,21 @@ namespace FWTL.Domain.Accounts
             AddEvent(accountAdded);
         }
 
+        public void CreateSession()
+        {
+            AddEvent(new SessionCreated() { AccountId = Id });
+        }
+
+        public void Delete(Guid deletedBy)
+        {
+            var accountDeleted = new AccountDeleted()
+            {
+                DeletedBy = deletedBy,
+                AccountId = Id
+            };
+
+            AddEvent(accountDeleted);
+        }
         public void FailSetup(IEnumerable<string> errors)
         {
             AddEvent(new SetupFailed()
@@ -98,12 +105,6 @@ namespace FWTL.Domain.Accounts
                 Errors = errors.ToList()
             });
         }
-
-        public void CreateSession()
-        {
-            AddEvent(new SessionCreated() { AccountId = Id });
-        }
-
         public void SendCode()
         {
             AddEvent(new CodeSent()
@@ -118,11 +119,6 @@ namespace FWTL.Domain.Accounts
             {
                 AccountId = Id
             });
-        }
-
-        public void Apply(AccountDeleted @event)
-        {
-            Version = -1;
         }
     }
 }

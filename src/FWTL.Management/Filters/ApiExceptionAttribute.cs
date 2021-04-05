@@ -47,17 +47,17 @@ namespace FWTL.Management.Filters
             context.HttpContext.Response.StatusCode = 500;
 
             var exceptionId = _guid.New;
-            _logger.LogError(
-                "ExceptionId: {exceptionId} {NewLine}" +
-                       "Url: {url} {NewLine}" +
-                       "Exception: {exception} {NewLine}" +
-                       "Source: {source}" +
-                       "Application : {applicationName}",
-                exceptionId,
-                context.HttpContext.Request.GetDisplayUrl(),
-                context.Exception,
-                _hosting.EnvironmentName,
-                _hosting.ApplicationName);
+            //_logger.LogError(
+            //    "ExceptionId: {exceptionId} {NewLine}" +
+            //           "Url: {url} {NewLine}" +
+            //           "Exception: {exception} {NewLine}" +
+            //           "Source: {source}" +
+            //           "Application : {applicationName}",
+            //    exceptionId,
+            //    context.HttpContext.Request.GetDisplayUrl(),
+            //    context.Exception,
+            //    _hosting.EnvironmentName,
+            //    _hosting.ApplicationName);
 
             context.Result = _hosting.IsDevelopment() ? new ContentResult { Content = context.Exception.ToString() } : new ContentResult { Content = exceptionId.ToString() };
         }

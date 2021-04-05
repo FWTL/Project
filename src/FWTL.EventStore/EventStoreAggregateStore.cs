@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
+using Polly;
 using StackExchange.Redis;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using StreamPosition = EventStore.Client.StreamPosition;
@@ -45,33 +48,38 @@ namespace FWTL.EventStore
 
         public TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new()
         {
-            var model = new TAggregate { Context = _context };
+            var model = new TAggregate { Context = _context, Version = -1 };
             return model;
         }
 
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
-            var streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
-            var newEvents = aggregate.Events;
-            var eventsToSave = newEvents.Select(ToEventData).ToList();
+            string streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
+            IEnumerable<EventComposite> newEvents = aggregate.Events;
+            List<EventData> eventsToSave = newEvents.Select(ToEventData).ToList();
 
             var service = _context.GetService<IAggregateMap<TAggregate>>();
+
             if (service != null)
             {
-                if (aggregate.Version == 0)
+                if (aggregate.Version == -1)
                 {
-                    await service.CreateAsync(aggregate);
+                    await Policies.SqRetryPolicy.ExecuteAsync(() => service.CreateAsync(aggregate));
                 }
                 else
                 {
-                    await service.UpdateAsync(aggregate);
+                    await Policies.SqRetryPolicy.ExecuteAsync(() => service.UpdateAsync(aggregate));
                 }
             }
 
-            await _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave);
-
+            var result = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(() => _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave));
+            if (result.Outcome == OutcomeType.Failure && service != null)
+            {
+                await Policies.SqRetryPolicy.ExecuteAsync(() => service.DeleteAsync(aggregate));
+            }
             aggregate.Version += aggregate.Events.Count() - 1;
-            await _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1));
+
+            await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1)));
         }
 
         public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
@@ -85,19 +93,25 @@ namespace FWTL.EventStore
                 await service.DeleteAsync(aggregate);
             }
 
-            await _eventStoreClient.SoftDeleteAsync(streamName, StreamRevision.None);
+            //await _eventStoreClient.SoftDeleteAsync(streamName, StreamRevision.None);
         }
 
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {
-            var eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType").Value;
-            return JsonSerializer.Deserialize(Encoding.UTF8.GetString(data.Span), Type.GetType((string)eventType));
+            JToken eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType")?.Value;
+            if (eventType == null)
+            {
+                throw new NullReferenceException("EventType is null");
+            }
+
+            string json = Encoding.UTF8.GetString(data.Span);
+            return JsonSerializer.Deserialize(json, Type.GetType((string)eventType));
         }
 
         public async Task<bool> ExistsAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot
         {
-            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
+            string streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
             EventStoreClient.ReadStreamResult stream = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.FromInt64(0));
 
             return await stream.ReadState != ReadState.StreamNotFound;
@@ -112,9 +126,12 @@ namespace FWTL.EventStore
             }
 
             var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
-            TAggregate aggregate = new TAggregate();
+            TAggregate aggregate = new TAggregate
+            {
+                Version = -1
+            };
 
-            var value = await _cache.StringGetAsync(streamName);
+            RedisValue value = await _cache.StringGetAsync(streamName);
             if (value.HasValue)
             {
                 aggregate = JsonSerializer.Deserialize<TAggregate>(value);
@@ -141,7 +158,7 @@ namespace FWTL.EventStore
 
         private EventData ToEventData(EventComposite @event)
         {
-            var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event.Event));
+            var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event.Event, @event.Event.GetType()));
             var metadata = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event.Metadata));
 
             return new EventData(@event.Metadata.EventId, @event.Metadata.EventType, data, metadata);

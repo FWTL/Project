@@ -2,7 +2,7 @@
 
 namespace FWTL.Core.Events
 {
-    public interface IEventHandlerAsync<in TEvent> where TEvent : IEvent
+    public interface IEventHandler<in TEvent> where TEvent : IEvent
     {
         Task HandleAsync(TEvent @event);
     }

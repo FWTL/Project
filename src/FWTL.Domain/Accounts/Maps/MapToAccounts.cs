@@ -15,11 +15,6 @@ namespace FWTL.Domain.Accounts.Maps
             _databaseContext = databaseContext;
         }
 
-        public async Task<bool> ProbeAsync(AccountAggregate aggregate)
-        {
-            return await _databaseContext.Accounts.AnyAsync(account => account.Id == aggregate.Id);
-        }
-
         public async Task CreateAsync(AccountAggregate aggregate)
         {
             await _databaseContext.Accounts.AddAsync(new Account()

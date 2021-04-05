@@ -53,6 +53,12 @@ namespace FWTL.RabbitMq
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IEventHandler<>)))
+                    .AsImplementedInterfaces().WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
                     .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationFor<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
@@ -123,6 +129,17 @@ namespace FWTL.RabbitMq
                     x.AddConsumer(typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
                 }
 
+                var events = typeof(TLookupType).Assembly.GetTypes()
+                    .Select(t => t.GetInterfaces().FirstOrDefault(t2 => t2.IsGenericType))
+                    .Where(i => i != null && typeof(IEventHandler<>).IsAssignableFrom(i.GetGenericTypeDefinition()))
+                    .ToList();
+
+                foreach (var eventType in events)
+                {
+                    var typeArguments = eventType.GetGenericArguments();
+                    x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(typeArguments));
+                }
+
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
                     cfg.ConfigureJsonSerializer(config =>
@@ -159,6 +176,15 @@ namespace FWTL.RabbitMq
                         {
                             var typeArguments = queryType.GetGenericArguments();
                             ec.ConfigureConsumer(context, typeof(QueryConsumer<,>).MakeGenericType(typeArguments));
+                        }
+                    });
+
+                    cfg.ReceiveEndpoint("events", ec =>
+                    {
+                        foreach (var eventType in events)
+                        {
+                            var typeArguments = eventType.GetGenericArguments();
+                            ec.ConfigureConsumer(context, typeof(EventConsumer<>).MakeGenericType(typeArguments));
                         }
                     });
 

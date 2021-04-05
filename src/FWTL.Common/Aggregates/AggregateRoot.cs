@@ -15,6 +15,8 @@ namespace FWTL.Common.Aggregates
     public abstract class AggregateRoot<TAggregate> : IAggregateRoot
         where TAggregate : AggregateRoot<TAggregate>
     {
+        private int DeleteVersion = -2;
+
         private readonly List<EventComposite> _events = new List<EventComposite>();
 
         [JsonIgnore]
@@ -48,11 +50,17 @@ namespace FWTL.Common.Aggregates
 
         public virtual async Task CommitAsync(IAggregateStore aggregateStore)
         {
-            if (Version == -1)
+            if (Version == DeleteVersion)
             {
                 await aggregateStore.DeleteAsync(this as TAggregate);
+                return;
             }
             await aggregateStore.SaveAsync(this as TAggregate);
+        }
+
+        public virtual void Delete()
+        {
+            Version = DeleteVersion;
         }
     }
 }
