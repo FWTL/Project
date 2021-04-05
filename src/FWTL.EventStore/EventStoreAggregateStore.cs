@@ -73,13 +73,17 @@ namespace FWTL.EventStore
             }
 
             var result = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(() => _eventStoreClient.AppendToStreamAsync(streamName, StreamState.Any, eventsToSave));
-            if (result.Outcome == OutcomeType.Failure && service != null)
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                aggregate.Version += aggregate.Events.Count() - 1;
+                await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1)));
+                return;
+            }
+
+            if (service != null)
             {
                 await Policies.SqRetryPolicy.ExecuteAsync(() => service.DeleteAsync(aggregate));
             }
-            aggregate.Version += aggregate.Events.Count() - 1;
-
-            await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1)));
         }
 
         public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot

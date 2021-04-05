@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 using FWTL.Database.Access.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,12 @@ namespace FWTL.Database.Access
     {
         public AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : base(options)
         {
+            this.Database.GetDbConnection();
         }
 
         public DbSet<Account> Accounts { get; set; }
+
+        public IDbConnection Connection => Database.GetDbConnection();
 
         public void BeginTransaction()
         {

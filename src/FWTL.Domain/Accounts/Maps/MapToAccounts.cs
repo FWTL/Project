@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Dapper.Contrib.Extensions;
 using FWTL.Core.Aggregates;
 using FWTL.Database.Access;
 using FWTL.Database.Access.Entities;
@@ -17,13 +17,12 @@ namespace FWTL.Domain.Accounts.Maps
 
         public async Task CreateAsync(AccountAggregate aggregate)
         {
-            await _databaseContext.Accounts.AddAsync(new Account()
+            await _databaseContext.Connection.InsertAsync(new Account()
             {
                 Id = aggregate.Id,
                 ExternalAccountId = aggregate.ExternalAccountId,
                 OwnerId = aggregate.OwnerId
             });
-            await _databaseContext.SaveChangesAsync();
         }
 
         public Task UpdateAsync(AccountAggregate aggregate)
@@ -33,11 +32,10 @@ namespace FWTL.Domain.Accounts.Maps
 
         public async Task DeleteAsync(AccountAggregate aggregate)
         {
-            _databaseContext.Accounts.Remove(new Account()
+            await _databaseContext.Connection.DeleteAsync(new Account()
             {
                 Id = aggregate.Id
             });
-            await _databaseContext.SaveChangesAsync();
         }
     }
 }

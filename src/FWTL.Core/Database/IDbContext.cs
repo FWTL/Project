@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Data;
+using System.Threading.Tasks;
 
 namespace FWTL.Core.Database
 {
@@ -11,5 +12,7 @@ namespace FWTL.Core.Database
         void SaveChangesSync();
 
         Task SaveChangesAsync();
+
+        IDbConnection Connection { get; }
     }
 }
