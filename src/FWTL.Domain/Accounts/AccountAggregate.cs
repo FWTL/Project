@@ -67,7 +67,7 @@ namespace FWTL.Domain.Accounts
 
         public void Apply(AccountDeleted @event)
         {
-            //Delete();
+            Delete();
         }
 
         public void Create(Guid accountId, AddAccount.Command command)

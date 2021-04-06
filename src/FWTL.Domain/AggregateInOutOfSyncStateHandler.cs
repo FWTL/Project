@@ -29,6 +29,11 @@ namespace FWTL.Domain
                 return;
             }
 
+            if (!doesExist && aggregate.Version >= 0)
+            {
+                await _map.CreateAsync(aggregate);
+            }
+
             if (@event.Version < aggregate.Version)
             {
                 return;
@@ -38,11 +43,6 @@ namespace FWTL.Domain
             {
                 await _map.UpdateAsync(aggregate);
                 return;
-            }
-
-            if (!doesExist && aggregate.Version >= 0)
-            {
-                await _map.CreateAsync(aggregate);
             }
         }
     }

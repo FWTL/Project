@@ -94,21 +94,39 @@ namespace FWTL.EventStore
                     Type = aggregate.GetType().FullName,
                     Version = aggregate.Version
                 });
+                throw result.FinalException;
             }
         }
 
         public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
-            var streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
-            await _cache.KeyDeleteAsync(streamName);
+            string streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
+            await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.KeyDeleteAsync(streamName));
 
             var service = _context.GetService<IAggregateMap<TAggregate>>();
             if (service != null)
             {
-                await service.DeleteAsync(aggregate);
+                await Policies.SqRetryPolicy.ExecuteAsync(() => service.DeleteAsync(aggregate));
             }
 
-            //await _eventStoreClient.SoftDeleteAsync(streamName, StreamRevision.None);
+            var result = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(() => _eventStoreClient.TombstoneAsync(streamName, StreamRevision.FromInt64(aggregate.Version)));
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                aggregate.Version += aggregate.Events.Count() - 1;
+                await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1)));
+                return;
+            }
+
+            if (service != null)
+            {
+                await _publishEndpoint.Publish(new AggregateInOutOfSyncState()
+                {
+                    AggregateId = aggregate.Id,
+                    Type = aggregate.GetType().FullName,
+                    Version = aggregate.Version
+                });
+                throw result.FinalException;
+            }
         }
 
 
