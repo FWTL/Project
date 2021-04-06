@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 using FWTL.Core.Aggregates;
 using FWTL.Database.Access;
@@ -36,6 +37,11 @@ namespace FWTL.Domain.Accounts.Maps
             {
                 Id = aggregate.Id
             });
+        }
+
+        public async Task<bool> ProbeAsync(AccountAggregate aggregate)
+        {
+            return await _databaseContext.Accounts.AnyAsync(x => x.Id == aggregate.Id);
         }
     }
 }

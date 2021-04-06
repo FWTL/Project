@@ -8,6 +8,8 @@ using EventStore.Client;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
+using FWTL.Events;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Polly;
@@ -25,14 +27,18 @@ namespace FWTL.EventStore
 
         private readonly EventStoreClient _eventStoreClient;
 
+        private readonly IPublishEndpoint _publishEndpoint;
+
         public EventStoreAggregateStore(
             EventStoreClient eventStoreClient,
             IDatabase cache,
-            IServiceProvider context)
+            IServiceProvider context,
+            IPublishEndpoint publishEndpoint)
         {
             _eventStoreClient = eventStoreClient;
             _cache = cache;
             _context = context;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : class, IAggregateRoot, new()
@@ -82,7 +88,12 @@ namespace FWTL.EventStore
 
             if (service != null)
             {
-                await Policies.SqRetryPolicy.ExecuteAsync(() => service.DeleteAsync(aggregate));
+                await _publishEndpoint.Publish(new AggregateInOutOfSyncState()
+                {
+                    AggregateId = aggregate.Id,
+                    Type = aggregate.GetType().FullName,
+                    Version = aggregate.Version
+                });
             }
         }
 
@@ -119,6 +130,12 @@ namespace FWTL.EventStore
             EventStoreClient.ReadStreamResult stream = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.FromInt64(0));
 
             return await stream.ReadState != ReadState.StreamNotFound;
+        }
+
+        public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(Guid aggregateId)
+            where TAggregate : class, IAggregateRoot, new()
+        {
+            return GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
         }
 
         private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
