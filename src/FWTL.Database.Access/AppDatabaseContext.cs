@@ -10,7 +10,6 @@ namespace FWTL.Database.Access
     {
         public AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : base(options)
         {
-            this.Database.GetDbConnection();
         }
 
         public DbSet<Account> Accounts { get; set; }

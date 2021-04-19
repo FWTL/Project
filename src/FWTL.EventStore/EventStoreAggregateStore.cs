@@ -88,12 +88,18 @@ namespace FWTL.EventStore
 
             if (service != null)
             {
-                await _publishEndpoint.Publish(new AggregateInOutOfSyncState()
+                var publishResult = await Policies.PublishRetryPolicy.ExecuteAndCaptureAsync(() => _publishEndpoint.Publish(new AggregateInOutOfSyncState()
                 {
                     AggregateId = aggregate.Id,
                     Type = aggregate.GetType().FullName,
                     Version = aggregate.Version
-                });
+                }));
+
+                if(publishResult.Outcome == OutcomeType.Failure)
+                {
+                    throw new ApplicationException($"Cannot sync aggregate {aggregate.Id} of type {aggregate.GetType().FullName}", result.FinalException);
+                }
+
                 throw result.FinalException;
             }
         }
@@ -119,12 +125,18 @@ namespace FWTL.EventStore
 
             if (service != null)
             {
-                await _publishEndpoint.Publish(new AggregateInOutOfSyncState()
+                var publishResult = await Policies.PublishRetryPolicy.ExecuteAndCaptureAsync(() => _publishEndpoint.Publish(new AggregateInOutOfSyncState()
                 {
                     AggregateId = aggregate.Id,
                     Type = aggregate.GetType().FullName,
                     Version = aggregate.Version
-                });
+                }));
+
+                if (publishResult.Outcome == OutcomeType.Failure)
+                {
+                    throw new AggregateInOutOfSyncException(aggregate, result.FinalException);
+                }
+
                 throw result.FinalException;
             }
         }

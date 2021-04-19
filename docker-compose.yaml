@@ -16,18 +16,18 @@ services:
       - FWTL-data:/data
     networks:
       - backend
-  # sql:
-  #   image: mcr.microsoft.com/mssql/server:2017-latest
-  #   container_name: "FWTL-sql"
-  #   ports:
-  #     - "1433:1433"
-  #   environment:
-  #     ACCEPT_EULA: "Y"
-  #     SA_PASSWORD: "!QAZ2wsx"
-  #   volumes:
-  #     - FWTL-sql-data:/var/opt/mssql
-  #   networks:
-  #     - backend
+  sql:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: "FWTL-sql"
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "!QAZ2wsx"
+    volumes:
+      - FWTL-sql-data:/var/opt/mssql
+    networks:
+      - backend
   telegram-api-server:
     image: xtrime/telegram-api-server:latest
     container_name: FWTL-telegram-api-server
@@ -37,7 +37,7 @@ services:
     ports:
       - "127.0.0.1:9503:9503"
     volumes:
-      - C:/Projects/FWTLAuth/.env.docker:/app/sessions/.env.docker
+      - C:/Projects/FWTL/.env.docker:/app/sessions/.env.docker
     #working_dir: /app-host-link
     depends_on:
       - mysql

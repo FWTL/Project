@@ -20,7 +20,7 @@ namespace FWTL.Domain
 
         public async Task HandleAsync(AggregateInOutOfSyncState @event)
         {
-            AccountAggregate aggregate = await _aggregateStore.GetByIdOrDefaultAsync<AccountAggregate>(@event.AggregateId);
+            AccountAggregate aggregate = await _aggregateStore.GetByIdOrDefaulnnnnnnntAsync<AccountAggregate>(@event.AggregateId);
             var doesExist = await _map.ProbeAsync(aggregate);
 
             if (doesExist && aggregate.IsNull())
