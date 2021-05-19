@@ -12,7 +12,6 @@ using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Specification;
-using FWTL.Domain.Accounts.Logout;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -99,8 +98,7 @@ namespace FWTL.RabbitMq
             services.AddScoped<RequestToQueryMapper>();
 
             var activitiesBuilder = new ActivitiesBuilder();
-            activitiesBuilder.Add<Logout.Command>();
-            activitiesBuilder.Add<Logout2.Command>();
+            //activitiesBuilder.Add<Logout.Command>();
 
             services.AddMassTransit(x =>
             {
@@ -108,9 +106,6 @@ namespace FWTL.RabbitMq
                 x.AddSagaStateMachines(typeof(TLookupType).Assembly);
 
                 activitiesBuilder.AddExecuteActivity(x);
-
-                //x.AddExecuteActivity<CommandActivity<Logout.Command>, Logout.Command>();
-                //x.AddExecuteActivity<CommandActivity<Logout2.Command>, Logout2.Command>();
 
                 var commands = typeof(TLookupType).Assembly.GetTypes()
                   .Where(t => t.IsNested && t.Name == "Handler")
@@ -149,7 +144,6 @@ namespace FWTL.RabbitMq
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    
                     cfg.UseHangfireScheduler("hangfire");
 
                     cfg.ConfigureJsonSerializer(config =>
@@ -199,16 +193,6 @@ namespace FWTL.RabbitMq
                     });
 
                     activitiesBuilder.ConfigureExecuteActivity(context, cfg);
-
-                    //cfg.ReceiveEndpoint("activities", ec =>
-                    //{
-                    //    ec.ConfigureExecuteActivity(context, typeof(CommandActivity<Logout.Command>));
-                    //});
-
-                    //cfg.ReceiveEndpoint("activities2", ec =>
-                    //{
-                    //    ec.ConfigureExecuteActivity(context, typeof(CommandActivity<Logout2.Command>));
-                    //});
                 }));
             });
         }

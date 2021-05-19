@@ -149,7 +149,7 @@ namespace FWTL.EventStore
             }
         }
 
-        private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
+        private object DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {
             JToken eventType = JObject.Parse(Encoding.UTF8.GetString(metadata.Span)).Property("EventType")?.Value;
             if (eventType == null)
@@ -181,7 +181,7 @@ namespace FWTL.EventStore
                 Version = -1
             };
 
-            RedisValue value = await _cache.StringGetAsync(streamName);
+            RedisValue value = await Policies.RedisValueFallbackPolicy.ExecuteAsync(() => _cache.StringGetAsync(streamName)); 
             if (value.HasValue)
             {
                 aggregate = JsonSerializer.Deserialize<TAggregate>(value);
@@ -198,7 +198,13 @@ namespace FWTL.EventStore
 
             await foreach (var @event in stream)
             {
-                (aggregate as dynamic).Apply(DeserializeEvent(@event.Event.Metadata, @event.Event.Data));
+                object eventObject = DeserializeEvent(@event.Event.Metadata, @event.Event.Data);
+                Type applyType = typeof(IApply<>).MakeGenericType(eventObject.GetType());
+                var isAssignableFrom = applyType.IsAssignableFrom(aggregate.GetType());
+                if (isAssignableFrom)
+                {
+                    ((dynamic)aggregate).Apply((dynamic)eventObject);
+                }
                 aggregate.Version++;
             }
 

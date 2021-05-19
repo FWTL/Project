@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FWTL.Core.Commands;
-using FWTL.Domain.Accounts.Activities;
 using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.RabbitMqTransport;

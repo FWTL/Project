@@ -8,7 +8,7 @@ namespace FWTL.Domain._Extensions
         public static void AddActivity<TCommand>(this RoutingSlipBuilder builder, TCommand command)
         {
             string endpointName = typeof(TCommand).FullName.Replace(".", "").Replace("+", "");
-            builder.AddActivity("endpointName", new Uri($"queue:{endpointName}"), command);
+            builder.AddActivity(endpointName, new Uri($"queue:{endpointName}"), command);
         }
     }
 }

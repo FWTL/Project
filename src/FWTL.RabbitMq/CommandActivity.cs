@@ -8,7 +8,7 @@ using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using MassTransit.Courier;
 
-namespace FWTL.Domain.Accounts.Activities
+namespace FWTL.RabbitMq
 {
     public class CommandActivity<TCommand> : IExecuteActivity<TCommand> where TCommand : class, ICommand
     {

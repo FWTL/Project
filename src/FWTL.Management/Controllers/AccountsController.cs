@@ -32,9 +32,9 @@ namespace FWTL.Management.Controllers
         }
 
         [HttpPost("{accountId}/Reset")]
-        public async Task<Guid> ResetTelegramAccount(string externalAccountId)
+        public async Task<Guid> ResetTelegramAccount(Guid accountId)
         {
-            return await _commandDispatcher.DispatchAsync<AddAccount.Request, AddAccount.Command>(new AddAccount.Request() { ExternalAccountId = externalAccountId });
+            return await _commandDispatcher.DispatchAsync<ResetSetup.Request, ResetSetup.Command>(new ResetSetup.Request() { AccountId = accountId });
         }
 
         [HttpPost("{accountId}/Verify")]

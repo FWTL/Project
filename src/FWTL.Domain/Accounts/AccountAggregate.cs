@@ -15,7 +15,8 @@ namespace FWTL.Domain.Accounts
         IApply<CodeSent>,
         IApply<AccountVeryfied>,
         IApply<SetupFailed>,
-        IApply<AccountDeleted>
+        IApply<AccountDeleted>,
+        IApply<SessionRemoved>
     {
         public AccountAggregate()
         {
@@ -35,12 +36,23 @@ namespace FWTL.Domain.Accounts
         public Guid OwnerId { get; set; }
 
         public AccountState State { get; set; }
+
         public void Apply(AccountCreated @event)
         {
             Id = @event.AccountId;
             ExternalAccountId = @event.ExternalAccountId;
             OwnerId = @event.OwnerId;
             State = AccountState.Initialized;
+        }
+
+        internal void Reset(ResetSetup.Command command)
+        {
+            AddEvent(new AccountSetupRestarted() { AccountId = command.AccountId });
+        }
+
+        internal void RemoveSession(RemoveSession.Command command)
+        {
+            AddEvent(new SessionRemoved() { AccountId = command.AccountId });
         }
 
         public void Apply(SessionCreated @event)
@@ -104,6 +116,7 @@ namespace FWTL.Domain.Accounts
                 Errors = errors.ToList()
             });
         }
+
         public void SendCode()
         {
             AddEvent(new CodeSent()
@@ -118,6 +131,11 @@ namespace FWTL.Domain.Accounts
             {
                 AccountId = Id
             });
+        }
+
+        public void Apply(SessionRemoved @event)
+        {
+            State = AccountState.Initialized;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace FWTL.TelegramClient.Services
 
         public Task<ResponseWrapper> LogoutAsync(string sessionName)
         {
-            throw new System.NotImplementedException();
+            return HandleAsync($"/api/acc/{sessionName}/removeSession?phone={sessionName}");
         }
 
         public Task<ResponseWrapper> PhoneLoginAsync(string sessionName, string phoneNumber)
