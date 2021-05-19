@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 
-namespace FWTL.Domain.Accounts
+namespace FWTL.Domain.Session
 {
     public class RemoveSession 
     {
