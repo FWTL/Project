@@ -5,7 +5,7 @@ using FWTL.Core.Commands;
 
 namespace FWTL.Domain.Accounts.Logout
 {
-    public class Logout
+    public class Logout2
     {
         public class Command : ICommand
         {

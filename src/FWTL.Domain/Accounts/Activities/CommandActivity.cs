@@ -10,11 +10,6 @@ using MassTransit.Courier;
 
 namespace FWTL.Domain.Accounts.Activities
 {
-    public class LogoutActivityArgs
-    {
-        public Guid AccountId { get; set; }
-    }
-
     public class CommandActivity<TCommand> : IExecuteActivity<TCommand> where TCommand : class, ICommand
     {
         private readonly IExceptionHandler _exceptionHandler;
