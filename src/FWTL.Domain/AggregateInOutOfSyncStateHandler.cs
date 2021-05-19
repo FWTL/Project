@@ -42,7 +42,6 @@ namespace FWTL.Domain
             if (doesExist && aggregate.Version >= 0)
             {
                 await _map.UpdateAsync(aggregate);
-                return;
             }
         }
     }

@@ -41,7 +41,7 @@ namespace FWTL.EventStore
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId,bool isDeleted = false) where TAggregate : class, IAggregateRoot, new()
+        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId, bool isDeleted = false) where TAggregate : class, IAggregateRoot, new()
         {
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
@@ -49,7 +49,7 @@ namespace FWTL.EventStore
                 throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
             }
 
-            if(aggregate.IsDeleted && !isDeleted)
+            if (aggregate.IsDeleted && !isDeleted)
             {
                 throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} is deleted");
             }
@@ -77,6 +77,10 @@ namespace FWTL.EventStore
                 {
                     await Policies.SqRetryPolicy.ExecuteAsync(() => service.CreateAsync(aggregate));
                 }
+                else if (aggregate.IsDeleted)
+                {
+                    await Policies.SqRetryPolicy.ExecuteAsync(() => service.DeleteAsync(aggregate));
+                }
                 else
                 {
                     await Policies.SqRetryPolicy.ExecuteAsync(() => service.UpdateAsync(aggregate));
@@ -100,7 +104,7 @@ namespace FWTL.EventStore
                     Version = aggregate.Version
                 }));
 
-                if(publishResult.Outcome == OutcomeType.Failure)
+                if (publishResult.Outcome == OutcomeType.Failure)
                 {
                     throw new ApplicationException($"Cannot sync aggregate {aggregate.Id} of type {aggregate.GetType().FullName}", result.FinalException);
                 }
@@ -144,7 +148,6 @@ namespace FWTL.EventStore
                 throw result.FinalException;
             }
         }
-
 
         private dynamic DeserializeEvent(ReadOnlyMemory<byte> metadata, ReadOnlyMemory<byte> data)
         {

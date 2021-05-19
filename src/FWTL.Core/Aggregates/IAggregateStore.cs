@@ -5,7 +5,7 @@ namespace FWTL.Core.Aggregates
 {
     public interface IAggregateStore
     {
-        Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : class, IAggregateRoot, new();
+        Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId, bool isDeleted = false) where TAggregate : class, IAggregateRoot, new();
 
         TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new();
 

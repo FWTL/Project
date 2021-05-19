@@ -30,8 +30,6 @@ namespace FWTL.Domain.Accounts
             Ready = 4
         }
 
-        public List<string> Errors { get; set; } = new List<string>();
-
         public string ExternalAccountId { get; set; }
 
         public Guid OwnerId { get; set; }
@@ -63,7 +61,6 @@ namespace FWTL.Domain.Accounts
         public void Apply(SetupFailed @event)
         {
             State = AccountState.Failed;
-            Errors = @event.Errors;
         }
 
         public void Apply(AccountDeleted @event)
@@ -98,6 +95,7 @@ namespace FWTL.Domain.Accounts
 
             AddEvent(accountDeleted);
         }
+
         public void FailSetup(IEnumerable<string> errors)
         {
             AddEvent(new SetupFailed()

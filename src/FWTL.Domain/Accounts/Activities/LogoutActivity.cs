@@ -6,7 +6,6 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
-using FWTL.Events;
 using MassTransit.Courier;
 
 namespace FWTL.Domain.Accounts.Activities
@@ -53,51 +52,16 @@ namespace FWTL.Domain.Accounts.Activities
             }
             catch (ValidationException ex)
             {
-                return context.Faulted();   
+                return context.Faulted(ex);   
             }
             catch (TelegramClientException ex)
             {
-                return context.Faulted();
+                return context.Faulted(ex);
             }
             catch (Exception ex)
             {
                 return context.Faulted(ex);
             }
-        }
-    }
-
-    public class LogoutHandler : IExecuteActivity<AccountDeleted>
-    {
-        public Task<ExecutionResult> Execute(ExecuteContext<AccountDeleted> context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class LogoutActivity : IExecuteActivity<LogoutActivityArgs>
-    {
-        public LogoutActivity(ICommandHandler<RemoveSession.Command> session)
-        {
-           
-        }
-
-        public  Task<ExecutionResult> Execute(ExecuteContext<LogoutActivityArgs> context)
-        {
-            context.Pu
-            return Task.FromResult(context.Completed());
-        }
-    }
-
-    public class Logout2Activity : IExecuteActivity<LogoutActivityArgs>
-    {
-        public Logout2Activity()
-        {
-
-        }
-
-        public Task<ExecutionResult> Execute(ExecuteContext<LogoutActivityArgs> context)
-        {
-            return Task.FromResult(context.Completed());
         }
     }
 }
