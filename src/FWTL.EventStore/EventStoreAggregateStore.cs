@@ -41,12 +41,17 @@ namespace FWTL.EventStore
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : class, IAggregateRoot, new()
+        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId,bool isDeleted = false) where TAggregate : class, IAggregateRoot, new()
         {
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
             {
                 throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
+            }
+
+            if(aggregate.IsDeleted && !isDeleted)
+            {
+                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} is deleted");
             }
 
             return aggregate;
@@ -118,8 +123,7 @@ namespace FWTL.EventStore
             var result = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(() => _eventStoreClient.TombstoneAsync(streamName, StreamRevision.FromInt64(aggregate.Version)));
             if (result.Outcome == OutcomeType.Successful)
             {
-                aggregate.Version += aggregate.Events.Count() - 1;
-                await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.StringSetAsync(streamName, JsonSerializer.Serialize(aggregate), TimeSpan.FromDays(1)));
+                await Policies.RedisFallbackPolicy.ExecuteAsync(() => _cache.KeyDeleteAsync(streamName));
                 return;
             }
 
@@ -152,14 +156,6 @@ namespace FWTL.EventStore
 
             string json = Encoding.UTF8.GetString(data.Span);
             return JsonSerializer.Deserialize(json, Type.GetType((string)eventType));
-        }
-
-        public async Task<bool> ExistsAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot
-        {
-            string streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
-            EventStoreClient.ReadStreamResult stream = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.FromInt64(0));
-
-            return await stream.ReadState != ReadState.StreamNotFound;
         }
 
         public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(Guid aggregateId)

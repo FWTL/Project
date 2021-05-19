@@ -15,8 +15,7 @@ namespace FWTL.Common.Aggregates
     public abstract class AggregateRoot<TAggregate> : IAggregateRoot
         where TAggregate : AggregateRoot<TAggregate>
     {
-        private int DeleteVersion = -2;
-
+        
         private readonly List<EventComposite> _events = new List<EventComposite>();
 
         [JsonIgnore]
@@ -28,6 +27,10 @@ namespace FWTL.Common.Aggregates
         public long Version { get; set; }
 
         public Guid Id { get; set; }
+
+        public bool ToDelete { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         protected void AddEvent<TEvent>(TEvent @event) where TEvent : IEvent
         {
@@ -50,7 +53,7 @@ namespace FWTL.Common.Aggregates
 
         public virtual async Task CommitAsync(IAggregateStore aggregateStore)
         {
-            if (Version == DeleteVersion)
+            if (ToDelete)
             {
                 await aggregateStore.DeleteAsync(this as TAggregate);
                 return;
@@ -58,9 +61,14 @@ namespace FWTL.Common.Aggregates
             await aggregateStore.SaveAsync(this as TAggregate);
         }
 
+        public virtual void SoftDelete()
+        {
+            IsDeleted = true;
+        }
+
         public virtual void Delete()
         {
-            Version = DeleteVersion;
+            ToDelete = true;
         }
     }
 }

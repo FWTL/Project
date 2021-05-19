@@ -31,6 +31,7 @@ namespace FWTL.Domain.Accounts
         }
 
         public List<string> Errors { get; set; } = new List<string>();
+
         public string ExternalAccountId { get; set; }
 
         public Guid OwnerId { get; set; }
@@ -67,7 +68,7 @@ namespace FWTL.Domain.Accounts
 
         public void Apply(AccountDeleted @event)
         {
-            Delete();
+            SoftDelete();
         }
 
         public void Create(Guid accountId, AddAccount.Command command)

@@ -13,6 +13,7 @@ using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Specification;
+using FWTL.Domain.Accounts.Activities;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -98,14 +99,13 @@ namespace FWTL.RabbitMq
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<RequestToQueryMapper>();
 
-
-
             services.AddMassTransit(x =>
             {
-                x.SetRedisSagaRepositoryProvider(r => r.DatabaseConfiguration(redisCredentials.ConnectionString));
-                x.AddSagaStateMachines(typeof(TLookupType).Assembly);
+              x.SetRedisSagaRepositoryProvider(r => r.DatabaseConfiguration(redisCredentials.ConnectionString));
+              x.AddSagaStateMachines(typeof(TLookupType).Assembly);
+              x.AddActivities(typeof(TLookupType).Assembly);
 
-                var commands = typeof(TLookupType).Assembly.GetTypes()
+              var commands = typeof(TLookupType).Assembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
@@ -142,6 +142,8 @@ namespace FWTL.RabbitMq
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
+                    cfg.UseHangfireScheduler("hangfire");
+
                     cfg.ConfigureJsonSerializer(config =>
                     {
                         config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -188,7 +190,15 @@ namespace FWTL.RabbitMq
                         }
                     });
 
-                    cfg.UseMessageScheduler(new Uri("queue:hangfire"));
+                    cfg.ReceiveEndpoint("activities", ec =>
+                    {
+                        ec.ConfigureExecuteActivity(context, typeof(LogoutActivity));
+                    });
+
+                    cfg.ReceiveEndpoint("activities2", ec =>
+                    {
+                        ec.ConfigureExecuteActivity(context, typeof(Logout2Activity));
+                    });
                 }));
             });
         }

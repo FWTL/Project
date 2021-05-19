@@ -1,4 +1,5 @@
-﻿using Automatonymous;
+﻿using System;
+using Automatonymous;
 using FWTL.Events;
 using MassTransit;
 
@@ -16,20 +17,37 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public AccountSetupSaga()
         {
-            Event(() => AccountCreated, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => AccountCreated, x =>
+            {
+                x.CorrelateById(m => m.Message.AccountId);
+                x.SetSagaFactory(context => new AccountSetupState
+                {
+                    CorrelationId = context.Message.AccountId,
+                    ExpirationTokenId = Guid.NewGuid(),
+                });
+
+            });
             Event(() => SessionCreated, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => CodeSent, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => SetupFailed, x => x.CorrelateById(m => m.Message.AccountId));
 
             InstanceState(x => x.CurrentState, Initialized, WithSession, WaitForCode, Ready);
+
+            Schedule(() => Timout, instance => instance.ExpirationTokenId, s =>
+            {
+                s.Delay = TimeSpan.FromSeconds(60);
+            });
 
             Initially(When(AccountCreated)
                 .TransitionTo(Initialized)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-
             During(Initialized, When(SessionCreated)
                  .TransitionTo(WithSession)
                  .Publish(x => new SendCode.Command() { CorrelationId = x.CorrelationId.Value, AccountId = x.Instance.CorrelationId }));
+
+            During(Initialized, When(Timout.Received)
+                 .Publish(x => x.Data));
 
             During(WithSession, When(CodeSent)
                 .TransitionTo(WaitForCode));
@@ -38,7 +56,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .TransitionTo(Ready).Finalize());
 
             //During(Initialized, When(SetupFailed)
-            //    .Schedule(Timout, x => x.Publish())
+            //    .Schedule(Timout, context => new CreateSession.Command() { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }));
         }
 
         public Event<AccountCreated> AccountCreated { get; }
@@ -51,6 +69,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public Event<SetupFailed> SetupFailed { get; }
 
-        public Schedule<AccountSetupState> Timout { get; }
+        public Schedule<AccountSetupState, CreateSession.Command> Timout { get; }
     }
 }

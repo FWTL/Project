@@ -8,6 +8,7 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="MassTransit" Version="7.1.6" />
+    <PackageReference Include="MassTransit.Hangfire" Version="7.1.6" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.6" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />

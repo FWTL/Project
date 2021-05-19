@@ -16,5 +16,7 @@ namespace FWTL.Core.Aggregates
         long Version { get; set; }
 
         Task CommitAsync(IAggregateStore aggregateStore);
+
+        public bool IsDeleted { get; set; }
     }
 }
