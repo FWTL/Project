@@ -31,7 +31,6 @@ services:
   telegram-api-server:
     image: xtrime/telegram-api-server:latest
     container_name: FWTL-telegram-api-server
-    restart: unless-stopped
     environment:
       WAIT_HOSTS: mysql:3306
     ports:
