@@ -4,6 +4,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Queries;
 using FWTL.Core.Services;
 using FWTL.Domain.Accounts.AccountSetup;
+using FWTL.Domain.Accounts.DeleteAccount;
 using FWTL.Domain.Accounts.DeleteAccountSetup;
 using Microsoft.AspNetCore.Mvc;
 

@@ -21,6 +21,11 @@ namespace FWTL.MockTelegramClient.Services
             throw new System.NotImplementedException();
         }
 
+        public Task<ResponseWrapper> UnlinkSession(string sessionName)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<ResponseWrapper> UnlinkSessionFileAsync(string sessionName)
         {
             throw new System.NotImplementedException();

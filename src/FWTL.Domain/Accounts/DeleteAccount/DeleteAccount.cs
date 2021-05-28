@@ -3,11 +3,10 @@ using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
-using FWTL.Core.Services.Telegram;
 
-namespace FWTL.Domain.Accounts.AccountSetup
+namespace FWTL.Domain.Accounts.DeleteAccount
 {
-    public class ResetSetup
+    public class DeleteAccount
     {
         public class Request : IRequest
         {
@@ -34,15 +33,15 @@ namespace FWTL.Domain.Accounts.AccountSetup
         {
             private readonly IAggregateStore _aggregateStore;
 
-            public Handler(ITelegramClient telegramClient, IAggregateStore aggregateStore)
+            public Handler(IAggregateStore aggregateStore)
             {
                 _aggregateStore = aggregateStore;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.Reset(command);
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                account.Delete(command.UserId);
                 return account;
             }
         }

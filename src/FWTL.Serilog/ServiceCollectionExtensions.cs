@@ -9,12 +9,14 @@ namespace FWTL.Serilog
         public static LoggerConfiguration AddSerilog(this ILogger logger)
         {
             const string format =
-                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}";
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {SourceContext} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
 
             return new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("MassTransit", LogEventLevel.Error)
+                .MinimumLevel.Override("Hangfire", LogEventLevel.Error)
                 .WriteTo.Console(outputTemplate: format)
                 .Enrich.FromLogContext();
         }

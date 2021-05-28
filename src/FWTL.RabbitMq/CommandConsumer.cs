@@ -8,6 +8,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace FWTL.RabbitMq
 {
@@ -17,17 +18,20 @@ namespace FWTL.RabbitMq
         private readonly ICommandHandler<TCommand> _handler;
         private readonly IEventFactory _eventFactory;
         private readonly IAggregateStore _aggregateStore;
+        private readonly ILogger<CommandConsumer<TCommand>> _logger;
 
         public CommandConsumer(
             ICommandHandler<TCommand> handler,
             IEventFactory eventFactory,
             IExceptionHandler exceptionHandler,
-            IAggregateStore aggregateStore)
+            IAggregateStore aggregateStore,
+            ILogger<CommandConsumer<TCommand>> logger)
         {
             _handler = handler;
             _eventFactory = eventFactory;
             _exceptionHandler = exceptionHandler;
             _aggregateStore = aggregateStore;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<TCommand> context)

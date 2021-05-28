@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
@@ -42,6 +43,11 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                if (account.State != AccountAggregate.AccountState.WaitForCode)
+                {
+                    throw new ValidationException("Not waiting for a code");
+                }
+
                 ResponseWrapper response = await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
 
                 if (response.IsSuccess)

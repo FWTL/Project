@@ -13,6 +13,8 @@ namespace FWTL.Core.Services.Telegram.Dto
         [JsonPropertyName("success")]
         public bool IsSuccess { get; set; }
 
+        public bool NotFound { get; set; }
+
         public IEnumerable<Error> Errors { get; set; } = new List<Error>();
     }
 }

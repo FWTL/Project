@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
@@ -29,17 +28,20 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId, true);
                 ResponseWrapper response = await _telegramClient.SystemService.RemoveSessionAsync(account.Id.ToString());
 
                 if (response.IsSuccess)
                 {
-                    account.RemoveSession(command);
+                    account.RemoveSession();
                     return account;
                 }
 
-                account.FailSetup(response.Errors.Select(e => e.Message));
+                if (response.NotFound)
+                {
+                    account.SessionNotFound();
+                }
+
                 return account;
             }
         }

@@ -10,5 +10,7 @@ namespace FWTL.Core.Services.Telegram
         Task<ResponseWrapper> AddSessionAsync(string sessionName);
 
         Task<ResponseWrapper> RemoveSessionAsync(string sessionName);
+
+        Task<ResponseWrapper> UnlinkSession(string sessionName);
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
+using Automatonymous;
 using FluentValidation;
 using FWTL.Common.Cqrs;
 using FWTL.Common.Cqrs.Mappers;
@@ -12,15 +14,31 @@ using FWTL.Core.Events;
 using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Specification;
+using FWTL.Domain.Accounts.AccountSetup;
+using FWTL.Domain.Accounts.DeleteAccount;
+using FWTL.Domain.Accounts.RestartSetup;
 using MassTransit;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
+using MassTransit.RedisIntegration;
+using MassTransit.Saga;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
+using StackExchange.Redis;
 
 namespace FWTL.RabbitMq
 {
     public static class ServiceCollectionExtensions
     {
+        private static void AddSaga<TSaga, TSagaState>(IServiceCollectionBusConfigurator configuration, RedisCredentials redisCredentials) where TSaga : class, SagaStateMachine<TSagaState> where TSagaState : class, SagaStateMachineInstance, ISagaVersion
+        {
+            configuration.AddSagaStateMachine<TSaga, TSagaState>().RedisRepository(r =>
+            {
+                r.KeyPrefix = typeof(TSaga).Name;
+                r.DatabaseConfiguration(redisCredentials.ConnectionString);
+            });
+        }
+
         public static void AddRabbitMq<TLookupType>(this IServiceCollection services, RabbitMqCredentials credentials, RedisCredentials redisCredentials)
         {
             services.AddAutoMapper(
@@ -97,15 +115,11 @@ namespace FWTL.RabbitMq
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<RequestToQueryMapper>();
 
-            var activitiesBuilder = new ActivitiesBuilder();
-            //activitiesBuilder.Add<Logout.Command>();
-
             services.AddMassTransit(x =>
             {
-                x.SetRedisSagaRepositoryProvider(r => r.DatabaseConfiguration(redisCredentials.ConnectionString));
-                x.AddSagaStateMachines(typeof(TLookupType).Assembly);
-
-                activitiesBuilder.AddExecuteActivity(x);
+                AddSaga<AccountSetupSaga, AccountSetupState>(x, redisCredentials);
+                AddSaga<DeleteAccountSaga, DeleteAccountState>(x, redisCredentials);
+                AddSaga<RestartAccountSetupSaga, RestartAccountSetupState>(x, redisCredentials);
 
                 var commands = typeof(TLookupType).Assembly.GetTypes()
                   .Where(t => t.IsNested && t.Name == "Handler")
@@ -192,7 +206,6 @@ namespace FWTL.RabbitMq
                         }
                     });
 
-                    activitiesBuilder.ConfigureExecuteActivity(context, cfg);
                 }));
             });
         }

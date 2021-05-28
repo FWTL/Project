@@ -45,16 +45,6 @@ namespace FWTL.Domain.Accounts
             State = AccountState.Initialized;
         }
 
-        internal void Reset(ResetSetup.Command command)
-        {
-            AddEvent(new AccountSetupRestarted() { AccountId = command.AccountId });
-        }
-
-        internal void RemoveSession(RemoveSession.Command command)
-        {
-            AddEvent(new SessionRemoved() { AccountId = command.AccountId });
-        }
-
         public void Apply(SessionCreated @event)
         {
             State = AccountState.WithSession;
@@ -78,6 +68,11 @@ namespace FWTL.Domain.Accounts
         public void Apply(AccountDeleted @event)
         {
             SoftDelete();
+        }
+
+        public void Apply(SessionRemoved @event)
+        {
+            State = AccountState.Initialized;
         }
 
         public void Create(Guid accountId, AddAccount.Command command)
@@ -133,9 +128,24 @@ namespace FWTL.Domain.Accounts
             });
         }
 
-        public void Apply(SessionRemoved @event)
+        internal void RemoveSession()
         {
-            State = AccountState.Initialized;
+            AddEvent(new SessionRemoved() { AccountId = Id });
+        }
+
+        internal void Reset()
+        {
+            AddEvent(new AccountSetupRestarted() { AccountId = Id });
+        }
+
+        internal void SessionNotFound()
+        {
+            AddEvent(new SessionNotFound() { AccountId = Id });
+        }
+
+        internal void UnlinkSession()
+        {
+            AddEvent(new SessionUnlinked() { AccountId = Id });
         }
     }
 }

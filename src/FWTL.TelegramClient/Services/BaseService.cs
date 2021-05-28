@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FWTL.Common.Exceptions;
 using FWTL.Core.Services.Telegram.Dto;
 using FWTL.TelegramClient.Converters;
 using Microsoft.AspNetCore.WebUtilities;
@@ -74,9 +73,14 @@ namespace FWTL.TelegramClient.Services
             }
 
             await using Stream responseStream = await response.Content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
-        }
+            var wrapper = await JsonSerializer.DeserializeAsync<ResponseWrapper>(responseStream, SerializeOptions);
 
-        
+            if (wrapper.Errors.Any(x => x.Message == "Session not found"))
+            {
+                wrapper.NotFound = true;
+            }
+
+            return wrapper;
+        }
     }
 }
