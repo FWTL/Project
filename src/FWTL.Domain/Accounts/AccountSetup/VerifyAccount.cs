@@ -43,13 +43,9 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                if (account.State != AccountAggregate.AccountState.WaitForCode)
-                {
-                    throw new ValidationException("Not waiting for a code");
-                }
+                account.TryToVerify();
 
                 ResponseWrapper response = await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
-
                 if (response.IsSuccess)
                 {
                     account.Verify();

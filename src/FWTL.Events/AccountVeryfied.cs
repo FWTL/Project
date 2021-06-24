@@ -3,7 +3,7 @@ using FWTL.Core.Events;
 
 namespace FWTL.Events
 {
-    public class AccountVeryfied : IEvent
+    public class AccountVerified : IEvent
     {
         public Guid CorrelationId { get; set; }
 

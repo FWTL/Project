@@ -11,5 +11,7 @@ namespace FWTL.Events
         public List<string> Errors { get; set; } = new List<string>();
 
         public Guid CorrelationId { get; set; }
+
+        public int CurrentState { get; set; }
     }
 }

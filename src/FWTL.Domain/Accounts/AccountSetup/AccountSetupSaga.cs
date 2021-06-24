@@ -74,7 +74,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public Event<CodeSent> CodeSent { get; }
 
-        public Event<AccountVeryfied> AccountVerified { get; }
+        public Event<AccountVerified> AccountVerified { get; }
 
         public Event<SetupFailed> SetupFailed { get; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FWTL.Common.Aggregates;
+using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Events;
@@ -13,7 +14,7 @@ namespace FWTL.Domain.Accounts
         IApply<AccountCreated>,
         IApply<SessionCreated>,
         IApply<CodeSent>,
-        IApply<AccountVeryfied>,
+        IApply<AccountVerified>,
         IApply<SetupFailed>,
         IApply<AccountDeleted>,
         IApply<SessionRemoved>
@@ -45,17 +46,14 @@ namespace FWTL.Domain.Accounts
             State = AccountState.Initialized;
         }
 
-        public void Apply(SessionCreated @event)
-        {
-            State = AccountState.WithSession;
-        }
+        public void Apply(SessionCreated @event) => State = AccountState.WithSession;
 
         public void Apply(CodeSent @event)
         {
             State = AccountState.WaitForCode;
         }
 
-        public void Apply(AccountVeryfied @event)
+        public void Apply(AccountVerified @event)
         {
             State = AccountState.Ready;
         }
@@ -108,6 +106,7 @@ namespace FWTL.Domain.Accounts
             AddEvent(new SetupFailed()
             {
                 AccountId = Id,
+                CurrentState = (int)State,
                 Errors = errors.ToList()
             });
         }
@@ -120,32 +119,56 @@ namespace FWTL.Domain.Accounts
             });
         }
 
+        public void TryToCreateSession()
+        {
+            if (State != AccountState.Initialized)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
+            }
+        }
+
         public void Verify()
         {
-            AddEvent(new AccountVeryfied()
+            AddEvent(new AccountVerified()
             {
                 AccountId = Id
             });
         }
 
-        internal void RemoveSession()
+        public void RemoveSession()
         {
             AddEvent(new SessionRemoved() { AccountId = Id });
         }
 
-        internal void Reset()
+        public void Reset()
         {
             AddEvent(new AccountSetupRestarted() { AccountId = Id });
         }
 
-        internal void SessionNotFound()
+        public void SessionNotFound()
         {
             AddEvent(new SessionNotFound() { AccountId = Id });
         }
 
-        internal void UnlinkSession()
+        public void UnlinkSession()
         {
             AddEvent(new SessionUnlinked() { AccountId = Id });
+        }
+
+        public void TryToSendCode()
+        {
+            if (State != AccountState.WithSession)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in WithSession state");
+            }
+        }
+
+        public void TryToVerify()
+        {
+            if (State != AccountState.WaitForCode)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
+            }
         }
     }
 }
