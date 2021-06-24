@@ -111,30 +111,6 @@ namespace FWTL.Domain.Accounts
             });
         }
 
-        public void SendCode()
-        {
-            AddEvent(new CodeSent()
-            {
-                AccountId = Id
-            });
-        }
-
-        public void TryToCreateSession()
-        {
-            if (State != AccountState.Initialized)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
-            }
-        }
-
-        public void Verify()
-        {
-            AddEvent(new AccountVerified()
-            {
-                AccountId = Id
-            });
-        }
-
         public void RemoveSession()
         {
             AddEvent(new SessionRemoved() { AccountId = Id });
@@ -145,14 +121,25 @@ namespace FWTL.Domain.Accounts
             AddEvent(new AccountSetupRestarted() { AccountId = Id });
         }
 
+        public void SendCode()
+        {
+            AddEvent(new CodeSent()
+            {
+                AccountId = Id
+            });
+        }
+
         public void SessionNotFound()
         {
             AddEvent(new SessionNotFound() { AccountId = Id });
         }
 
-        public void UnlinkSession()
+        public void TryToCreateSession()
         {
-            AddEvent(new SessionUnlinked() { AccountId = Id });
+            if (State != AccountState.Initialized)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
+            }
         }
 
         public void TryToSendCode()
@@ -169,6 +156,19 @@ namespace FWTL.Domain.Accounts
             {
                 throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
             }
+        }
+
+        public void UnlinkSession()
+        {
+            AddEvent(new SessionUnlinked() { AccountId = Id });
+        }
+
+        public void Verify()
+        {
+            AddEvent(new AccountVerified()
+            {
+                AccountId = Id
+            });
         }
     }
 }
