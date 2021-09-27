@@ -351,3 +351,4 @@ MigrationBackup/
 /generators/js
 /.env.docker
 /src/FWTL.Database/FWTL.Database.Sql.refactorlog
+/k8/telegram/values.yaml

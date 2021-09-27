@@ -1,0 +1,131 @@
+#kubectl apply -f ./deployment-telegram.yaml
+#kubectl exec --stdin --tty telegram-deployment-7888d495b8-nhd8m -- /bin/bash
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegram-config-{{ .Values.clientId }}
+  namespace: default
+data:
+  .env.docker: |
+    # ENV file version
+    # Check for outdated .env files
+    VERSION=1
+
+    SERVER_ADDRESS=0.0.0.0
+    SERVER_PORT=9503
+
+    MEMORY_LIMIT=256M
+    TIMEZONE=UTC
+    #If madelineProto throws fatal exceptions script will be stopped, so docker/supervisor can restart it.
+    EXIT_ON_FATAL_EXCEPTION=true
+
+    # List of allowed clients. Separate with comma.
+    # Leave blanc, to allow requests from all IP (dangerous!)
+    IP_WHITELIST=
+
+    # TELEGRAM CLIENT
+    TELEGRAM_API_ID={{ .Values.telegram.api.id }}
+    TELEGRAM_API_HASH={{ .Values.telegram.api.hash }}
+    # FATAL_ERROR = 0; ERROR = 1; WARNING = 2; const NOTICE = 3; VERBOSE = 4; ULTRA_VERBOSE = 5;
+    LOGGER_LEVEL=4
+
+    # TELEGRAM SOCKS5 PROXY (optional)
+    TELEGRAM_PROXY_ADDRESS=
+    TELEGRAM_PROXY_PORT=
+    TELEGRAM_PROXY_USERNAME=
+    TELEGRAM_PROXY_PASSWORD=
+
+    # DB
+    #   memory
+    #       Keep all data in memory/session file.
+    #       This is default behavior
+    #   mysql
+    #       Keep part of data in mysql database.
+    #       Reduce memory consumption and session size. Beta function.
+    #       MariaDb + InnoDb Preffered.
+    #       Tables and DB will be created if not exists.
+
+    #   Change this type to convert session:
+    DB_TYPE=memory
+    #   MYSQL Settings. Required, when DB_TYPE=mysql
+    DB_HOST=mysql
+    DB_PORT=3306
+    DB_USER=root
+    DB_PASSWORD=
+    DB_DATABASE=MadelineProto
+    DB_MAX_CONNECTIONS=10
+    DB_IDLE_TIMEOUT=60
+    #   Recent data will be stored in memory this amount of time:
+    DB_CACHE_TTL="+5 minutes"
+
+    # HEALTHCHECK
+    # If server stops responding to requests it will be stoped
+    # Requests made each 30 seconds by default.
+    HEALTHCHECK_ENABLED=0
+    HEALTHCHECK_INTERVAL=30
+    HEALTHCHECK_REQUEST_TIMEOUT=10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-deployment-{{ .Values.clientId }}
+spec:
+  selector:
+    matchLabels:
+      app: telegram
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: telegram
+    spec:
+      containers:
+        - name: telegram
+          image: xtrime/telegram-api-server:latest
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/sessions/.env.docker
+              subPath: .env.docker
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 9503
+      volumes:
+        - name: config-volume
+          configMap:
+            name: telegram-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: telegram-service-{{ .Values.clientId }}
+spec:
+  selector:
+    app: telegram
+  ports:
+  - name: http
+    port: 9503
+    protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: telegram-ingress-{{ .Values.clientId }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+      http:
+        paths:
+          - path: /Client/{{ .Values.clientId }}/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: telegram-service
+                port:
+                  number: 9503
+          

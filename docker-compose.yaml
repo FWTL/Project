@@ -37,7 +37,6 @@ services:
       - "127.0.0.1:9503:9503"
     volumes:
       - C:/Projects/FWTL/.env.docker:/app/sessions/.env.docker
-    #working_dir: /app-host-link
     depends_on:
       - mysql
   mysql:
@@ -115,7 +114,7 @@ volumes:
   FWTL-sql-data:
   FWTL-data:
   FWTL-sessions:
-  FWTL-mongo-data:
+  # FWTL-mongo-data:
   FWTL-eventStore-data:
   FWTL-mysql:
   
