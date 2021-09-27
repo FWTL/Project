@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using FWTL.Core.Events;
 
-namespace FWTL.Events
+namespace FWTL.Domain.Events
 {
-    public class AccountSetupRestarted : IEvent
+    public class SessionNotFound : IEvent
     {
         public Guid AccountId { get; set; }
+
         public Guid CorrelationId { get; set; }
     }
 }

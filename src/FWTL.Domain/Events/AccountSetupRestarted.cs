@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using FWTL.Core.Events;
+using FWTL.Domain.Accounts;
 
-namespace FWTL.Events
+namespace FWTL.Domain.Events
 {
-    public class SessionUnlinked : IEvent
+    public class AccountSetupRestarted : IEvent
     {
         public Guid AccountId { get; set; }
         public Guid CorrelationId { get; set; }

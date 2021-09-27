@@ -8,7 +8,7 @@ using EventStore.Client;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
-using FWTL.Events;
+using FWTL.Domain.Events;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
@@ -181,7 +181,7 @@ namespace FWTL.EventStore
                 Version = -1
             };
 
-            RedisValue value = await Policies.RedisValueFallbackPolicy.ExecuteAsync(() => _cache.StringGetAsync(streamName)); 
+            RedisValue value = await Policies.RedisValueFallbackPolicy.ExecuteAsync(() => _cache.StringGetAsync(streamName));
             if (value.HasValue)
             {
                 aggregate = JsonSerializer.Deserialize<TAggregate>(value);

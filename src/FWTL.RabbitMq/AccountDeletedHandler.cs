@@ -2,7 +2,7 @@
 using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Services.Telegram;
-using FWTL.Events;
+using FWTL.Domain.Events;
 
 namespace FWTL.Domain.Accounts.DeleteAccountSetup
 {

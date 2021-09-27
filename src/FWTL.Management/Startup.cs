@@ -93,6 +93,7 @@ namespace FWTL.Management
             services.AddCurrentUserService();
 
             services.AddSingleton<IClock>(b => SystemClock.Instance);
+
             services.AddSingleton<IGuidService, GuidService>();
         }
 

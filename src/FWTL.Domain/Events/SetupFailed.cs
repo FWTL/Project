@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using FWTL.Core.Events;
+using FWTL.Domain.Accounts;
 
-namespace FWTL.Events
+namespace FWTL.Domain.Events
 {
     public class SetupFailed : IEvent
     {
@@ -12,6 +13,6 @@ namespace FWTL.Events
 
         public Guid CorrelationId { get; set; }
 
-        public int CurrentState { get; set; }
+        public AccountAggregate.AccountState CurrentState { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using FWTL.Core.Services;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.DeleteAccount;
 using FWTL.Domain.Accounts.DeleteAccountSetup;
+using FWTL.Domain.Accounts.RestartSetup;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FWTL.Management.Controllers

@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Accounts\Logout\**" />
+    <EmbeddedResource Remove="Accounts\Logout\**" />
+    <None Remove="Accounts\Logout\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="MassTransit" Version="7.1.6" />
@@ -14,12 +20,7 @@
     <ProjectReference Include="..\FWTL.Common\FWTL.Common.csproj" />
     <ProjectReference Include="..\FWTL.Core\FWTL.Core.csproj" />
     <ProjectReference Include="..\FWTL.Database.Access\FWTL.Database.Access.csproj" />
-    <ProjectReference Include="..\FWTL.Events\FWTL.Events.csproj" />
     <ProjectReference Include="..\FWTL.TelegramClient\FWTL.TelegramClient.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Accounts\Logout\" />
   </ItemGroup>
 
 </Project>

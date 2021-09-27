@@ -3,7 +3,7 @@ using FWTL.Common.Extensions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
 using FWTL.Domain.Accounts;
-using FWTL.Events;
+using FWTL.Domain.Events;
 
 namespace FWTL.Domain
 {

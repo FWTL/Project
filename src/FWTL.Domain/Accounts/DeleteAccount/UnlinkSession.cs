@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
 
-namespace FWTL.Domain.Accounts.AccountSetup
+namespace FWTL.Domain.Accounts.DeleteAccount
 {
     public class UnlinkSession
     {
@@ -28,16 +29,22 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId,true);
-
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId, true);
                 ResponseWrapper response = await _telegramClient.SystemService.UnlinkSession(account.Id.ToString());
 
-                if (response.IsSuccess || response.NotFound)
+                if (response.IsSuccess)
                 {
                     account.UnlinkSession();
                     return account;
                 }
 
+                if (response.NotFound)
+                {
+                    account.SessionNotFound();
+                    return account;
+                }
+
+                account.FailSetup(response.Errors.Select(e => e.Message));
                 return account;
             }
         }

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
 
-namespace FWTL.Domain.Accounts.AccountSetup
+namespace FWTL.Domain.Accounts.DeleteAccount
 {
     public class RemoveSession
     {
@@ -40,8 +41,10 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 if (response.NotFound)
                 {
                     account.SessionNotFound();
+                    return account;
                 }
 
+                account.FailSetup(response.Errors.Select(e => e.Message));
                 return account;
             }
         }

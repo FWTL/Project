@@ -5,7 +5,7 @@ using FWTL.Core.Commands;
 using FWTL.Core.Services;
 using FWTL.Core.Services.Telegram;
 
-namespace FWTL.Domain.Accounts.AccountSetup
+namespace FWTL.Domain.Accounts.RestartSetup
 {
     public class ResetSetup
     {

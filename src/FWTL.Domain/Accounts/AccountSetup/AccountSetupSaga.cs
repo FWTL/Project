@@ -1,6 +1,7 @@
 ﻿using System;
 using Automatonymous;
-using FWTL.Events;
+using FWTL.Domain.Accounts.DeleteAccount;
+using FWTL.Domain.Events;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {

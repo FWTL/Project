@@ -5,7 +5,7 @@ using FWTL.Common.Aggregates;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Events;
+using FWTL.Domain.Events;
 
 namespace FWTL.Domain.Accounts
 {
@@ -106,7 +106,7 @@ namespace FWTL.Domain.Accounts
             AddEvent(new SetupFailed()
             {
                 AccountId = Id,
-                CurrentState = (int)State,
+                CurrentState = State,
                 Errors = errors.ToList()
             });
         }

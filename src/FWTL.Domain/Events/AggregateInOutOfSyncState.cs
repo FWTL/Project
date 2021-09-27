@@ -1,7 +1,7 @@
 ﻿using System;
 using FWTL.Core.Events;
 
-namespace FWTL.Events
+namespace FWTL.Domain.Events
 {
     public class AggregateInOutOfSyncState : IEvent
     {

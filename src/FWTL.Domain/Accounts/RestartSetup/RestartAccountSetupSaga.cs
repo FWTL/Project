@@ -1,7 +1,9 @@
 ﻿using System;
 using Automatonymous;
+using FWTL.Core.Events;
 using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Events;
+using FWTL.Domain.Accounts.DeleteAccount;
+using FWTL.Domain.Events;
 
 namespace FWTL.Domain.Accounts.RestartSetup
 {
@@ -40,7 +42,6 @@ namespace FWTL.Domain.Accounts.RestartSetup
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
             During(Restart, When(SessionUnlinked)
-                .TransitionTo(Restart)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
             During(Restart, When(SessionCreated)

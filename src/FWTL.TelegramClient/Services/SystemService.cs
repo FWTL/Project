@@ -28,7 +28,7 @@ namespace FWTL.TelegramClient.Services
 
         public Task<ResponseWrapper> UnlinkSession(string sessionName)
         {
-            return HandleAsync($"/system/removeSession?session=acc/{sessionName}");
+            return HandleAsync($"/system/unlinkSessionFile?session=acc/{sessionName}");
         }
     }
 }

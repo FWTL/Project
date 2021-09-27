@@ -6,7 +6,7 @@ using FWTL.Common.Validators;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Specification;
 using FWTL.Database.Access;
-using FWTL.Events;
+using FWTL.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Accounts

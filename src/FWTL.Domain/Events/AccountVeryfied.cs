@@ -1,9 +1,9 @@
 ﻿using System;
 using FWTL.Core.Events;
 
-namespace FWTL.Events
+namespace FWTL.Domain.Events
 {
-    public class CodeSent : IEvent
+    public class AccountVerified : IEvent
     {
         public Guid CorrelationId { get; set; }
 
