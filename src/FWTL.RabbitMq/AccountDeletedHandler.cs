@@ -17,7 +17,7 @@ namespace FWTL.Domain.Accounts.DeleteAccountSetup
 
         public async Task HandleAsync(AccountDeleted @event)
         {
-            await _telegramClient.SystemService.RemoveSessionAsync(@event.AccountId.ToString());
+            await _telegramClient.SystemService.RemoveSessionAsync(@event.AccountId);
         }
     }
 

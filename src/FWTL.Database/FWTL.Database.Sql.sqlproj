@@ -65,9 +65,6 @@
     <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\00001.Create.Table.Accounts.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Build Include="dbo\Tables\Accounts.sql" />
   </ItemGroup>
 </Project>

@@ -30,7 +30,7 @@ namespace FWTL.Domain.Accounts.DeleteAccount
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId, true);
-                ResponseWrapper response = await _telegramClient.SystemService.RemoveSessionAsync(account.Id.ToString());
+                ResponseWrapper response = await _telegramClient.SystemService.RemoveSessionAsync(account.Id);
 
                 if (response.IsSuccess)
                 {

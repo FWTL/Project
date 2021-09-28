@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
-using FWTL.Core.Services.Telegram;
+using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class CreateSession
+    public class CreateInfrastructure
     {
         public class Command : ICommand
         {
@@ -22,28 +21,28 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly ITelegramClient _telegramClient;
             private readonly IAggregateStore _aggregateStore;
+            private readonly IInfrastructureSetupService _infrastructureSetupService;
 
-            public Handler(ITelegramClient telegramClient, IAggregateStore aggregateStore)
+            public Handler(IAggregateStore aggregateStore, IInfrastructureSetupService infrastructureSetupService)
             {
-                _telegramClient = telegramClient;
                 _aggregateStore = aggregateStore;
+                _infrastructureSetupService = infrastructureSetupService;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.TryToCreateSession();
+                account.TryToCreateInfrastructure();
 
-                var response = await _telegramClient.SystemService.AddSessionAsync(account.Id);
-                if (response.IsSuccess)
+                var result = await _infrastructureSetupService.CreateTelegramApi(command.AccountId);
+                if (result.IsSuccess)
                 {
-                    account.CreateSession();
+                    account.CreateInfrastructure();
                     return account;
                 }
 
-                account.FailSetup(response.Errors.Select(e => e.Message));
+                account.FailSetup(result.Errors);
                 return account;
             }
         }

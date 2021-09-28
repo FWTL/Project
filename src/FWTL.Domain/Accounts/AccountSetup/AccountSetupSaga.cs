@@ -25,6 +25,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             });
 
             Event(() => SessionCreated, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => InfrastructureCreated, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => CodeSent, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => AccountVerified, x => x.CorrelateById(m => m.Message.AccountId));
 
@@ -42,10 +43,13 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             Initially(When(AccountCreated)
                 .TransitionTo(Initialized)
+                .Publish(x => new CreateInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
+
+            During(Initialized, When(InfrastructureCreated)
+                .TransitionTo(Setup)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-            During(Initialized, When(SessionCreated)
-                .TransitionTo(Setup)
+            During(Setup, When(SessionCreated)
                 .Publish(x => new SendCode.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
             During(Setup, When(CodeSent)
@@ -70,6 +74,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
         }
 
         public Event<AccountCreated> AccountCreated { get; }
+
+        public Event<InfrastructureCreated> InfrastructureCreated { get; }
 
         public Event<SessionCreated> SessionCreated { get; }
 

@@ -17,7 +17,8 @@ namespace FWTL.Domain.Accounts
         IApply<AccountVerified>,
         IApply<SetupFailed>,
         IApply<AccountDeleted>,
-        IApply<SessionRemoved>
+        IApply<SessionRemoved>,
+        IApply<InfrastructureCreated>
     {
         public AccountAggregate()
         {
@@ -27,9 +28,10 @@ namespace FWTL.Domain.Accounts
         {
             Failed = -1,
             Initialized = 1,
-            WithSession = 2,
-            WaitForCode = 3,
-            Ready = 4
+            WithInfrastructure = 2,
+            WithSession = 3,
+            WaitForCode = 4,
+            Ready = 5
         }
 
         public string ExternalAccountId { get; set; }
@@ -73,6 +75,11 @@ namespace FWTL.Domain.Accounts
             State = AccountState.Initialized;
         }
 
+        public void Apply(InfrastructureCreated @event)
+        {
+            State = AccountState.WithInfrastructure;
+        }
+
         public void Create(Guid accountId, AddAccount.Command command)
         {
             var accountAdded = new AccountCreated()
@@ -83,6 +90,14 @@ namespace FWTL.Domain.Accounts
             };
 
             AddEvent(accountAdded);
+        }
+
+        public void CreateInfrastructure()
+        {
+            AddEvent(new InfrastructureCreated()
+            {
+                AccountId = Id
+            });
         }
 
         public void CreateSession()
@@ -134,9 +149,17 @@ namespace FWTL.Domain.Accounts
             AddEvent(new SessionNotFound() { AccountId = Id });
         }
 
-        public void TryToCreateSession()
+        public void TryToCreateInfrastructure()
         {
             if (State != AccountState.Initialized)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
+            }
+        }
+
+        public void TryToCreateSession()
+        {
+            if (State != AccountState.WithInfrastructure)
             {
                 throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
             }
@@ -157,7 +180,6 @@ namespace FWTL.Domain.Accounts
                 throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
             }
         }
-
         public void UnlinkSession()
         {
             AddEvent(new SessionUnlinked() { AccountId = Id });

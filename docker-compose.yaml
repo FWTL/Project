@@ -28,17 +28,17 @@ services:
       - FWTL-sql-data:/var/opt/mssql
     networks:
       - backend
-  telegram-api-server:
-    image: xtrime/telegram-api-server:latest
-    container_name: FWTL-telegram-api-server
-    environment:
-      WAIT_HOSTS: mysql:3306
-    ports:
-      - "127.0.0.1:9503:9503"
-    volumes:
-      - C:/Projects/FWTL/.env.docker:/app/sessions/.env.docker
-    depends_on:
-      - mysql
+  # telegram-api-server:
+  #   image: xtrime/telegram-api-server:latest
+  #   container_name: FWTL-telegram-api-server
+  #   environment:
+  #     WAIT_HOSTS: mysql:3306
+  #   ports:
+  #     - "127.0.0.1:9503:9503"
+  #   volumes:
+  #     - C:/Projects/FWTL/.env.docker:/app/sessions/.env.docker
+  #   depends_on:
+  #     - mysql
   mysql:
     image: mariadb:10.5
     container_name: FWTL-mysql
@@ -89,33 +89,35 @@ services:
   #   volumes:
   #     - FWTL-mongo-data:/data/db
   eventStore:
-    image: eventstore/eventstore:latest
+    image: eventstore/eventstore:21.6.0-buster-slim
     container_name : "FWTL-eventStore"
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
-      - EVENTSTORE_INT_TCP_PORT=1112
       - EVENTSTORE_EXT_TCP_PORT=1113
-      - EVENTSTORE_INT_HTTP_PORT=2112
-      - EVENTSTORE_EXT_HTTP_PORT=2113
+      - EVENTSTORE_HTTP_PORT=2113
       - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
     ports:
-      - "1112:1112"
       - "1113:1113"
-      - "2112:2112"
       - "2113:2113"
-    volumes :
-      - FWTL-eventStore-data:/var/lib/eventstore/data
-    networks :
-      - backend
+    volumes:
+      - type: volume
+        source: FWTL-eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: FWTL-eventstore-volume-logs
+        target: /var/log/eventstore
 
 volumes:
   FWTL-sql-data:
   FWTL-data:
   FWTL-sessions:
   # FWTL-mongo-data:
-  FWTL-eventStore-data:
+  FWTL-eventstore-volume-data:
+  FWTL-eventstore-volume-logs:
   FWTL-mysql:
   
 networks:

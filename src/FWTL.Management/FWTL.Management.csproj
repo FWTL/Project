@@ -33,6 +33,7 @@
     <ProjectReference Include="..\FWTL.EventStore\FWTL.EventStore.csproj" />
     <ProjectReference Include="..\FWTL.Hangfire\FWTL.Hangfire.csproj" />
     <ProjectReference Include="..\FWTL.MockTelegramClient\FWTL.MockTelegramClient.csproj" />
+    <ProjectReference Include="..\FWTL.Powershell\FWTL.Powershell.csproj" />
     <ProjectReference Include="..\FWTL.RabbitMq\FWTL.RabbitMq.csproj" />
     <ProjectReference Include="..\FWTL.Redis\FWTL.Redis.csproj" />
     <ProjectReference Include="..\FWTL.Serilog\FWTL.Serilog.csproj" />

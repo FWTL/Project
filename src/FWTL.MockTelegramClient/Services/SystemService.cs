@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
 
@@ -6,29 +7,14 @@ namespace FWTL.MockTelegramClient.Services
 {
     public class SystemService : ISystemService
     {
-        public Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync()
+        public Task<ResponseWrapper> AddSessionAsync(Guid accountId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public Task<ResponseWrapper> AddSessionAsync(string sessionName)
+        public Task<ResponseWrapper> RemoveSessionAsync(Guid accountId)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<ResponseWrapper> RemoveSessionAsync(string sessionName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<ResponseWrapper> UnlinkSession(string sessionName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<ResponseWrapper> UnlinkSessionFileAsync(string sessionName)
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

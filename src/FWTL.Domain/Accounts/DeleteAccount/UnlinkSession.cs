@@ -30,21 +30,6 @@ namespace FWTL.Domain.Accounts.DeleteAccount
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId, true);
-                ResponseWrapper response = await _telegramClient.SystemService.UnlinkSession(account.Id.ToString());
-
-                if (response.IsSuccess)
-                {
-                    account.UnlinkSession();
-                    return account;
-                }
-
-                if (response.NotFound)
-                {
-                    account.SessionNotFound();
-                    return account;
-                }
-
-                account.FailSetup(response.Errors.Select(e => e.Message));
                 return account;
             }
         }

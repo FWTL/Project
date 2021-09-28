@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
@@ -11,24 +12,14 @@ namespace FWTL.TelegramClient.Services
         {
         }
 
-        public Task<ResponseWrapper> AddSessionAsync(string sessionName)
+        public Task<ResponseWrapper> AddSessionAsync(Guid accountId)
         {
-            return HandleAsync($"/system/addSession?session=acc/{sessionName}");
+            return HandleAsync($"Accounts/{accountId}/system/addSession?session={accountId}");
         }
 
-        public Task<ResponseWrapper<GetSessionListResponse>> GetSessionListAsync()
+        public Task<ResponseWrapper> RemoveSessionAsync(Guid accountId)
         {
-            return HandleAsync<GetSessionListResponse>("/system/getSessionList");
-        }
-
-        public Task<ResponseWrapper> RemoveSessionAsync(string sessionName)
-        {
-            return HandleAsync($"/system/removeSession?session=acc/{sessionName}");
-        }
-
-        public Task<ResponseWrapper> UnlinkSession(string sessionName)
-        {
-            return HandleAsync($"/system/unlinkSessionFile?session=acc/{sessionName}");
+            return HandleAsync($"Accounts/{accountId}/system/removeSession?session={accountId}");
         }
     }
 }

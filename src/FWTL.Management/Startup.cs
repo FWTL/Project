@@ -9,6 +9,7 @@ using FWTL.EventStore;
 using FWTL.Hangfire;
 using FWTL.Management.Configuration;
 using FWTL.Management.Filters;
+using FWTL.Powershell;
 using FWTL.RabbitMq;
 using FWTL.Redis;
 using FWTL.Serilog;
@@ -82,7 +83,7 @@ namespace FWTL.Management
 
             services.AddEventStore(_solutionConfiguration.EventStoreUrl);
 
-            services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
+            //services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
 
             services.AddRedis(_solutionConfiguration.RedisCredentials.ConnectionString);
 
@@ -95,6 +96,7 @@ namespace FWTL.Management
             services.AddSingleton<IClock>(b => SystemClock.Instance);
 
             services.AddSingleton<IGuidService, GuidService>();
+            services.AddLocalInfrastructureSetupService();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -106,7 +108,7 @@ namespace FWTL.Management
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHangfireDashboard();
+                //endpoints.MapHangfireDashboard();
             });
 
             app.UseSwagger();
