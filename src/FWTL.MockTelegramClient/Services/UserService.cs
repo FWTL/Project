@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
@@ -15,6 +16,16 @@ namespace FWTL.MockTelegramClient.Services
         public Task<ResponseWrapper> CompletePhoneLoginAsync(string sessionName, string code)
         {
             throw new System.NotImplementedException();
+        }
+
+        public Task<ResponseWrapper> PhoneLoginAsync(Guid accountId, string phoneNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseWrapper> CompletePhoneLoginAsync(Guid accountId, string code)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<ResponseWrapper<User>> GetSelfAsync(string sessionName)

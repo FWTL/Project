@@ -158,7 +158,7 @@ namespace FWTL.RabbitMq
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    //cfg.UseHangfireScheduler("hangfire");
+                    cfg.UseHangfireScheduler("hangfire");
 
                     cfg.ConfigureJsonSerializer(config =>
                     {

@@ -37,7 +37,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.TryToSendCode();
 
-                ResponseWrapper response = await _telegramClient.UserService.PhoneLoginAsync(account.Id.ToString(), account.ExternalAccountId);
+                ResponseWrapper response = await _telegramClient.UserService.PhoneLoginAsync(account.Id, account.ExternalAccountId);
                 if (response.IsSuccess)
                 {
                     account.SendCode();

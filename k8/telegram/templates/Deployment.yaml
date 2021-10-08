@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-deployment-{{ .Values.accountId }}
+spec:
+  selector:
+    matchLabels:
+      app: telegram
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: telegram
+    spec:
+      containers:
+        - name: telegram
+          image: xtrime/telegram-api-server:latest
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/sessions/.env.docker
+              subPath: .env.docker
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 9503
+      volumes:
+        - name: config-volume
+          configMap:
+            name: telegram-config-{{ .Values.accountId }}

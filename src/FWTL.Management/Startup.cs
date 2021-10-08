@@ -83,7 +83,7 @@ namespace FWTL.Management
 
             services.AddEventStore(_solutionConfiguration.EventStoreUrl);
 
-            //services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
+            services.AddHangfire(_solutionConfiguration.HangfireDatabaseCredentials.ConnectionString);
 
             services.AddRedis(_solutionConfiguration.RedisCredentials.ConnectionString);
 
@@ -108,7 +108,7 @@ namespace FWTL.Management
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                //endpoints.MapHangfireDashboard();
+                endpoints.MapHangfireDashboard();
             });
 
             app.UseSwagger();

@@ -1,0 +1,30 @@
+#kubectl apply -f ./deployment-telegram.yaml
+#kubectl exec --stdin --tty telegram-deployment-7888d495b8-nhd8m -- /bin/bash
+#kubectl patch ingress telegram-ingress --patch "$(cat test.json)"
+#kubectl patch ingress telegram-ingress --type merge --patch "$(Get-Content test.yaml -Raw)" --dry-run -o yaml
+#kubectl patch ingress telegram-ingress --type merge --patch='[{"op": "replace", "path": "/spec/rules/host/kubernetes.docker.internal/http/paths", "value":"new image"}]'
+#kubectl patch ingress telegram-ingress --type json --patch "$(Get-Content test.json -Raw | % {$_.replace("123","321")})" --dry-run -o yaml
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: telegram-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+      http:
+        paths:
+          - path: /Accounts/0/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: notexists
+                port:
+                  number: 9503
+
+          

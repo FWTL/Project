@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FWTL.Core.Services.Telegram;
@@ -12,9 +13,9 @@ namespace FWTL.TelegramClient.Services
         {
         }
 
-        public Task<ResponseWrapper> CompletePhoneLoginAsync(string sessionName, string code)
+        public Task<ResponseWrapper> CompletePhoneLoginAsync(Guid accountId, string code)
         {
-            return HandleAsync($"api/acc/{sessionName}/completePhoneLogin?code={code}");
+            return HandleAsync($"Accounts/{accountId}/api/completePhoneLogin?code={code}");
         }
 
         public Task<ResponseWrapper<List<Dialog>>> GetDialogsAsync(string sessionName)
@@ -27,14 +28,9 @@ namespace FWTL.TelegramClient.Services
             throw new System.NotImplementedException();
         }
 
-        public Task<ResponseWrapper> LogoutAsync(string sessionName)
+        public Task<ResponseWrapper> PhoneLoginAsync(Guid accountId, string phoneNumber)
         {
-            return HandleAsync($"/api/acc/{sessionName}/removeSession?phone={sessionName}");
-        }
-
-        public Task<ResponseWrapper> PhoneLoginAsync(string sessionName, string phoneNumber)
-        {
-            return HandleAsync($"/api/acc/{sessionName}/phoneLogin?phone={phoneNumber}");
+            return HandleAsync($"Accounts/{accountId}/api/phoneLogin?phone={phoneNumber}");
         }
     }
 }

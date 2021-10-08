@@ -1,6 +1,3 @@
-#kubectl apply -f ./deployment-telegram.yaml
-#kubectl exec --stdin --tty telegram-deployment-7888d495b8-nhd8m -- /bin/bash
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -65,67 +62,3 @@ data:
     HEALTHCHECK_ENABLED=0
     HEALTHCHECK_INTERVAL=30
     HEALTHCHECK_REQUEST_TIMEOUT=10
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: telegram-deployment-{{ .Values.accountId }}
-spec:
-  selector:
-    matchLabels:
-      app: telegram
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: telegram
-    spec:
-      containers:
-        - name: telegram
-          image: xtrime/telegram-api-server:latest
-          volumeMounts:
-            - name: config-volume
-              mountPath: /app/sessions/.env.docker
-              subPath: .env.docker
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "250m"
-          ports:
-            - containerPort: 9503
-      volumes:
-        - name: config-volume
-          configMap:
-            name: telegram-config-{{ .Values.accountId }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: telegram-service-{{ .Values.accountId }}
-spec:
-  selector:
-    app: telegram
-  ports:
-  - name: http
-    port: 9503
-    protocol: TCP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: telegram-ingress-{{ .Values.accountId }}
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-spec:
-  rules:
-    - host: kubernetes.docker.internal
-      http:
-        paths:
-          - path: /Accounts/{{ .Values.accountId }}/(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: telegram-service-{{ .Values.accountId }}
-                port:
-                  number: 9503
-          

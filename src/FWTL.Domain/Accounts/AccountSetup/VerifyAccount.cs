@@ -45,7 +45,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.TryToVerify();
 
-                ResponseWrapper response = await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id.ToString(), command.Code);
+                ResponseWrapper response = await _telegramClient.UserService.CompletePhoneLoginAsync(account.Id, command.Code);
                 if (response.IsSuccess)
                 {
                     account.Verify();

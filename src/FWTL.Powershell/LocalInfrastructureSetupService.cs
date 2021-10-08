@@ -21,7 +21,7 @@ namespace FWTL.Powershell
             var result = await ps.InvokeAsync();
             if (ps.HadErrors)
             {
-                return new Result(ps.Streams.Error.Select(e => e.ErrorDetails.Message).ToList());
+                return new Result(ps.Streams.Error.Select(e => e.Exception.Message).ToList());
             }
 
             return new Result();
