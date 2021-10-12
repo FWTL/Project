@@ -6,7 +6,7 @@ using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.DeleteAccount
 {
-    public class DestroyInfrastructure
+    public class TearDownInfrastructure
     {
         public class Command : ICommand
         {
@@ -33,8 +33,17 @@ namespace FWTL.Domain.Accounts.DeleteAccount
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var result = await _infrastructureService.DeleteTelegramApi(command.AccountId);
-                return null;
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                account.TryToTearDownInfrastructure();
+
+                var result = await _infrastructureService.TearDownTelegramApi(command.AccountId);
+                if (result.IsSuccess)
+                {
+                    account.TearDownInfrastructure();
+                }
+
+                account.FailSetup(result.Errors);
+                return account;
             }
         }
     }

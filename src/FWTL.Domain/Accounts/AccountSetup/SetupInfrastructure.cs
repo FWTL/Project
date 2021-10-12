@@ -35,7 +35,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
                 account.TryToCreateInfrastructure();
 
-                var result = await _infrastructureSetupService.CreateTelegramApi(command.AccountId);
+                var result = await _infrastructureSetupService.GenerateTelegramApi(command.AccountId);
                 if (result.IsSuccess)
                 {
                     account.CreateInfrastructure();

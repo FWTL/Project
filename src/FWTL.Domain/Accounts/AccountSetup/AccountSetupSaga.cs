@@ -54,14 +54,14 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .Publish(x => new SendCode.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
             During(TelegramSetup, When(CodeSent)
-                .Schedule(Timeout, context => new DestroyInfrastructure.Command() { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }));
+                .Schedule(Timeout, context => new TearDownInfrastructure.Command() { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }));
 
             During(TelegramSetup, When(AccountVerified)
                 .Unschedule(Timeout).Finalize());
 
             During(TelegramSetup, When(SetupFailed)
                 .Unschedule(Timeout)
-                .Publish(x => new DestroyInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId })
+                .Publish(x => new TearDownInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId })
                 .Finalize());
 
             During(InfrastructureSetup, When(SetupFailed).Finalize());
@@ -89,6 +89,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public Event<AccountDeleted> AccountDeleted { get; }
 
-        public Schedule<AccountSetupState, DestroyInfrastructure.Command> Timeout { get; }
+        public Schedule<AccountSetupState, TearDownInfrastructure.Command> Timeout { get; }
     }
 }

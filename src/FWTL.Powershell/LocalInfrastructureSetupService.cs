@@ -9,7 +9,7 @@ namespace FWTL.Powershell
 {
     public class LocalInfrastructureService : IInfrastructureService
     {
-        public async Task<Result> CreateTelegramApi(Guid accountId)
+        public async Task<Result> GenerateTelegramApi(Guid accountId)
         {
             var script = await File.ReadAllTextAsync(@".\..\..\k8\telegram\helm-install.ps1");
 
@@ -22,7 +22,7 @@ namespace FWTL.Powershell
             return ps.HadErrors ? new Result(ps.Streams.Error.Select(e => e.Exception.Message).ToList()) : new Result();
         }
 
-        public async Task<Result> DeleteTelegramApi(Guid accountId)
+        public async Task<Result> TearDownTelegramApi(Guid accountId)
         {
             var script = await File.ReadAllTextAsync(@".\..\..\k8\telegram\helm-uninstall.ps1");
 

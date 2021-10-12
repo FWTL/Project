@@ -118,7 +118,6 @@ namespace FWTL.RabbitMq
             services.AddMassTransit(x =>
             {
                 AddSaga<AccountSetupSaga, AccountSetupState>(x, redisCredentials);
-                AddSaga<DeleteAccountSaga, DeleteAccountState>(x, redisCredentials);
                 AddSaga<RestartAccountSetupSaga, RestartAccountSetupState>(x, redisCredentials);
 
                 var commands = typeof(TLookupType).Assembly.GetTypes()

@@ -7,8 +7,8 @@ namespace FWTL.Core.Services
 {
     public interface IInfrastructureService
     {
-        public Task<Result> CreateTelegramApi(Guid accountId);
-        public Task<Result> DeleteTelegramApi(Guid accountId);
+        public Task<Result> GenerateTelegramApi(Guid accountId);
+        public Task<Result> TearDownTelegramApi(Guid accountId);
     }
 
     public class Result

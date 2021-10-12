@@ -18,7 +18,8 @@ namespace FWTL.Domain.Accounts
         IApply<SetupFailed>,
         IApply<AccountDeleted>,
         IApply<SessionRemoved>,
-        IApply<InfrastructureCreated>
+        IApply<InfrastructureCreated>,
+        IApply<InfrastructureTearedDown>
     {
         public AccountAggregate()
         {
@@ -177,6 +178,27 @@ namespace FWTL.Domain.Accounts
             {
                 AccountId = Id
             });
+        }
+
+        public void TryToTearDownInfrastructure()
+        {
+            if (State == AccountState.Initialized)
+            {
+                throw new AppValidationException(nameof(State), $"Nothing to tear down");
+            }
+        }
+
+        public void TearDownInfrastructure()
+        {
+            AddEvent(new InfrastructureTearedDown()
+            {
+                AccountId = Id
+            });
+        }
+
+        public void Apply(InfrastructureTearedDown @event)
+        {
+            State = AccountState.Initialized;
         }
     }
 }
