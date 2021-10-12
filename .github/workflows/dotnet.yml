@@ -44,5 +44,5 @@ jobs:
         working-directory: ./src
         run: |
           ..\.sonar\scanner\dotnet-sonarscanner begin /k:"FWTL_Auth" /o:"fwtl" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build
+          dotnet build FWTL.Management
           ..\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
