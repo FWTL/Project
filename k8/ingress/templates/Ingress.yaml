@@ -5,7 +5,6 @@
 #kubectl patch ingress telegram-ingress --type merge --patch='[{"op": "replace", "path": "/spec/rules/host/kubernetes.docker.internal/http/paths", "value":"new image"}]'
 #kubectl patch ingress telegram-ingress --type json --patch "$(Get-Content test.json -Raw | % {$_.replace("123","321")})" --dry-run -o yaml
 
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

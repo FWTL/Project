@@ -4,4 +4,4 @@
     $PathToChart
 )
 
-helm install "Telegram" $PathToChart --create-namespace "Telegram"
+helm install "telegram-base" $PathToChart --namespace "telegram" --create-namespace

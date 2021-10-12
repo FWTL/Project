@@ -5,7 +5,7 @@ namespace FWTL.Common.Setup.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static string GetNotNullOrEmpty(this IConfiguration configuration, string key)
+        public static string Get(this IConfiguration configuration, string key)
         {
             string result = configuration[key];
             if (string.IsNullOrWhiteSpace(result))

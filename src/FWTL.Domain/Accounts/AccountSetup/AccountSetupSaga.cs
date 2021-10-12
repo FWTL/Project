@@ -8,9 +8,9 @@ namespace FWTL.Domain.Accounts.AccountSetup
     //https://miro.com/app/board/o9J_lDZlCU8=/
     public class AccountSetupSaga : MassTransitStateMachine<AccountSetupState>
     {
-        public State Initialized { get; }
+        public State InfrastructureSetup { get; }
 
-        public State Setup { get; }
+        public State TelegramSetup { get; }
 
         public AccountSetupSaga()
         {
@@ -34,42 +34,42 @@ namespace FWTL.Domain.Accounts.AccountSetup
             Event(() => AccountSetupRestarted, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => AccountDeleted, x => x.CorrelateById(m => m.Message.AccountId));
 
-            InstanceState(x => x.CurrentState, Initialized, Setup);
+            InstanceState(x => x.CurrentState, InfrastructureSetup, TelegramSetup);
 
             Schedule(() => Timeout, instance => instance.ExpirationTokenId, s =>
             {
                 s.Delay = TimeSpan.FromMinutes(10);
             });
+            DuringAny(When(Timeout.Received).Publish(x => x.Data));
 
             Initially(When(AccountCreated)
-                .TransitionTo(Initialized)
-                .Publish(x => new CreateInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
+                .TransitionTo(InfrastructureSetup)
+                .Publish(x => new SetupInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-            During(Initialized, When(InfrastructureCreated)
-                .TransitionTo(Setup)
+            During(InfrastructureSetup, When(InfrastructureCreated)
+                .TransitionTo(TelegramSetup)
                 .Publish(x => new CreateSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-            During(Setup, When(SessionCreated)
+            During(TelegramSetup, When(SessionCreated)
                 .Publish(x => new SendCode.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
-            During(Setup, When(CodeSent)
-                .Schedule(Timeout, context => new RemoveSession.Command() { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }));
+            During(TelegramSetup, When(CodeSent)
+                .Schedule(Timeout, context => new DestroyInfrastructure.Command() { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }));
 
-            During(Setup, When(AccountVerified)
+            During(TelegramSetup, When(AccountVerified)
                 .Unschedule(Timeout).Finalize());
 
-            During(Setup, When(SetupFailed)
+            During(TelegramSetup, When(SetupFailed)
                 .Unschedule(Timeout)
-                .Publish(x => new RemoveSession.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId })
+                .Publish(x => new DestroyInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId })
                 .Finalize());
 
-            During(Initialized, When(SetupFailed).Finalize());
+            During(InfrastructureSetup, When(SetupFailed).Finalize());
 
             DuringAny(When(AccountSetupRestarted).Finalize());
             DuringAny(When(AccountDeleted).Finalize());
 
-            DuringAny(When(Timeout.Received).Publish(x => x.Data));
-
+            
             SetCompletedWhenFinalized();
         }
 
@@ -89,6 +89,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public Event<AccountDeleted> AccountDeleted { get; }
 
-        public Schedule<AccountSetupState, RemoveSession.Command> Timeout { get; }
+        public Schedule<AccountSetupState, DestroyInfrastructure.Command> Timeout { get; }
     }
 }

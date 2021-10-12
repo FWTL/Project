@@ -67,7 +67,7 @@ namespace FWTL.Domain.Accounts
 
         public void Apply(AccountDeleted @event)
         {
-            SoftDelete();
+            Delete();
         }
 
         public void Apply(SessionRemoved @event)
@@ -126,11 +126,6 @@ namespace FWTL.Domain.Accounts
             });
         }
 
-        public void RemoveSession()
-        {
-            AddEvent(new SessionRemoved() { AccountId = Id });
-        }
-
         public void Reset()
         {
             AddEvent(new AccountSetupRestarted() { AccountId = Id });
@@ -142,11 +137,6 @@ namespace FWTL.Domain.Accounts
             {
                 AccountId = Id
             });
-        }
-
-        public void SessionNotFound()
-        {
-            AddEvent(new SessionNotFound() { AccountId = Id });
         }
 
         public void TryToCreateInfrastructure()
@@ -161,7 +151,7 @@ namespace FWTL.Domain.Accounts
         {
             if (State != AccountState.WithInfrastructure)
             {
-                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
+                throw new AppValidationException(nameof(State), $"Account is not in WithInfrastructure state");
             }
         }
 
@@ -179,10 +169,6 @@ namespace FWTL.Domain.Accounts
             {
                 throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
             }
-        }
-        public void UnlinkSession()
-        {
-            AddEvent(new SessionUnlinked() { AccountId = Id });
         }
 
         public void Verify()

@@ -7,7 +7,7 @@ namespace FWTL.Powershell
     {
         public static void AddLocalInfrastructureSetupService(this IServiceCollection services)
         {
-            services.AddScoped<IInfrastructureSetupService, LocalInfrastructureSetupService>();
+            services.AddScoped<IInfrastructureService, LocalInfrastructureService>();
         }
     }
 }

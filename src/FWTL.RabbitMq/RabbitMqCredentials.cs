@@ -7,9 +7,9 @@ namespace FWTL.RabbitMq
     {
         public RabbitMqCredentials(IConfiguration configuration)
         {
-            UserName = configuration.GetNotNullOrEmpty("RabbitMq:UserName");
-            Password = configuration.GetNotNullOrEmpty("RabbitMq:Password");
-            Url = configuration.GetNotNullOrEmpty("RabbitMq:Url");
+            UserName = configuration.Get("RabbitMq:UserName");
+            Password = configuration.Get("RabbitMq:Password");
+            Url = configuration.Get("RabbitMq:Url");
         }
 
         public string Password { get; }

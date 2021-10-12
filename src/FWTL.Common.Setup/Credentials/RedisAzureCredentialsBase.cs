@@ -19,9 +19,9 @@ namespace FWTL.Common.Setup.Credentials
 
         public RedisAzureCredentialsBase(IConfiguration configuration)
         {
-            _name = configuration.GetNotNullOrEmpty("Redis:Name");
-            _password = configuration.GetNotNullOrEmpty("Redis:Password");
-            _port = configuration.GetNotNullOrEmpty("Redis:Port").To<int>();
+            _name = configuration.Get("Redis:Name");
+            _password = configuration.Get("Redis:Password");
+            _port = configuration.Get("Redis:Port").To<int>();
 
             _isSsl = true;
             _allowAdmin = true;

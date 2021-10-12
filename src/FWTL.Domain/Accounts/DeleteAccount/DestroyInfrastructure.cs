@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
-using FWTL.Core.Services.Telegram;
-using FWTL.Core.Services.Telegram.Dto;
+using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.DeleteAccount
 {
-    public class UnlinkSession
+    public class DestroyInfrastructure
     {
         public class Command : ICommand
         {
@@ -18,19 +16,25 @@ namespace FWTL.Domain.Accounts.DeleteAccount
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly IAggregateStore _aggregateStore;
-            private readonly ITelegramClient _telegramClient;
+            private readonly IInfrastructureService _infrastructureService;
 
-            public Handler(IAggregateStore aggregateStore, ITelegramClient telegramClient)
+            public Handler(IInfrastructureService infrastructureService)
+            {
+                _infrastructureService = infrastructureService;
+            }
+
+            private readonly IAggregateStore _aggregateStore;
+
+            public Handler(IAggregateStore aggregateStore, IInfrastructureService infrastructureService)
             {
                 _aggregateStore = aggregateStore;
-                _telegramClient = telegramClient;
+                _infrastructureService = infrastructureService;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId, true);
-                return account;
+                var result = await _infrastructureService.DeleteTelegramApi(command.AccountId);
+                return null;
             }
         }
     }

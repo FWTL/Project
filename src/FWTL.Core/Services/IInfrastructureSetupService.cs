@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace FWTL.Core.Services
 {
-    public interface IInfrastructureSetupService
+    public interface IInfrastructureService
     {
         public Task<Result> CreateTelegramApi(Guid accountId);
+        public Task<Result> DeleteTelegramApi(Guid accountId);
     }
 
     public class Result

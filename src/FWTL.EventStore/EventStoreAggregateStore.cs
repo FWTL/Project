@@ -200,7 +200,7 @@ namespace FWTL.EventStore
             {
                 object eventObject = DeserializeEvent(@event.Event.Metadata, @event.Event.Data);
                 Type applyType = typeof(IApply<>).MakeGenericType(eventObject.GetType());
-                var isAssignableFrom = applyType.IsAssignableFrom(aggregate.GetType());
+                var isAssignableFrom = applyType.IsInstanceOfType(aggregate);
                 if (isAssignableFrom)
                 {
                     ((dynamic)aggregate).Apply((dynamic)eventObject);

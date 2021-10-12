@@ -43,7 +43,7 @@ namespace FWTL.TelegramClient.Services
                     IsSuccess = false,
                     Errors = new[]
                     {
-                        new Error() {Message = response.StatusCode + " " + await response.Content.ReadAsStringAsync()}
+                        new Error() { Message = response.StatusCode + " " + await response.Content.ReadAsStringAsync()}
                     }
                 };
             }

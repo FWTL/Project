@@ -7,7 +7,7 @@ using FWTL.Core.Services;
 
 namespace FWTL.Powershell
 {
-    public class LocalInfrastructureSetupService : IInfrastructureSetupService
+    public class LocalInfrastructureService : IInfrastructureService
     {
         public async Task<Result> CreateTelegramApi(Guid accountId)
         {
@@ -18,13 +18,21 @@ namespace FWTL.Powershell
             ps.AddParameter("AccountId", accountId);
             ps.AddParameter("PathToChart", @".\..\..\k8\telegram\");
 
-            var result = await ps.InvokeAsync();
-            if (ps.HadErrors)
-            {
-                return new Result(ps.Streams.Error.Select(e => e.Exception.Message).ToList());
-            }
+            await ps.InvokeAsync();
+            return ps.HadErrors ? new Result(ps.Streams.Error.Select(e => e.Exception.Message).ToList()) : new Result();
+        }
 
-            return new Result();
+        public async Task<Result> DeleteTelegramApi(Guid accountId)
+        {
+            var script = await File.ReadAllTextAsync(@".\..\..\k8\telegram\helm-uninstall.ps1");
+
+            using PowerShell ps = PowerShell.Create();
+            ps.AddScript(script);
+            ps.AddParameter("AccountId", accountId);
+            ps.AddParameter("PathToChart", @".\..\..\k8\telegram\");
+
+            await ps.InvokeAsync();
+            return ps.HadErrors ? new Result(ps.Streams.Error.Select(e => e.Exception.Message).ToList()) : new Result();
         }
     }
 }

@@ -4,7 +4,7 @@ metadata:
   name: telegram-service-{{ .Values.accountId }}
 spec:
   selector:
-    app: telegram
+    app: telegram-{{ .Values.accountId }}
   ports:
   - name: http
     port: 9503

@@ -5,18 +5,18 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: telegram
+      app: telegram-{{ .Values.accountId }}
   replicas: 1
   template:
     metadata:
       labels:
-        app: telegram
+        app: telegram-{{ .Values.accountId }}
     spec:
       containers:
         - name: telegram
           image: xtrime/telegram-api-server:latest
           volumeMounts:
-            - name: config-volume
+            - name: config-volume-{{ .Values.accountId }}
               mountPath: /app/sessions/.env.docker
               subPath: .env.docker
           resources:
@@ -26,6 +26,6 @@ spec:
           ports:
             - containerPort: 9503
       volumes:
-        - name: config-volume
+        - name: config-volume-{{ .Values.accountId }}
           configMap:
             name: telegram-config-{{ .Values.accountId }}

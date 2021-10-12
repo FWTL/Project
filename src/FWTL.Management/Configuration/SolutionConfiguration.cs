@@ -15,9 +15,9 @@ namespace FWTL.Management.Configuration
             HangfireDatabaseCredentials = new HangfireDatabaseCredentials(new SqlServerDatabaseCredentials(configuration, "Hangfire"));
             RedisCredentials = new RedisCredentials(new RedisLocalCredentialsBase(configuration));
             RabbitMqCredentials = new RabbitMqCredentials(configuration);
-            SeqUrl = new Uri(configuration.GetNotNullOrEmpty("Seq:Url"));
-            TelegramUrl = new Uri(configuration.GetNotNullOrEmpty("Telegram:Url"));
-            EventStoreUrl = new Uri(configuration.GetNotNullOrEmpty("EventStore:Url"));
+            SeqUrl = new Uri(configuration.Get("Seq:Url"));
+            TelegramUrl = new Uri(configuration.Get("Telegram:Url"));
+            EventStoreUrl = new Uri(configuration.Get("EventStore:Url"));
         }
 
         public RabbitMqCredentials RabbitMqCredentials { get; }

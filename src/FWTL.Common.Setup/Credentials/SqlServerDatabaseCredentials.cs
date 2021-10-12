@@ -19,11 +19,11 @@ namespace FWTL.Common.Setup.Credentials
 
         public SqlServerDatabaseCredentials(IConfiguration configuration, string prefix)
         {
-            _url = configuration.GetNotNullOrEmpty($"{prefix}:Url");
-            _port = configuration.GetNotNullOrEmpty($"{prefix}:Port").To<int>();
-            _catalog = configuration.GetNotNullOrEmpty($"{prefix}:Catalog");
-            _user = configuration.GetNotNullOrEmpty($"{prefix}:User");
-            _password = configuration.GetNotNullOrEmpty($"{prefix}:Password");
+            _url = configuration.Get($"{prefix}:Url");
+            _port = configuration.Get($"{prefix}:Port").To<int>();
+            _catalog = configuration.Get($"{prefix}:Catalog");
+            _user = configuration.Get($"{prefix}:User");
+            _password = configuration.Get($"{prefix}:Password");
         }
 
         public string ConnectionString =>

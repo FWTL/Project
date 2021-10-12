@@ -9,10 +9,10 @@ namespace FWTL.Common.Setup.Credentials
     {
         public EventStoreCredentialsBase(IConfiguration configuration)
         {
-            User = configuration.GetNotNullOrEmpty("EventStore:User");
-            Password = configuration.GetNotNullOrEmpty("EventStore:Password");
-            Ip = configuration.GetNotNullOrEmpty("EventStore:Ip");
-            Port = configuration.GetNotNullOrEmpty("EventStore:Port").To<int>();
+            User = configuration.Get("EventStore:User");
+            Password = configuration.Get("EventStore:Password");
+            Ip = configuration.Get("EventStore:Ip");
+            Port = configuration.Get("EventStore:Port").To<int>();
         }
 
         public string Ip { get; }

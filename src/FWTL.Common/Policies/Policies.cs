@@ -17,10 +17,14 @@ namespace FWTL.Common.Policies
                 .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(retryAttempts, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-            Polly.Fallback.AsyncFallbackPolicy<HttpResponseMessage> fallbackPolicy = HttpPolicyExtensions.HandleTransientHttpError().FallbackAsync(fallbackAction: (result, context, token) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout)
-            {
-                Content = new StringContent(result.Exception.Message)
-            }),
+            Polly.Fallback.AsyncFallbackPolicy<HttpResponseMessage> fallbackPolicy = HttpPolicyExtensions.HandleTransientHttpError().FallbackAsync(fallbackAction: (result, context, token) =>
+                {
+                    var msg = result.Exception?.Message ?? result.Result.StatusCode.ToString();
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout)
+                    {
+                        Content = new StringContent(result?.Exception?.Message)
+                    });
+                },
             (result, context) => Task.CompletedTask);
 
             return Policy.WrapAsync(retryPolicy, fallbackPolicy);

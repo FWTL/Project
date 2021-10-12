@@ -6,7 +6,7 @@ using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class CreateInfrastructure
+    public class SetupInfrastructure
     {
         public class Command : ICommand
         {
@@ -22,9 +22,9 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public class Handler : ICommandHandler<Command>
         {
             private readonly IAggregateStore _aggregateStore;
-            private readonly IInfrastructureSetupService _infrastructureSetupService;
+            private readonly IInfrastructureService _infrastructureSetupService;
 
-            public Handler(IAggregateStore aggregateStore, IInfrastructureSetupService infrastructureSetupService)
+            public Handler(IAggregateStore aggregateStore, IInfrastructureService infrastructureSetupService)
             {
                 _aggregateStore = aggregateStore;
                 _infrastructureSetupService = infrastructureSetupService;

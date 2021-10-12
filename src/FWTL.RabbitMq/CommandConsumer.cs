@@ -38,6 +38,8 @@ namespace FWTL.RabbitMq
         {
             try
             {
+                _logger.LogDebug($"{context.Message.GetType().Name} {context.Message.CorrelationId}");
+
                 IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
                 _eventFactory.Make(aggregateRoot.Events);
 

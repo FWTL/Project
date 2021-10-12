@@ -36,7 +36,7 @@ namespace FWTL.Domain.Accounts
                 bool doesExist = await _dbContext.Accounts.AsQueryable()
                     .Where(account => account.OwnerId == aggregate.OwnerId)
                     .Where(account => account.ExternalAccountId == aggregate.ExternalAccountId)
-                    .Where(account => account.Id != aggregate.Id).AnyAsync(cancellationToken: token);
+                    .Where(account => account.Id != aggregate.Id).AnyAsync(token);
 
                 if (doesExist)
                 {

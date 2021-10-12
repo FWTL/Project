@@ -83,7 +83,6 @@ namespace FWTL.Management
 
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
-          
             services.AddScoped<IEventFactory, EventFactory>();
 
             return services.BuildServiceProvider();

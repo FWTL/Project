@@ -8,6 +8,10 @@
     $PathToChart
 )
 
-$installationName = "Telegram-" + $AccountId
-helm install $installationName $PathToChart --namespace "Telegram" --set accountId=$AccountId
-kubectl patch ingress telegram-ingress --type json --patch "$(Get-Content add-path-to-ingress.json -Raw | % {$_.replace("{{id}}",$AccountId)})"
+$installationName = "telegram-" + $AccountId
+$pathToPatchFile = $PathToChart + "\\add-path-to-ingress.json";
+
+helm install $installationName $PathToChart --namespace "telegram" --set accountId=$AccountId
+
+kubectl rollout status deployment ("telegram-deployment-" + $AccountId)
+kubectl patch ingress telegram-ingress --type json --patch "$(Get-Content $pathToPatchFile -Raw | % {$_.replace("{{id}}",$AccountId)})"
