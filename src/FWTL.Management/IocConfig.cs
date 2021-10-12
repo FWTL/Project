@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentValidation;
 using FWTL.Common.Cqrs;
 using FWTL.Common.Cqrs.Mappers;
@@ -13,16 +11,10 @@ using FWTL.Core.Services;
 using FWTL.Core.Specification;
 using FWTL.CurrentUser;
 using FWTL.Domain.Users;
-using FWTL.EventStore;
 using FWTL.RabbitMq;
-using FWTL.TelegramClient;
-using FWTL.TimeZones;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace FWTL.Management
 {
@@ -31,7 +23,6 @@ namespace FWTL.Management
         public static ServiceProvider RegisterDependencies(IServiceCollection services, IWebHostEnvironment env)
         {
             var domainAssembly = typeof(GetMe).GetTypeInfo().Assembly;
-
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
@@ -71,7 +62,6 @@ namespace FWTL.Management
                     .WithScopedLifetime()
             );
 
-          
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<ICommandDispatcher, RequestDispatcher>();
             services.AddScoped<IQueryDispatcher, QueryDispatcher>();
@@ -87,7 +77,5 @@ namespace FWTL.Management
 
             return services.BuildServiceProvider();
         }
-
-       
     }
 }

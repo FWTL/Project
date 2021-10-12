@@ -5,7 +5,7 @@ using FWTL.Core.Commands;
 
 namespace FWTL.Domain.Session
 {
-    public class RemoveSession 
+    public class RemoveSession
     {
         public class Command : ICommand
         {
@@ -18,7 +18,6 @@ namespace FWTL.Domain.Session
         {
             public Handler()
             {
-
             }
 
             public Task<IAggregateRoot> ExecuteAsync(Command command)

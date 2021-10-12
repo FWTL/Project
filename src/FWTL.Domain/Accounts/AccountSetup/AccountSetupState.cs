@@ -12,6 +12,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
         public int Version { get; set; }
 
-        public Guid? ExpirationTokenId{ get; set; }
+        public Guid? ExpirationTokenId { get; set; }
     }
 }

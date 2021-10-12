@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using FWTL.Common.Cqrs.Mappers;
-using FWTL.Common.Cqrs.Responses;
 using FWTL.Common.Exceptions;
 using FWTL.Common.Extensions;
 using FWTL.Core.Commands;

@@ -1,9 +1,4 @@
-﻿using System;
-using Automatonymous;
-using FWTL.Core.Events;
-using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Domain.Accounts.DeleteAccount;
-using FWTL.Domain.Events;
+﻿using Automatonymous;
 
 namespace FWTL.Domain.Accounts.RestartSetup
 {
@@ -14,7 +9,6 @@ namespace FWTL.Domain.Accounts.RestartSetup
 
         public RestartAccountSetupSaga()
         {
-            
         }
     }
 }

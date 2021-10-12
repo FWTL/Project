@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FWTL.Core.Services
 {
-    public interface IInfrastructureService
-    {
-        public Task<Result> GenerateTelegramApi(Guid accountId);
-        public Task<Result> TearDownTelegramApi(Guid accountId);
-    }
-
     public class Result
     {
         public Result()

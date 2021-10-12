@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EventStore.Client;
 using Polly;
 using StackExchange.Redis;
 

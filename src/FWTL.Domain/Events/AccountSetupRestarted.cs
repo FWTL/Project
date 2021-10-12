@@ -1,6 +1,5 @@
 ﻿using System;
 using FWTL.Core.Events;
-using FWTL.Domain.Accounts;
 
 namespace FWTL.Domain.Events
 {

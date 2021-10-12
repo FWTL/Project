@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FWTL.Core.Commands;
-using FWTL.Core.Queries;
-using FWTL.Core.Services;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Accounts.DeleteAccount;
-using FWTL.Domain.Accounts.DeleteAccountSetup;
 using FWTL.Domain.Accounts.RestartSetup;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +13,7 @@ namespace FWTL.Management.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
-        
+
         public AccountsController(ICommandDispatcher commandDispatcher)
         {
             _commandDispatcher = commandDispatcher;

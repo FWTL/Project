@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Automatonymous;
@@ -15,16 +14,13 @@ using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Specification;
 using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Domain.Accounts.DeleteAccount;
 using FWTL.Domain.Accounts.RestartSetup;
 using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
-using MassTransit.RedisIntegration;
 using MassTransit.Saga;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
-using StackExchange.Redis;
 
 namespace FWTL.RabbitMq
 {
@@ -204,7 +200,6 @@ namespace FWTL.RabbitMq
                             ec.ConfigureConsumer(context, typeof(EventConsumer<>).MakeGenericType(typeArguments));
                         }
                     });
-
                 }));
             });
         }

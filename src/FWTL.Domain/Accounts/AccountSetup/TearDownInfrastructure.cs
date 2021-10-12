@@ -4,7 +4,7 @@ using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services;
 
-namespace FWTL.Domain.Accounts.DeleteAccount
+namespace FWTL.Domain.Accounts.AccountSetup
 {
     public class TearDownInfrastructure
     {

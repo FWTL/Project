@@ -30,7 +30,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
             Event(() => AccountVerified, x => x.CorrelateById(m => m.Message.AccountId));
 
             Event(() => SetupFailed, x => x.CorrelateById(m => m.Message.AccountId));
-            
+
             Event(() => AccountSetupRestarted, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => AccountDeleted, x => x.CorrelateById(m => m.Message.AccountId));
 
@@ -69,7 +69,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
             DuringAny(When(AccountSetupRestarted).Finalize());
             DuringAny(When(AccountDeleted).Finalize());
 
-            
             SetCompletedWhenFinalized();
         }
 

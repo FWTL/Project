@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Commands;
 using FWTL.Core.Services.Telegram;
 using FWTL.Core.Services.Telegram.Dto;
-using FWTL.TelegramClient;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
@@ -24,7 +22,6 @@ namespace FWTL.Domain.Accounts.AccountSetup
             public Command()
             {
             }
-
 
             public Guid CorrelationId { get; set; }
         }

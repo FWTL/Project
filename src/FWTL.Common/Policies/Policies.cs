@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
-using Polly.Wrap;
 
 namespace FWTL.Common.Policies
 {

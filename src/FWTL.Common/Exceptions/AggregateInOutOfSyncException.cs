@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 using FWTL.Core.Aggregates;
 
 namespace FWTL.Common.Exceptions
@@ -10,13 +7,11 @@ namespace FWTL.Common.Exceptions
     {
         public AggregateInOutOfSyncException()
         {
-
         }
 
-        public AggregateInOutOfSyncException(IAggregateRoot aggregateRoot, Exception innerException) 
+        public AggregateInOutOfSyncException(IAggregateRoot aggregateRoot, Exception innerException)
             : base($"Cannot sync aggregate {aggregateRoot.Id} of type {aggregateRoot.GetType().FullName}", innerException)
         {
-          
         }
     }
 }

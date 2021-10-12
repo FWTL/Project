@@ -7,7 +7,7 @@ namespace FWTL.EventStore
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddEventStore(this IServiceCollection services,Uri address)
+        public static void AddEventStore(this IServiceCollection services, Uri address)
         {
             services.AddSingleton(b =>
             {

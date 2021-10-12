@@ -42,7 +42,7 @@ namespace FWTL.Domain.Accounts.Maps
 
         public async Task<bool> ProbeAsync(AccountAggregate aggregate)
         {
-            if(aggregate.IsNull())
+            if (aggregate.IsNull())
             {
                 return false;
             }

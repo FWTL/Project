@@ -4,7 +4,7 @@ using FWTL.Core.Services.Telegram.Dto;
 
 namespace FWTL.MockTelegramClient.Services
 {
-    public class MessageService :  IMessageService
+    public class MessageService : IMessageService
     {
         public Task<ResponseWrapper<MessagesChats>> GetAllChatsAsync(string sessionName)
         {
