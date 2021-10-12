@@ -31,8 +31,6 @@ namespace FWTL.RabbitMq
         public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : class, IQuery
         {
-            //await TraitValidationAsync<TQuery, IPagingTrait>(query);
-
             var validator = _context.GetService<IValidator<TQuery>>();
             if (validator.IsNotNull())
             {

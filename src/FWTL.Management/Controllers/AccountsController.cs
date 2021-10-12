@@ -16,15 +16,10 @@ namespace FWTL.Management.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
-        private readonly IQueryDispatcher _queryDispatcher;
-        private readonly ICurrentUserService _currentUserService;
-
-        public AccountsController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher,
-            ICurrentUserService currentUserService)
+        
+        public AccountsController(ICommandDispatcher commandDispatcher)
         {
             _commandDispatcher = commandDispatcher;
-            _queryDispatcher = queryDispatcher;
-            _currentUserService = currentUserService;
         }
 
         [HttpPost]

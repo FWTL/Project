@@ -3,7 +3,6 @@ using System.Linq;
 using FluentValidation;
 using FWTL.Common.Helpers;
 using FWTL.Common.Validators;
-using FWTL.Core.Aggregates;
 using FWTL.Core.Specification;
 using FWTL.Database.Access;
 using FWTL.Domain.Events;
@@ -15,12 +14,10 @@ namespace FWTL.Domain.Accounts
         ISpecificationFor<AccountAggregate, AccountCreated>,
         ISpecificationFor<AccountAggregate, AccountDeleted>
     {
-        private readonly IAggregateStore _aggregateStore;
         private readonly IDatabaseContext _dbContext;
 
-        public AccountAggregateSpecification(IAggregateStore aggregateStore, IDatabaseContext dbContext)
+        public AccountAggregateSpecification(IDatabaseContext dbContext)
         {
-            _aggregateStore = aggregateStore;
             _dbContext = dbContext;
         }
 

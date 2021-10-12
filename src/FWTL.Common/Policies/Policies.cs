@@ -22,7 +22,7 @@ namespace FWTL.Common.Policies
                     var msg = result.Exception?.Message ?? result.Result.StatusCode.ToString();
                     return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout)
                     {
-                        Content = new StringContent(result?.Exception?.Message)
+                        Content = new StringContent(msg)
                     });
                 },
             (result, context) => Task.CompletedTask);

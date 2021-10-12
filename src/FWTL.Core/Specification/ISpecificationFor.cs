@@ -4,7 +4,7 @@ using FWTL.Core.Events;
 
 namespace FWTL.Core.Specification
 {
-    public interface ISpecificationFor<TAggregate, TEvent> where TEvent : IEvent where TAggregate : IAggregateRoot
+    public interface ISpecificationFor<in TAggregate, in TEvent> where TEvent : IEvent where TAggregate : IAggregateRoot
     {
         IValidator<TAggregate> Apply(TEvent @event);
     }

@@ -24,7 +24,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
-using NodaTime.Serialization.JsonNet;
 using NodaTime.Serialization.SystemTextJson;
 using Serilog;
 
@@ -36,7 +35,6 @@ namespace FWTL.Management
     {
         private readonly IConfigurationRoot _configuration;
 
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly SolutionConfiguration _solutionConfiguration;
 
         public Startup(IWebHostEnvironment hostingEnvironment)
@@ -47,15 +45,13 @@ namespace FWTL.Management
                 .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
 
-            _configuration = configuration.Build();
-
             if (hostingEnvironment.IsDevelopment())
             {
                 configuration.AddUserSecrets<Startup>(true);
-                _configuration = configuration.Build();
             }
 
-            _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration.Build();
+
             _solutionConfiguration = new SolutionConfiguration(_configuration);
         }
 
