@@ -38,7 +38,7 @@ namespace FWTL.RabbitMq
         {
             try
             {
-                _logger.LogDebug($"{context.Message.GetType().Name} {context.Message.CorrelationId}");
+                _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.Message.CorrelationId}");
 
                 IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
                 _eventFactory.Make(aggregateRoot.Events);
@@ -64,6 +64,10 @@ namespace FWTL.RabbitMq
             {
                 var exceptionId = _exceptionHandler.Handle(ex, context.Message);
                 await context.RespondAsync(message: new ErrorResponse(exceptionId));
+            }
+            finally
+            {
+                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.Message.CorrelationId}");
             }
         }
     }

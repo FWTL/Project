@@ -17,8 +17,7 @@ namespace FWTL.Domain.Accounts
         IApply<AccountVerified>,
         IApply<SetupFailed>,
         IApply<AccountDeleted>,
-        IApply<SessionRemoved>,
-        IApply<InfrastructureCreated>,
+        IApply<InfrastructureGenerated>,
         IApply<InfrastructureTearedDown>
     {
         public AccountAggregate()
@@ -32,7 +31,7 @@ namespace FWTL.Domain.Accounts
             WithInfrastructure = 2,
             WithSession = 3,
             WaitForCode = 4,
-            Ready = 5
+            Ready = 5,
         }
 
         public string ExternalAccountId { get; set; }
@@ -71,22 +70,17 @@ namespace FWTL.Domain.Accounts
             Delete();
         }
 
-        public void Apply(SessionRemoved @event)
-        {
-            State = AccountState.Initialized;
-        }
-
-        public void Apply(InfrastructureCreated @event)
+        public void Apply(InfrastructureGenerated @event)
         {
             State = AccountState.WithInfrastructure;
         }
 
         public void Apply(InfrastructureTearedDown @event)
         {
-            State = AccountState.Initialized;
+            State = AccountState.Failed;
         }
 
-        public void Create(Guid accountId, AddAccount.Command command)
+        public void Create(Guid accountId, CreateAccount.Command command)
         {
             var accountAdded = new AccountCreated()
             {
@@ -98,9 +92,9 @@ namespace FWTL.Domain.Accounts
             AddEvent(accountAdded);
         }
 
-        public void CreateInfrastructure()
+        public void GenerateInfrastructure()
         {
-            AddEvent(new InfrastructureCreated()
+            AddEvent(new InfrastructureGenerated()
             {
                 AccountId = Id
             });
@@ -116,6 +110,7 @@ namespace FWTL.Domain.Accounts
             var accountDeleted = new AccountDeleted()
             {
                 DeletedBy = deletedBy,
+                State = State,
                 AccountId = Id
             };
 
@@ -177,12 +172,9 @@ namespace FWTL.Domain.Accounts
             }
         }
 
-        public void TryToTearDownInfrastructure()
+        public bool HasInfrastructure()
         {
-            if (State == AccountState.Initialized)
-            {
-                throw new AppValidationException(nameof(State), $"Nothing to tear down");
-            }
+            return State >= AccountState.WithInfrastructure;
         }
 
         public void TryToVerify()
@@ -190,6 +182,14 @@ namespace FWTL.Domain.Accounts
             if (State != AccountState.WaitForCode)
             {
                 throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
+            }
+        }
+
+        public void TryToReset()
+        {
+            if (State != AccountState.Failed)
+            {
+                throw new AppValidationException(nameof(State), $"Account is not in Failed state");
             }
         }
 

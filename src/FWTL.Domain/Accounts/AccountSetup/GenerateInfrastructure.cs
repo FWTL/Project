@@ -6,43 +6,39 @@ using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class TearDownInfrastructure
+    public class GenerateInfrastructure
     {
         public class Command : ICommand
         {
+            public Command()
+            {
+            }
+
             public Guid AccountId { get; set; }
+
             public Guid CorrelationId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>
         {
-            private readonly IInfrastructureService _infrastructureService;
-
-            public Handler(IInfrastructureService infrastructureService)
-            {
-                _infrastructureService = infrastructureService;
-            }
-
             private readonly IAggregateStore _aggregateStore;
+            private readonly IInfrastructureService _infrastructureSetupService;
 
             public Handler(IAggregateStore aggregateStore, IInfrastructureService infrastructureService)
             {
                 _aggregateStore = aggregateStore;
-                _infrastructureService = infrastructureService;
+                _infrastructureSetupService = infrastructureService;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                if (!account.HasInfrastructure())
-                {
-                    return account;
-                }
+                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
+                account.TryToCreateInfrastructure();
 
-                var result = await _infrastructureService.TearDownTelegramApi(command.AccountId);
+                var result = await _infrastructureSetupService.GenerateTelegramApi(command.AccountId);
                 if (result.IsSuccess)
                 {
-                    account.TearDownInfrastructure();
+                    account.GenerateInfrastructure();
                     return account;
                 }
 

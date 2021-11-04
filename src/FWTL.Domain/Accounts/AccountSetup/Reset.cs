@@ -6,43 +6,44 @@ using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class SetupInfrastructure
+    public class Reset
     {
-        public class Command : ICommand
+        public class Request : IRequest
+        {
+            public Guid AccountId { get; set; }
+        }
+
+        public class Command : Request, ICommand
         {
             public Command()
             {
             }
 
-            public Guid AccountId { get; set; }
+            public Command(ICurrentUserService currentUserService)
+            {
+                UserId = currentUserService.CurrentUserId;
+            }
 
             public Guid CorrelationId { get; set; }
+
+            public Guid UserId { get; set; }
         }
 
         public class Handler : ICommandHandler<Command>
         {
             private readonly IAggregateStore _aggregateStore;
-            private readonly IInfrastructureService _infrastructureSetupService;
 
-            public Handler(IAggregateStore aggregateStore, IInfrastructureService infrastructureSetupService)
+            public Handler(IAggregateStore aggregateStore)
             {
                 _aggregateStore = aggregateStore;
-                _infrastructureSetupService = infrastructureSetupService;
             }
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
                 AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.TryToCreateInfrastructure();
+                account.TryToReset();
 
-                var result = await _infrastructureSetupService.GenerateTelegramApi(command.AccountId);
-                if (result.IsSuccess)
-                {
-                    account.CreateInfrastructure();
-                    return account;
-                }
-
-                account.FailSetup(result.Errors);
+                account.Reset();
                 return account;
             }
         }

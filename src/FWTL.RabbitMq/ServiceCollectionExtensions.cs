@@ -14,7 +14,6 @@ using FWTL.Core.Helpers;
 using FWTL.Core.Queries;
 using FWTL.Core.Specification;
 using FWTL.Domain.Accounts.AccountSetup;
-using FWTL.Domain.Accounts.RestartSetup;
 using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.Saga;
@@ -114,8 +113,7 @@ namespace FWTL.RabbitMq
             services.AddMassTransit(x =>
             {
                 AddSaga<AccountSetupSaga, AccountSetupState>(x, redisCredentials);
-                AddSaga<RestartAccountSetupSaga, RestartAccountSetupState>(x, redisCredentials);
-
+                
                 var commands = typeof(TLookupType).Assembly.GetTypes()
                   .Where(t => t.IsNested && t.Name == "Handler")
                   .Select(t => t.GetInterfaces().First())

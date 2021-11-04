@@ -9,7 +9,7 @@ using FWTL.Core.Services;
 
 namespace FWTL.Domain.Accounts.AccountSetup
 {
-    public class AddAccount
+    public class CreateAccount
     {
         public class Request : IRequest
         {
