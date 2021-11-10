@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FWTL.Core.Commands;
 using FWTL.Core.Events;
 
 namespace FWTL.Core.Aggregates
@@ -18,5 +19,9 @@ namespace FWTL.Core.Aggregates
         Task CommitAsync(IAggregateStore aggregateStore);
 
         public bool IsDeleted { get; set; }
+
+        void AddCompletionEvent<TCommand>(TCommand command) where TCommand : ICommand;
+
+        void AddValidationFailureEvent<TCommand>(TCommand command) where TCommand : ICommand;
     }
 }

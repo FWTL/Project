@@ -6,6 +6,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using FWTL.Common.Extensions;
 using FWTL.Core.Aggregates;
+using FWTL.Core.Commands;
 using FWTL.Core.Events;
 using FWTL.Core.Specification;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,15 @@ namespace FWTL.Common.Aggregates
         public bool ToDelete { get; set; }
 
         public bool IsDeleted { get; set; }
+        public void AddCompletionEvent<TCommand>(TCommand command) where TCommand : ICommand
+        {
+            _events.Add(new EventComposite(new CommandCompleted<TCommand>(command)));
+        }
+
+        public void AddValidationFailureEvent<TCommand>(TCommand command) where TCommand : ICommand
+        {
+            throw new NotImplementedException();
+        }
 
         protected void AddEvent<TEvent>(TEvent @event) where TEvent : IEvent
         {

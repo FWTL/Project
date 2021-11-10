@@ -8,5 +8,6 @@ namespace FWTL.Domain.Events
     {
         public Guid AccountId { get; set; }
         public Guid CorrelationId { get; set; }
+        public AccountAggregate.AccountState State { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventStore.Client;
+using FWTL.Common.Aggregates;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;

@@ -45,6 +45,7 @@ namespace FWTL.RabbitMq
 
                 await aggregateRoot.CommitAsync(_aggregateStore);
 
+                aggregateRoot.AddCompletionEvent(context.Message);
                 foreach (var composite in aggregateRoot.Events)
                 {
                     await context.Publish(composite.Event, composite.Event.GetType());

@@ -129,7 +129,7 @@ namespace FWTL.Domain.Accounts
 
         public void Reset()
         {
-            AddEvent(new AccountSetupRestarted() { AccountId = Id });
+            AddEvent(new AccountSetupRestarted() { AccountId = Id, State = State });
         }
 
         public void SendCode()

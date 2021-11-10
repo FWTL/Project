@@ -1,5 +1,6 @@
 ﻿using System;
 using Automatonymous;
+using FWTL.Core.Events;
 using FWTL.Domain.Events;
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +12,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public State InfrastructureSetup { get; }
 
         public State TelegramSetup { get; }
+
+        public State Reset { get; }
 
         public AccountSetupSaga(ILogger<AccountSetupSaga> logger)
         {
@@ -43,6 +46,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             Event(() => AccountSetupRestarted, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => AccountDeleted, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => TearDownInfrastructureCompleted, x => x.CorrelateById(m => m.Message.CorrelationId));
 
             InstanceState(x => x.CurrentState, InfrastructureSetup, TelegramSetup);
 
@@ -56,7 +60,36 @@ namespace FWTL.Domain.Accounts.AccountSetup
                 .TransitionTo(InfrastructureSetup)
                 .Publish(x => new GenerateInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
+
             Initially(When(AccountSetupRestarted)
+                .TransitionTo(Reset)
+                .Publish(x => new TearDownInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
+
+            Initially(When(AccountSetupRestarted)
+                .TransitionTo(Reset)
+                .Publish(x => new TearDownInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
+
+            //Initially(When(AccountSetupRestarted)
+            //    .IfElse(x => x.Data.State >= AccountAggregate.AccountState.WithInfrastructure,
+            //        x => 
+            //            x.TransitionTo(Reset)
+            //            .Publish(context => new TearDownInfrastructure.Command { CorrelationId = context.Data.CorrelationId, AccountId = context.Instance.CorrelationId }),
+            //        x => x.TransitionTo()
+
+            //.if(x => x.Data.State >= AccountAggregate.AccountState.WithInfrastructure
+            //{
+            //    var @event = x.Data;
+            //    if (@event.State >= AccountAggregate.AccountState.WithInfrastructure)
+            //    {
+            //        x.Publish(new TearDownInfrastructure.Command { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId });
+            //    }
+            //    else
+            //    {
+            //        x.Publish(new GenerateInfrastructure.Command { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId });
+            //    }
+            //})
+
+            During(Reset, When(TearDownInfrastructureCompleted)
                 .TransitionTo(InfrastructureSetup)
                 .Publish(x => new GenerateInfrastructure.Command() { CorrelationId = x.Data.CorrelationId, AccountId = x.Instance.CorrelationId }));
 
@@ -105,6 +138,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public Event<AccountDeleted> AccountDeleted { get; }
 
         public Event<InfrastructureTearedDown> InfrastructureTearedDown { get; }
+
+        public Event<CommandCompleted<TearDownInfrastructure.Command>> TearDownInfrastructureCompleted { get; }
 
         public Schedule<AccountSetupState, TearDownInfrastructure.Command> Timeout { get; }
     }
