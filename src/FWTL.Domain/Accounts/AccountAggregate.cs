@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FWTL.Common.Aggregates;
-using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
 using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Events;
@@ -18,7 +17,8 @@ namespace FWTL.Domain.Accounts
         IApply<SetupFailed>,
         IApply<AccountDeleted>,
         IApply<InfrastructureGenerated>,
-        IApply<InfrastructureTearedDown>
+        IApply<InfrastructureTearedDown>,
+        IApply<AccountSetupRestarted>
     {
         public AccountAggregate()
         {
@@ -92,14 +92,6 @@ namespace FWTL.Domain.Accounts
             AddEvent(accountAdded);
         }
 
-        public void GenerateInfrastructure()
-        {
-            AddEvent(new InfrastructureGenerated()
-            {
-                AccountId = Id
-            });
-        }
-
         public void CreateSession()
         {
             AddEvent(new SessionCreated() { AccountId = Id });
@@ -127,6 +119,19 @@ namespace FWTL.Domain.Accounts
             });
         }
 
+        public void GenerateInfrastructure()
+        {
+            AddEvent(new InfrastructureGenerated()
+            {
+                AccountId = Id
+            });
+        }
+
+        public bool HasInfrastructure()
+        {
+            return State >= AccountState.WithInfrastructure;
+        }
+
         public void Reset()
         {
             AddEvent(new AccountSetupRestarted() { AccountId = Id });
@@ -148,57 +153,17 @@ namespace FWTL.Domain.Accounts
             });
         }
 
-        public void TryToCreateInfrastructure()
-        {
-            if (State != AccountState.Initialized)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in Initialized state");
-            }
-        }
-
-        public void TryToCreateSession()
-        {
-            if (State != AccountState.WithInfrastructure)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in WithInfrastructure state");
-            }
-        }
-
-        public void TryToSendCode()
-        {
-            if (State != AccountState.WithSession)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in WithSession state");
-            }
-        }
-
-        public bool HasInfrastructure()
-        {
-            return State >= AccountState.WithInfrastructure;
-        }
-
-        public void TryToVerify()
-        {
-            if (State != AccountState.WaitForCode)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in WaitForCode state");
-            }
-        }
-
-        public void TryToReset()
-        {
-            if (State != AccountState.Failed)
-            {
-                throw new AppValidationException(nameof(State), $"Account is not in Failed state");
-            }
-        }
-
         public void Verify()
         {
             AddEvent(new AccountVerified()
             {
                 AccountId = Id
             });
+        }
+
+        public void Apply(AccountSetupRestarted @event)
+        {
+            State = AccountState.Initialized;
         }
     }
 }

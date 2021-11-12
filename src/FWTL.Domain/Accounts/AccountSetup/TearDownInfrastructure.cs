@@ -33,11 +33,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                var account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                if (!account.HasInfrastructure())
-                {
-                    return account;
-                }
+                var account = await _aggregateStore.GetByIdAsync<AccountAggregate, Command>(command.AccountId, command);
 
                 var result = await _infrastructureService.TearDownTelegramApi(command.AccountId);
                 if (result.IsSuccess)

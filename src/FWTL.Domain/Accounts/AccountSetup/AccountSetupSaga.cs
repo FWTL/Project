@@ -1,5 +1,7 @@
 ﻿using System;
 using Automatonymous;
+using FluentValidation;
+using FWTL.Core.Events;
 using FWTL.Domain.Events;
 using Microsoft.Extensions.Logging;
 
@@ -43,6 +45,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             Event(() => AccountSetupRestarted, x => x.CorrelateById(m => m.Message.AccountId));
             Event(() => AccountDeleted, x => x.CorrelateById(m => m.Message.AccountId));
+            Event(() => ValidationExceptionRaised, x => x.CorrelateById(m => m.Message.AggregateId));
 
             InstanceState(x => x.CurrentState, InfrastructureSetup, TelegramSetup);
 
@@ -80,6 +83,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             During(TelegramSetup, When(InfrastructureTearedDown).Finalize());
             During(InfrastructureSetup, When(SetupFailed).Finalize());
+            DuringAny(When(ValidationExceptionRaised).Finalize());
 
             DuringAny(When(AccountDeleted).Finalize());
 
@@ -105,6 +109,8 @@ namespace FWTL.Domain.Accounts.AccountSetup
         public Event<AccountDeleted> AccountDeleted { get; }
 
         public Event<InfrastructureTearedDown> InfrastructureTearedDown { get; }
+
+        public Event<ValidationExceptionRaised> ValidationExceptionRaised { get; }
 
         public Schedule<AccountSetupState, TearDownInfrastructure.Command> Timeout { get; }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FluentValidation;
 using FWTL.Common.Cqrs.Responses;
 using FWTL.Common.Exceptions;
 using FWTL.Core.Aggregates;
@@ -52,8 +51,9 @@ namespace FWTL.RabbitMq
 
                 await context.RespondAsync(new Common.Cqrs.Responses.Response(aggregateRoot.Id));
             }
-            catch (ValidationException ex)
+            catch (AppValidationException ex)
             {
+                await context.Publish(new ValidationExceptionRaised(ex.AggregateId, ex.Errors));
                 await context.RespondAsync(new BadRequestResponse(ex));
             }
             catch (TelegramClientException ex)
@@ -62,6 +62,7 @@ namespace FWTL.RabbitMq
             }
             catch (Exception ex)
             {
+                await context.Publish(new UnhandledExceptionOccured() { CommandCorrelationId = context.Message.CorrelationId, CommandFullName = context.Message.GetType().FullName });
                 var exceptionId = _exceptionHandler.Handle(ex, context.Message);
                 await context.RespondAsync(message: new ErrorResponse(exceptionId));
             }

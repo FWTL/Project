@@ -71,7 +71,7 @@ namespace FWTL.RabbitMq
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationFor<,>)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationForCommand<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 

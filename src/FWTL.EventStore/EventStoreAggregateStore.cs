@@ -5,9 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventStore.Client;
+using FluentValidation.Results;
 using FWTL.Common.Exceptions;
+using FWTL.Common.Extensions;
 using FWTL.Core.Aggregates;
+using FWTL.Core.Commands;
 using FWTL.Core.Events;
+using FWTL.Core.Specification;
 using FWTL.Domain.Events;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,12 +50,40 @@ namespace FWTL.EventStore
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
             {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
+                throw new AppValidationException(aggregateId, $"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
             }
 
             if (aggregate.IsDeleted && !isDeleted)
             {
-                throw new AppValidationException($"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} is deleted");
+                throw new AppValidationException(aggregateId, $"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} is deleted");
+            }
+
+            return aggregate;
+        }
+
+        public async Task<TAggregate> GetByIdAsync<TAggregate, TCommand>(Guid aggregateId, TCommand command, bool isDeleted = false) where TAggregate : class, IAggregateRoot, new() where TCommand : ICommand
+        {
+            var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
+            if (aggregate is null)
+            {
+                throw new AppValidationException(aggregateId, $"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} not found");
+            }
+
+            if (aggregate.IsDeleted && !isDeleted)
+            {
+                throw new AppValidationException(aggregateId, $"{typeof(TAggregate).Name}Id", $"Aggregate with id : {aggregateId} is deleted");
+            }
+
+            var specificationFor = _context.GetService<ISpecificationForCommand<TAggregate, TCommand>>();
+
+            if (specificationFor.IsNotNull())
+            {
+                var validator = specificationFor.Apply(command);
+                ValidationResult result = await validator.ValidateAsync(aggregate);
+                if (!result.IsValid)
+                {
+                    throw new AppValidationException(aggregateId, result.Errors);
+                }
             }
 
             return aggregate;

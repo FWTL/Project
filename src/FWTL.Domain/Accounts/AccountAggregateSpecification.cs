@@ -5,14 +5,21 @@ using FWTL.Common.Helpers;
 using FWTL.Common.Validators;
 using FWTL.Core.Specification;
 using FWTL.Database.Access;
+using FWTL.Domain.Accounts.AccountSetup;
 using FWTL.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace FWTL.Domain.Accounts
 {
     public class AccountAggregateSpecification : AppAbstractValidation<AccountAggregate>,
-        ISpecificationFor<AccountAggregate, AccountCreated>,
-        ISpecificationFor<AccountAggregate, AccountDeleted>
+        ISpecificationForEvent<AccountAggregate, AccountCreated>,
+        ISpecificationForEvent<AccountAggregate, AccountDeleted>,
+        ISpecificationForCommand<AccountAggregate, GenerateInfrastructure.Command>,
+        ISpecificationForCommand<AccountAggregate, CreateSession.Command>,
+    ISpecificationForCommand<AccountAggregate, Reset.Command>,
+        ISpecificationForCommand<AccountAggregate, SendCode.Command>,
+        ISpecificationForCommand<AccountAggregate, TearDownInfrastructure.Command>,
+        ISpecificationForCommand<AccountAggregate, VerifyAccount.Command>
     {
         private readonly IDatabaseContext _dbContext;
 
@@ -42,6 +49,16 @@ namespace FWTL.Domain.Accounts
             });
         }
 
+        public void MustBeInState(AccountAggregate.AccountState state)
+        {
+            RuleFor(x => x.State).Equal(state);
+        }
+
+        public void MustHaveInfrastructure()
+        {
+            RuleFor(x => x).Must(x => x.HasInfrastructure());
+        }
+
         public void MustBeOwner(Guid ownerId)
         {
             RuleFor(x => x.OwnerId).Equal(ownerId);
@@ -57,6 +74,42 @@ namespace FWTL.Domain.Accounts
         public IValidator<AccountAggregate> Apply(AccountDeleted @event)
         {
             MustBeOwner(@event.DeletedBy);
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(GenerateInfrastructure.Command command)
+        {
+            MustBeInState(AccountAggregate.AccountState.Ready);
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(CreateSession.Command command)
+        {
+            MustBeInState(AccountAggregate.AccountState.WithInfrastructure);
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(Reset.Command command)
+        {
+            MustHaveInfrastructure();
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(SendCode.Command command)
+        {
+            MustBeInState(AccountAggregate.AccountState.WithSession);
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(TearDownInfrastructure.Command command)
+        {
+            MustHaveInfrastructure();
+            return this;
+        }
+
+        public IValidator<AccountAggregate> Apply(VerifyAccount.Command command)
+        {
+            MustBeInState(AccountAggregate.AccountState.WaitForCode);
             return this;
         }
     }

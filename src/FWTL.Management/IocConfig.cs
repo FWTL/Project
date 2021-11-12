@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Automatonymous;
 using FluentValidation;
 using FWTL.Common.Cqrs;
 using FWTL.Common.Cqrs.Mappers;
@@ -44,7 +45,7 @@ namespace FWTL.Management
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationFor<,>)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationForCommand<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
@@ -58,6 +59,13 @@ namespace FWTL.Management
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly)
                     .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
+                    .AsSelf()
+                    .WithScopedLifetime()
+            );
+
+            services.Scan(scan =>
+                scan.FromAssemblies(domainAssembly)
+                    .AddClasses(filter => filter.Where(implementation => typeof(Activity).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );

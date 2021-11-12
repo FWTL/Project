@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
+using FWTL.Common.Exceptions;
 using FWTL.Common.Extensions;
 using FWTL.Core.Aggregates;
 using FWTL.Core.Events;
@@ -35,7 +36,7 @@ namespace FWTL.Common.Aggregates
         {
             (this as IApply<TEvent>)?.Apply(@event);
 
-            var specificationFor = Context.GetService<ISpecificationFor<TAggregate, TEvent>>();
+            var specificationFor = Context.GetService<ISpecificationForEvent<TAggregate, TEvent>>();
 
             if (specificationFor.IsNotNull())
             {
@@ -43,7 +44,7 @@ namespace FWTL.Common.Aggregates
                 ValidationResult result = validator.Validate(this);
                 if (!result.IsValid)
                 {
-                    throw new ValidationException(result.Errors);
+                    throw new AppValidationException(Id, result.Errors);
                 }
             }
 

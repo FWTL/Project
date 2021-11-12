@@ -40,8 +40,7 @@ namespace FWTL.Domain.Accounts.AccountSetup
 
             public async Task<IAggregateRoot> ExecuteAsync(Command command)
             {
-                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate>(command.AccountId);
-                account.TryToReset();
+                AccountAggregate account = await _aggregateStore.GetByIdAsync<AccountAggregate, Command>(command.AccountId, command);
 
                 account.Reset();
                 return account;
